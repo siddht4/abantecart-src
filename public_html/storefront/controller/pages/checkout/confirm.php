@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -37,7 +37,7 @@ class ControllerPagesCheckoutConfirm extends AController {
 		$pmt_address_rt = 'checkout/address/payment';	
 		$shp_address_rt = 'checkout/address/shipping';				
 		$confirm_rt = 'checkout/confirm';
-		$sucess_rt = 'checkout/success';
+		$success_rt = 'checkout/success';
 		$product_rt = 'product/product';		
 		if($this->config->get('embed_mode') == true){
 			$cart_rt = 'r/checkout/cart/embed';
@@ -94,7 +94,7 @@ class ControllerPagesCheckoutConfirm extends AController {
 		if($order_id===false){
 			// preventing rebuilding order of already processed orders
 			//(by "back" button via browser history from external payment page(paypal, google_checkout etc))
-			$this->redirect($this->html->getSecureURL($sucess_rt));
+			$this->redirect($this->html->getSecureURL($success_rt));
 		}
 		$this->session->data['order_id'] = $order_id;
 
@@ -164,7 +164,7 @@ class ControllerPagesCheckoutConfirm extends AController {
 		$this->loadModel('account/address');
 		$shipping_address = $this->model_account_address->getAddress($this->session->data['shipping_address_id']);	
 		if ($this->cart->hasShipping()) {
-			$this->data['shipping_address'] = $this->customer->getFormatedAdress($shipping_address, $shipping_address[ 'address_format' ] );
+			$this->data['shipping_address'] = $this->customer->getFormattedAddress($shipping_address, $shipping_address[ 'address_format' ] );
 		} else {
 			$this->data['shipping_address'] = '';
 		}
@@ -176,7 +176,7 @@ class ControllerPagesCheckoutConfirm extends AController {
 
 		$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);
 		if ($payment_address) {
-			$this->data['payment_address'] = $this->customer->getFormatedAdress($payment_address, $payment_address[ 'address_format' ] );
+			$this->data['payment_address'] = $this->customer->getFormattedAddress($payment_address, $payment_address[ 'address_format' ] );
 		} else {
 			$this->data['payment_address'] = '';
 		}
@@ -192,8 +192,20 @@ class ControllerPagesCheckoutConfirm extends AController {
 		$this->loadModel('tool/seo_url');
 		$this->loadModel('tool/image');
 
+		$product_ids = array();
+		foreach($this->data['products'] as $result){
+			$product_ids[] = (int)$result['product_id'];
+		}
+
+		$resource = new AResource('image');
+		$thumbnails = $resource->getMainThumbList(
+						'products',
+						$product_ids,
+						$this->config->get('config_image_cart_width'),
+						$this->config->get('config_image_cart_height')
+		);
+
 		//Format product data specific for confirmation page
-        $resource = new AResource('image');
         for($i = 0; $i < sizeof( $this->data['products'] ); $i++){
         	$product_id = $this->data['products'][$i]['product_id'];
 			$opts = $this->data['products'][$i]['option'];
@@ -225,11 +237,7 @@ class ControllerPagesCheckoutConfirm extends AController {
 
 	        $this->data['products'][$i]['option'] = $options;
 
-	        $thumbnail = $resource->getMainThumb('products',
-			                                    $product_id,
-												(int)$this->config->get('config_image_cart_width'),
-												(int)$this->config->get('config_image_cart_height'),
-												true);
+	        $thumbnail = $thumbnails[ $product_id ];
 			$tax = $this->tax->calcTotalTaxAmount($this->data['products'][$i]['total'], $this->data['products'][$i]['tax_class_id']);
       		$this->data['products'][$i] = array_merge( 
       			$this->data['products'][$i], 

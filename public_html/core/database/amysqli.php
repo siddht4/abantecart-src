@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -53,6 +53,7 @@ final class AMySQLi {
 	    $connection->query("SET CHARACTER_SET_CONNECTION=utf8");
 	    $connection->query("SET SQL_MODE = ''");
 	    $connection->query("SET session wait_timeout=60;");
+	    $connection->query("SET SESSION SQL_BIG_SELECTS=1;");
 
         $this->registry = Registry::getInstance();
 		$this->connection = $connection;
@@ -98,11 +99,11 @@ final class AMySQLi {
 				return TRUE;
 			}
 		} else {
+			$this->error = 'SQL Error: '.mysqli_error($this->connection).'<br />Error No: '.mysqli_errno($this->connection).'<br />SQL: '.$sql;
 			if($noexcept){
-				$this->error = 'AbanteCart Error: ' . $result->error . '<br />' . $sql;
 				return FALSE;
 			}else{
-				throw new AException(AC_ERR_MYSQL, 'Error: ' . $result->error . '<br />' . $sql);
+				throw new AException(AC_ERR_MYSQL, $this->error);
 			}
     	}
   	}
@@ -114,6 +115,8 @@ final class AMySQLi {
     public function escape($value) {
 	    if(is_array($value)){
 		    $dump = var_export($value,true);
+		    $backtrace = debug_backtrace();
+		    $dump .= ' (file: '.$backtrace[1]['file'] .' line '.$backtrace[1]['line'].')';
 		    $message = 'aMySQLi class error: Try to escape non-string value: '.$dump;
 		    $error = new AError($message);
 		    $error->toLog()->toDebug()->toMessages();
@@ -138,5 +141,12 @@ final class AMySQLi {
 
     public function __destruct() {
 	    $this->connection->close();
+	}
+
+	public function getDBError(){
+		return array(
+				'error_text' => mysqli_error($this->connection),
+				'errno'      => mysqli_errno($this->connection)
+		);
 	}
 }

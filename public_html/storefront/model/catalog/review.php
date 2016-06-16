@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -20,7 +20,12 @@
 if (! defined ( 'DIR_CORE' )) {
 	header ( 'Location: static_pages/' );
 }
-class ModelCatalogReview extends Model {		
+class ModelCatalogReview extends Model {
+	/**
+	 * @param int $product_id
+	 * @param array $data
+	 * @return int
+	 */
 	public function addReview($product_id, $data) {
 		$this->db->query("INSERT INTO " . $this->db->table("reviews") . " 
 						  SET author = '" . $this->db->escape($data['name']) . "',
@@ -39,13 +44,17 @@ class ModelCatalogReview extends Model {
 		$msg = new AMessage();
 		$msg->saveNotice($language->get('text_new_review'), $msg_text);
 				
-		$this->cache->delete('product.rating.'.(int)$product_id);
-		$this->cache->delete('product.reviews.totals');
-		$this->cache->delete('product.reviews.totals.'.$product_id);
+		$this->cache->remove('product');
 
-		return '';
+		return $review_id;
 	}
-		
+
+	/**
+	 * @param int $product_id
+	 * @param int $start
+	 * @param int $limit
+	 * @return array
+	 */
 	public function getReviewsByProductId($product_id, $start = 0, $limit = 20) {
 		$query = $this->db->query("SELECT r.review_id,
 										  r.author,
@@ -68,38 +77,51 @@ class ModelCatalogReview extends Model {
 		
 		return $query->rows;
 	}
-	
+
+	/**
+	 * @param int $product_id
+	 * @return int
+	 */
 	public function getAverageRating($product_id) {
-		$cache = $this->cache->get('product.rating.'.(int)$product_id);
-		if(is_null($cache)){
+		$cache = $this->cache->pull('product.rating.'.(int)$product_id);
+		if($cache === false){
 			$query = $this->db->query( "SELECT AVG(rating) AS total
 										FROM " . $this->db->table("reviews") . " 
 										WHERE status = '1' AND product_id = '" . (int)$product_id . "'
 										GROUP BY product_id");
 			$cache  = (int)$query->row['total'];
-			$this->cache->set('product.rating.'.(int)$product_id,$cache);
+			$this->cache->push('product.rating.'.(int)$product_id, $cache);
 		}
 		return $cache;
-	}	
-	
+	}
+
+	/**
+	 * @return int
+	 */
 	public function getTotalReviews() {
-		$cache = $this->cache->get('product.reviews.totals');
-		if(is_null($cache)){
+		$cache = $this->cache->pull('product.reviews.totals');
+		if($cache === false){
 		$query = $this->db->query( "SELECT COUNT(*) AS total
 									FROM " . $this->db->table("reviews") . " r
 									LEFT JOIN " . $this->db->table("products") . " p ON (r.product_id = p.product_id)
 									WHERE p.date_available <= NOW()
 										AND p.status = '1'
 										AND r.status = '1'");
-			$cache = $query->row['total'];
-			$this->cache->set('product.reviews.totals', $cache);
+			$cache = (int)$query->row['total'];
+			$this->cache->push('product.reviews.totals', $cache);
 		}
 		return $cache;
 	}
 
+	/**
+	 * @param int $product_id
+	 * @return int
+	 */
 	public function getTotalReviewsByProductId($product_id) {
-		$cache = $this->cache->get('product.reviews.totals.'.$product_id, (int)$this->config->get('storefront_language_id'));
-		if(is_null($cache)){
+		$language_id = (int)$this->config->get('storefront_language_id');
+		$cache_key = 'product.reviews.totals.'.$product_id.'.lang_'.$language_id;
+		$cache = $this->cache->pull($cache_key);
+		if($cache === false){
 			$query = $this->db->query( "SELECT COUNT(*) AS total
 										FROM " . $this->db->table("reviews") . " r
 										LEFT JOIN " . $this->db->table("products") . " p ON (r.product_id = p.product_id)
@@ -108,12 +130,11 @@ class ModelCatalogReview extends Model {
 											AND p.date_available <= NOW()
 											AND p.status = '1'
 											AND r.status = '1'
-											AND pd.language_id = '" . (int)$this->config->get('storefront_language_id') . "'");
+											AND pd.language_id = '" . $language_id . "'");
 
-			$cache = $query->row['total'];
-			$this->cache->set('product.reviews.totals.'.$product_id, $cache, (int)$this->config->get('storefront_language_id'));
+			$cache = (int)$query->row['total'];
+			$this->cache->push($cache_key, $cache);
 		}
 		return $cache;
 	}
 }
-?>

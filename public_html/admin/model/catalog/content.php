@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -22,20 +22,24 @@ if (! defined ( 'DIR_CORE' ) || !IS_ADMIN) {
 }
 
 class ModelCatalogContent extends Model {
-	
+	/**
+	 * @return array
+	 */
 	public function getContents() {
-		
 		$contents = array();
-		
-		$contentmanager = new AContentManager();
-        $results = $contentmanager->getContents();
-        $contents[] = array( 'content_id' => '0', 'title' => $this->language->get('text_none') );
+		$content_manager = new AContentManager();
+        $results = $content_manager->getContents();
+        $contents[] = array(
+                'content_id' => '0',
+                'title' => $this->language->get('text_none')
+        );
         foreach( $results as $r ) {
-			$contents[] = array( 'content_id' => $r['content_id'], 'title' => $r['title'] );
+			$contents[] = array(
+                                'content_id' => $r['content_id'],
+                                'title' => $r['title']
+            );
 		}
-		
 		return $contents;
-		
 	}
 		
 }

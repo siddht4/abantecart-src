@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   Lincence details is bundled with this package in the file LICENSE.txt.
@@ -169,17 +169,26 @@ class ControllerResponsesProductProduct extends AController {
 		if(!$this->view->isTemplateExists('responses/checkout/cart_details.tpl')){
 			return '';
 		}
+
+		$cart_products = $this->cart->getProducts();
+
+		$product_ids = array();
+		foreach($cart_products as $result){
+			$product_ids[] = (int)$result['product_id'];
+		}
+
 		$resource = new AResource('image');
-		foreach ($this->cart->getProducts() as $result) {
+		$thumbnails = $resource->getMainThumbList(
+						'products',
+						$product_ids,
+						$this->config->get('config_image_product_width'),
+						$this->config->get('config_image_product_height')
+		);
+
+		foreach ($cart_products as $result) {
 			$option_data = array();
-
-			$thumbnail = $resource->getMainThumb('products',
-				$result['product_id'],
-				$this->config->get('config_image_product_width'),
-				$this->config->get('config_image_product_height'), true);
-
+			$thumbnail = $thumbnails[ $result['product_id'] ];
 			foreach ($result['option'] as $option) {
-
 				$value = $option['value'];
                 // hide binary value for checkbox
                 if($option['element_type']=='C' && in_array($value, array(0,1))){
@@ -277,5 +286,42 @@ class ControllerResponsesProductProduct extends AController {
 
 		$this->load->library('json');
 		$this->response->setOutput(AJson::encode($output));
+	}
+
+	public function editCartProduct() {
+
+		//init controller data
+		$this->extensions->hk_InitData($this, __FUNCTION__);
+		$this->loadLanguage('checkout/cart');
+
+		if (!empty($this->request->post['quantity'])) {
+			foreach ($this->request->post['quantity'] as $key => $value) {
+				$this->cart->update($key, $value);
+			}
+			unset($this->session->data['shipping_method']);
+			unset($this->session->data['shipping_methods']);
+			unset($this->session->data['payment_method']);
+			unset($this->session->data['payment_methods']);
+			$this->extensions->hk_UpdateData($this, __FUNCTION__);
+		}
+		return $this->getCartContent();
+	}
+
+	public function removeFromCart() {
+		//init controller data
+		$this->extensions->hk_InitData($this, __FUNCTION__);
+		$this->loadLanguage('checkout/cart');
+
+		// Remove
+		if ($this->request->post_or_get('key')){
+			$this->cart->remove($this->request->post_or_get('key'));
+			$this->session->data['success'] = $this->language->get('text_remove');
+			unset($this->session->data['shipping_method']);
+			unset($this->session->data['shipping_methods']);
+			unset($this->session->data['payment_method']);
+			unset($this->session->data['payment_methods']);
+			$this->extensions->hk_UpdateData($this, __FUNCTION__);
+		}
+		return $this->getCartContent();
 	}
 }

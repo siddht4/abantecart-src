@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -21,10 +21,13 @@ if (! defined ( 'DIR_CORE' )) {
 	header ( 'Location: static_pages/' );
 }
 class ModelLocalisationCountry extends Model {
-
+	/**
+	 * @param int $country_id
+	 * @return array
+	 */
 	public function getCountry($country_id) {
 		$language_id = $this->language->getLanguageID();
-		$default_lang_id = $this->language->getDefaultLanguageID();	
+		$default_language_id = $this->language->getDefaultLanguageID();
 
 		$query = $this->db->query("SELECT *, COALESCE( cd1.name,cd2.name) as name
 										FROM " . $this->db->table("countries") . " c
@@ -35,13 +38,17 @@ class ModelLocalisationCountry extends Model {
 										WHERE c.country_id = '" . (int)$country_id . "' AND status = '1'");
 		return $query->row;
 	}
-	
+
+	/**
+	 * @return array
+	 */
 	public function getCountries() {
 		$language_id = $this->language->getLanguageID();
-		$default_language_id = $this->language->getDefaultLanguageID();		
-		$country_data = $this->cache->get('country', $language_id);
+		$default_language_id = $this->language->getDefaultLanguageID();
+		$cache_key = 'localization.country.lang_'.$language_id;
+		$country_data = $this->cache->pull($cache_key);
 		
-		if (is_null($country_data)) {
+		if ($country_data === false) {
 			if ($language_id == $default_language_id) {
 			    $query = $this->db->query( "SELECT *
 			    						FROM " . $this->db->table("countries") . " c
@@ -64,10 +71,9 @@ class ModelLocalisationCountry extends Model {
 	
 			$country_data = $query->rows;
 		
-			$this->cache->set('country', $country_data, $language_id);
+			$this->cache->push($cache_key, $country_data);
 		}
 
-		return $country_data;
+		return (array)$country_data;
 	}
 }
-?>

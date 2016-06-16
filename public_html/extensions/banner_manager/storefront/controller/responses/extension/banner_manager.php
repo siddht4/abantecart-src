@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -20,6 +20,11 @@
 if (! defined ( 'DIR_CORE' )) {
 	header ( 'Location: static_pages/' );
 }
+
+/**
+ * Class ControllerResponsesExtensionBannerManager
+ * @property ModelExtensionBannerManager $model_extension_banner_manager
+ */
 class ControllerResponsesExtensionBannerManager extends AController {
 	public $data = array();
 	
@@ -49,7 +54,7 @@ class ControllerResponsesExtensionBannerManager extends AController {
 	public function click() {
 		//controller function to register click and redirect
 		//NOTE: Work only for banners with target_url
-		//For security reson, do not allow URL as parameter for this redirect
+		//For security reason, do not allow URL as parameter for this redirect
         //init controller data
         $this->extensions->hk_InitData($this,__FUNCTION__);
 

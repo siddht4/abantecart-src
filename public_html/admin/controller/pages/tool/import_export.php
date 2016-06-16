@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -26,6 +26,9 @@ class ControllerPagesToolImportExport extends AController{
 	public $error;
 	public $success = '';
 	private $data = array();
+	/**
+	 * @var AData
+	 */
 	private $handler;
 
 	public function main(){
@@ -165,7 +168,10 @@ class ControllerPagesToolImportExport extends AController{
 				$this->data['options'] = $options;
 
 				if(!empty($this->request->files)){
-					if(file_exists($this->request->files['imported_file']['tmp_name'])){
+					if(file_exists($this->request->files['imported_file']['tmp_name']) && $this->request->files['imported_file']['size']==0){
+						$this->success = $this->language->get('text_import_loaded') . '0';
+						$this->session->data['error'] = $this->language->get('error_file_empty');
+					}elseif(file_exists($this->request->files['imported_file']['tmp_name'])){
 
 						$this->data['results'] = $this->import($this->request->files['imported_file']);
 
@@ -266,16 +272,17 @@ class ControllerPagesToolImportExport extends AController{
 		$results = array();
 		$run_mode = isset($this->request->post['test_mode']) ? $this->request->post['test_mode'] : 'commit';
 
+
 		if(in_array($file['type'], array('text/csv', 'application/vnd.ms-excel', 'text/plain', 'application/octet-stream'))){
 			#NOTE: 'application/octet-stream' is a solution for Windows OS sending unknown file type
 			#TODO: Need to add test for the file in case of 'application/octet-stream'
 			$csv_array = $this->handler->CSV2ArrayFromFile($file['tmp_name'], $this->request->post['options']['delimiter']);
 			$results = $this->handler->importData($csv_array, $run_mode);
-			$this->cache->delete('*');
+			$this->cache->remove('*');
 		} elseif($file['type'] == 'text/xml'){
 			$xml_array = $this->handler->XML2ArrayFromFile($file['tmp_name']);
 			$results = $this->handler->importData($xml_array, $run_mode);
-			$this->cache->delete('*');
+			$this->cache->remove('*');
 		} else{
 			$this->session->data['error'] = $this->language->get('error_file_format');
 		}

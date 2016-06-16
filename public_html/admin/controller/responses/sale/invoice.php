@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -103,7 +103,7 @@ class ControllerResponsesSaleInvoice extends AController {
 						'country' => $order_info['shipping_country']
 				);
 
-				$shipping_address = $customer->getFormatedAdress($shipping_data, $order_info['shipping_address_format']);
+				$shipping_address = $customer->getFormattedAddress($shipping_data, $order_info['shipping_address_format']);
 
 				$payment_data = array(
 						'firstname' => $order_info['payment_firstname'],
@@ -118,7 +118,7 @@ class ControllerResponsesSaleInvoice extends AController {
 						'country' => $order_info['payment_country']
 				);
 
-				$payment_address = $customer->getFormatedAdress($payment_data, $order_info['payment_address_format']);
+				$payment_address = $customer->getFormattedAddress($payment_data, $order_info['payment_address_format']);
 
 				$product_data = array();
 

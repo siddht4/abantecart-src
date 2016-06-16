@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -45,14 +45,21 @@ class ControllerResponsesListingGridReview extends AController {
 		$response->records = $total;
 		$results = $this->model_catalog_review->getReviews(array_merge($filter_form->getFilterData(), $filter_grid->getFilterData()));
 
+		$product_ids = array();
+		foreach($results as $result){
+			$product_ids[] = (int)$result['product_id'];
+		}
+
 		$resource = new AResource('image');
+		$thumbnails = $resource->getMainThumbList(
+						'products',
+						$product_ids,
+						$this->config->get('config_image_grid_width'),
+						$this->config->get('config_image_grid_height')
+		);
 		$i = 0;
 		foreach ($results as $result) {
-			$thumbnail = $resource->getMainThumb('products',
-				$result[ 'product_id' ],
-				$this->config->get('config_image_grid_width'),
-				$this->config->get('config_image_grid_height'), true);
-
+			$thumbnail = $thumbnails[ $result['product_id'] ];
 			$response->rows[ $i ][ 'id' ] = $result[ 'review_id' ];
 			$response->rows[ $i ][ 'cell' ] = array(
 				$thumbnail[ 'thumb_html' ],

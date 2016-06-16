@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -47,24 +47,35 @@ class ControllerResponsesEmbedJS extends AController {
 		}
 
 		$this->view->assign('store_name', $this->config->get('store_name'));
-		$icon_rl = $this->config->get('config_icon');
-		if($icon_rl){		
-			//see if we have a resource ID or path
-			if (is_numeric($icon_rl)) {
-				$resource = new AResource('image');
-			    $image_data = $resource->getResource( $icon_rl );
-			    if ( is_file(DIR_RESOURCE . $image_data['image']) ) {
-			    	$icon_rl = 'resources/'.$image_data['image'];
-			    } else {
-			    	$icon_rl = $image_data['resource_code'];
-			    }
-			} else	
-			if(!is_file(DIR_RESOURCE.$icon_rl)){
-				$icon_rl ='';
-			}
+		
+ 		$icon_rl = $this->config->get('config_icon');
+		//see if we have a resource ID or path
+		if (is_numeric($icon_rl)) {
+		   $resource = new AResource('image');
+		    $image_data = $resource->getResource( $icon_rl );
+		    if ( is_file(DIR_RESOURCE . $image_data['image']) ) {
+		    	$icon_rl = 'resources/'.$image_data['image'];
+		    } else {
+		    	$icon_rl = $image_data['resource_code'];
+		    }
+		} else if(!is_file(DIR_RESOURCE.$icon_rl)){
+		   $icon_rl ='';
 		}
 		$this->view->assign('icon', $icon_rl);
-		
+
+		$this->data['logo'] = $this->config->get('config_icon');
+		//see if we have a resource ID
+		if (is_numeric($this->data['logo'])) {
+			$resource = new AResource('image');
+		    $image_data = $resource->getResource( $this->data['logo'] );
+ 			if ( is_file(DIR_RESOURCE . $image_data['image']) ) {
+ 				$this->data['logo'] = 'resources/'.$image_data['image'];
+			} else {
+				$this->data['logo'] = $image_data['resource_code'];
+			}
+		}
+	
+		$this->data['homepage'] =  HTTPS_SERVER;
 		$this->data['abc_embed_test_cookie_url'] = $this->html->getURL('r/embed/js/testcookie','&timestamp='.time());
 
 		$this->loadLanguage('common/header');
@@ -113,12 +124,12 @@ class ControllerResponsesEmbedJS extends AController {
 		$product_info['name'] = htmlentities(html_entity_decode($product_info['name'],ENT_QUOTES,'UTF-8'),ENT_QUOTES,'UTF-8');
 
 		$resource = new AResource('image');
-		$product_info['thumbnail'] =  $resource->getMainThumb('products',
+		$product_info['thumbnail'] =  $resource->getMainThumb(
+				'products',
 				$product_id,
-			(int)$this->config->get('config_image_thumb_width'),
-			(int)$this->config->get('config_image_thumb_height'),
-		    true);
-
+				(int)$this->config->get('config_image_product_width'),
+				(int)$this->config->get('config_image_product_height')
+		);
 
 		if ($product_info['final_price'] && $product_info['final_price']!=$product_info['price']) {
 			$product_info['special'] = $this->currency->format($product_info['final_price']);
@@ -224,16 +235,24 @@ class ControllerResponsesEmbedJS extends AController {
 			return null;
 		}
 
+		$ids = array();
+		foreach($categories as $result){
+			$ids[] = (int)$result['category_id'];
+		}
+
+		//get thumbnails by one pass
 		$resource = new AResource('image');
+		$thumbnails = $resource->getMainThumbList(
+				'categories',
+				$ids,
+				$this->config->get('config_image_category_width'),
+				$this->config->get('config_image_category_height')
+		);
 
 		foreach($categories as &$category){
 			//deal with quotes
 			$category['name'] = htmlentities(html_entity_decode($category['name'],ENT_QUOTES,'UTF-8'),ENT_QUOTES,'UTF-8');
-			$category['thumbnail'] =  $resource->getMainThumb('categories',
-							$category['category_id'],
-						(int)$this->config->get('config_image_category_width'),
-						(int)$this->config->get('config_image_category_height'),
-					    true);
+			$category['thumbnail'] =  $thumbnails[ $category['category_id'] ];
 			$rt = $this->config->get('config_embed_click_action')=='modal' ? 'r/product/category' : 'product/category';
 			$category['details_url'] = $this->html->getURL( $rt, '&category_id=' .$category['category_id']);
 
@@ -281,16 +300,24 @@ class ControllerResponsesEmbedJS extends AController {
 			return null;
 		}
 
+		$ids = array();
+		foreach($manufacturers as $result){
+			$ids[] = (int)$result['manufacturer_id'];
+		}
+
+		//get thumbnails by one pass
 		$resource = new AResource('image');
+		$thumbnails = $resource->getMainThumbList(
+				'manufacturers',
+				$ids,
+				$this->config->get('config_image_category_width'),
+				$this->config->get('config_image_category_height')
+		);
 
 		foreach($manufacturers as &$manufacturer){
 			//deal with quotes
 			$manufacturer['name'] = htmlentities(html_entity_decode($manufacturer['name'],ENT_QUOTES,'UTF-8'),ENT_QUOTES,'UTF-8');
-			$manufacturer['thumbnail'] =  $resource->getMainThumb('manufacturers',
-							$manufacturer['manufacturer_id'],
-						(int)$this->config->get('config_image_category_width'),
-						(int)$this->config->get('config_image_category_height'),
-					    true);
+			$manufacturer['thumbnail'] = $thumbnails[$manufacturer['manufacturer_id']];
 			$rt = $this->config->get('config_embed_click_action')=='modal' ? 'r/product/manufacturer' : 'product/manufacturer';
 			$manufacturer['details_url'] = $this->html->getURL( $rt, '&manufacturer_id=' .$manufacturer['manufacturer_id']);
 

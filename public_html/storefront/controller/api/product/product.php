@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   Lincence details is bundled with this package in the file LICENSE.txt.
@@ -49,7 +49,7 @@ class ControllerApiProductProduct extends AControllerAPI {
 		$thumbnail = $resource->getMainThumb('products',
 			                                 $product_id,
 			                                 $this->config->get('config_image_thumb_width'),
-			                                 $this->config->get('config_image_thumb_height'),true);
+			                                 $this->config->get('config_image_thumb_height'));
 		$product_info['thumbnail'] = $thumbnail['thumb']['thumb_url'];
 
 		if ($this->config->get('config_customer_price') || $this->customer->isLogged() ) {

@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -317,10 +317,10 @@ class ModelToolTableRelationships extends Model {
 
 	private function _build_table_relationship() {
 		//NOTE: Not used see below in _build_relathionship
-		$cache_file = 'tables.key.relationship';
+		$cache_key = 'tables.key.relationship';
 
 		if($this->cache){
-			$this->tables_data = $this->cache->get($cache_file);
+			$this->tables_data = $this->cache->pull($cache_key);
 		}
 		if (!$this->tables_data) {
 			$sql = "SELECT table_name, column_name, extra 
@@ -354,7 +354,7 @@ class ModelToolTableRelationships extends Model {
 			$this->_apply_special_cases();
 
 			if($this->cache){
-				$this->cache->set($cache_file, $table_data);
+				$this->cache->push($cache_key, $this->tables_data);
 			}
 		}
 	}

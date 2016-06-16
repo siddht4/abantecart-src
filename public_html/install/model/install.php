@@ -6,7 +6,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -73,10 +73,14 @@ class ModelInstall extends Model {
 		
         //clear cache dir in case of reinstall
         $cache = new ACache();
-        $cache->delete('*');
+        $cache->remove('*');
 
 	}
 
+	/**
+	 * @param ADB $db
+	 * @param string $database_name
+	 */
 	private function create_triggers($db, $database_name) {
 		$tables_sql = "
 			SELECT DISTINCT TABLE_NAME 

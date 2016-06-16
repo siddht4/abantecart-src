@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   Lincence details is bundled with this package in the file LICENSE.txt.
@@ -140,7 +140,7 @@ class ControllerApiCheckoutShipping extends AControllerAPI {
 			$this->data[ 'error_warning' ] = $this->language->get('error_no_shipping');
 		}
 
-		$this->data[ 'address' ] = $this->customer->getFormatedAdress($shipping_address, $shipping_address[ 'address_format' ] );		
+		$this->data[ 'address' ] = $this->customer->getFormattedAddress($shipping_address, $shipping_address[ 'address_format' ] );
 		$this->data[ 'shipping_methods' ] = $this->session->data[ 'shipping_methods' ] 	? $this->session->data[ 'shipping_methods' ] : array();
 		$this->data[ 'comment' ] = isset($request[ 'comment' ]) ? $request[ 'comment' ] : $this->session->data[ 'comment' ];
 		

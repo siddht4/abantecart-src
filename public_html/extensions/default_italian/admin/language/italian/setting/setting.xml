@@ -429,6 +429,10 @@
 		<value><![CDATA[Genera in alta risoluzione (retina) le immagini:<br /><span class="help">Per essere utilizzata, deve essere installato il modulo apache mod-rewrite ed è necessario rinominare il htaccess.txt in .htaccess. Nota: se AbanteCart non è installato nella root principale, (esempio in una sottocartella), è necessario modificare la regola RewriteBase nel file .htaccess. <br>Dopo aver abilitato dovresti cancellare la cache delle le immagini. </span>]]></value>
 	</definition>
 	<definition>
+		<key>entry_image_quality</key>
+		<value><![CDATA[Jpeg Livello Immagini Compressione]]></value>
+	</definition>
+	<definition>
 		<key>entry_compression</key>
 		<value><![CDATA[Uscita di livello di compressione:<br /><span class="help">GZIP per un trasferimento più efficace ai clienti richiedenti. Il livello di compressione deve essere tra 0 - 9</span>]]></value>
 	</definition>
@@ -447,6 +451,10 @@
 	<definition>
 		<key>entry_cache_enable</key>
 		<value><![CDATA[Cache abilitata:<br /><span class="help">Si prega di prestare attenzione quando si disabilita la memeorizzazione nella Cache. Le pagine memorizzate nella Cache non verranno ricreate e il sito potrebbe iniziare il caricamento lento. </span>]]></value>
+	</definition>
+	<definition>
+		<key>text_setting_cache_drivers</key>
+		<value><![CDATA[Attualmente utilizzando driver del <b>%s</b> di cache. Altri driver disponibili per la configurazione sono <i>%s</i> ]]></value>
 	</definition>
 	<definition>
 		<key>entry_storefront_api_status</key>
@@ -819,5 +827,82 @@
 	<definition>
 		<key>entry_recaptcha_secret_key</key>
 		<value><![CDATA[Google reCAPTCHA Site Key:<br /><span class="help">Aggiungere <a href="https://www.google.com/recaptcha" target="_blank">Google reCAPTCHA v2</a> per aiutare i vostri ospiti con una migliore entrata captcha. If you enable reCAPTCHA site/secret keys, Google reCAPTCHA v2 will be activated instead of default AbanteCart captcha image</span>]]></value>
+	</definition>
+	<definition>
+		<key>text_setting_php_exceed</key>
+		<value><![CDATA[Questo valore non può superare il direttiva php.ini %s (<=%s) ]]></value>
+	</definition>
+	<definition>
+		<key>entry_start_order_id</key>
+		<value><![CDATA[Inizio ordine No.:<br /><span class="help">Impostare il numero iniziale gli ordini cominceranno da.</span>]]></value>
+	</definition>
+	<definition>
+		<key>error_start_order_id</key>
+		<value><![CDATA[Numero di partenza Ordine deve essere una numerico!]]></value>
+	</definition>
+	<definition>
+		<key>error_starting_invoice_id</key>
+		<value><![CDATA[Numero di partenza della fattura deve essere un numerica!]]></value>
+	</definition>
+	<definition>
+		<key>entry_expire_order_days</key>
+		<value><![CDATA[
+			Incompleta scadenza Order:<br /><br /><span class="help">Questo valore controlla intervallo di tempo in giorni prima verranno cancellati ordini incompleti. valore vuoto significa che nessun ordine sarà quello di eliminare.</span>]]></value>
+	</definition>
+	<definition>
+		<key>error_expire_order_days</key>
+		<value><![CDATA[Valore di scadenza ordine incompleto deve essere un numerica!]]></value>
+	</definition>
+	<definition>
+		<key>text_storefront</key>
+		<value><![CDATA[Sito vetrina]]></value>
+	</definition>
+	<definition>
+		<key>text_im_driver</key>
+		<value><![CDATA[Guidatore]]></value>
+	</definition>
+	<definition>
+		<key>text_im_protocol</key>
+		<value><![CDATA[protocollo MI]]></value>
+	</definition>
+	<definition>
+		<key>entry_sms_driver</key>
+		<value><![CDATA[SMS Provider]]></value>
+	</definition>
+	<definition>
+		<key>entry_sms_driver_tooltip</key>
+		<value><![CDATA[Selezionare un'estensione per provider di servizi SMS]]></value>
+	</definition>
+	<definition>
+		<key>entry_storefront_status_tooltip</key>
+		<value><![CDATA[Abilita SMS per i clienti]]></value>
+	</definition>
+	<definition>
+		<key>entry_admin_status_tooltip</key>
+		<value><![CDATA[Abilita SMS per gli amministratori]]></value>
+	</definition>
+	<definition>
+		<key>text_no_driver</key>
+		<value><![CDATA[ Nessun MI driver trovato]]></value>
+	</definition>
+	<definition>
+		<key>text_im_settings_attention</key>
+		<value><![CDATA[Queste impostazioni sono per i messaggi istantanei inviati automaticamente durante gli eventi AbanteCart in vetrina e admin.]]></value>
+	</definition>
+	<definition>
+		<key>entry_image_manufacturer_width</key>
+		<value><![CDATA[Marca Icona Lista Larghezza:]]></value>
+	</definition>
+	<definition>
+		<key>entry_image_manufacturer_height</key>
+		<value><![CDATA[Marca Icona Lista Altezza:]]></value>
+	</definition>
+	<definition>
+		<key>error_image_manufacturer</key>
+		<value><![CDATA[Marca Elenco Icona dimensioni formato richiesto!]]></value>
+	</definition>
+	<definition>
+		<key>entry_html_cache</key>
+		<value><![CDATA[Cache HTML: <br/><span class="help">pagine HTML attivato e blocca caching per ottenere una migliore velocità per le pagine. Questo si aggiunge la cache di regolare la cache dei dati abilitata nel system/config.php </span>]]></value>
 	</definition>
 </definitions>

@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -21,6 +21,14 @@ if (! defined ( 'DIR_CORE' )) {
 	header ( 'Location: static_pages/' );
 }
 class ControllerPagesIndexHome extends AController {
+
+	/**
+	 * Check if HTML Cache is enabled for the method
+	 * @return array - array of data keys to be used for cache key building  
+	 */	
+	public static function main_cache_keys(){
+		return array();
+	}
 
 	public function main() {
 

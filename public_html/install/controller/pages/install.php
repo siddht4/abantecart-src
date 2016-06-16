@@ -6,7 +6,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -112,18 +112,27 @@ class ControllerPagesInstall extends AController {
 				if(extension_loaded('mysqli')){
 					$options['amysqli'] = 'MySQLi';
 				}
+
+				if(extension_loaded('pdo_mysql')){
+					$options['apdomysql'] = 'PDO MySQL';
+				}
+
 				//regular mysql is not supported on PHP 5.5.+
 				if(extension_loaded('mysql') && version_compare(phpversion(), '5.5.0', '<') == TRUE ){
 					$options['mysql'] = 'MySQL';
 				}
-
-				$this->data[ 'form' ][ $field ] = $form->getFieldHtml(array(
-					'type' => 'selectbox',
-					'name' => $field,
-					'value' => $this->data[ $field ],
-					'options' => $options,
-					'required' => true
-				));
+				if($options){
+					$this->data['form'][$field] = $form->getFieldHtml(array (
+							'type'     => 'selectbox',
+							'name'     => $field,
+							'value'    => $this->data[$field],
+							'options'  => $options,
+							'required' => true
+					));
+				}else{
+					$this->data['form'][$field] = '';
+					$this->data['error'][$field] = 'No database support. Please install AMySQL or PDO_MySQL php extension.';
+				}
 
 			}
 		}
@@ -218,6 +227,8 @@ class ControllerPagesInstall extends AController {
 		} elseif ($step == 3) {
 			//NOTE: Create config as late as possible. This will prevent triggering finished installation 
 			$this->_configure();
+			//wait for end of writing of file on disk (for slow hdd)
+			sleep(3);
 			$this->session->data['finish'] = 'false';
 			$this->response->addJSONHeader();
 			return AJson::encode(array( 'ret_code' => 100 ));
@@ -264,7 +275,7 @@ class ControllerPagesInstall extends AController {
 		$content .= "/**\n";
 		$content .= "	AbanteCart, Ideal OpenSource Ecommerce Solution\n";
 		$content .= "	http://www.AbanteCart.com\n";
-		$content .= "	Copyright © 2011-'.date('Y').' Belavier Commerce LLC\n\n";
+		$content .= "	Copyright © 2011-".date('Y')." Belavier Commerce LLC\n\n";
 		$content .= "	Released under the Open Software License (OSL 3.0)\n";
 		$content .= "*/\n";
 		$content .= "// Admin Section Configuration. You can change this value to any name. Will use ?s=name to access the admin\n";
@@ -276,6 +287,8 @@ class ControllerPagesInstall extends AController {
 		$content .= "define('DB_PASSWORD', '" . $this->session->data['install_step_data']['db_password'] . "');\n";
 		$content .= "define('DB_DATABASE', '" . $this->session->data['install_step_data']['db_name'] . "');\n";
 		$content .= "define('DB_PREFIX', '" . DB_PREFIX . "');\n";		
+		$content .= "\n";		
+		$content .= "define('CACHE_DRIVER', 'file');\n";
 		$content .= "// Unique AbanteCart store ID\n";
 		$content .= "define('UNIQUE_ID', '" . md5(time()) . "');\n";
 		$content .= "// Salt key for oneway encryption of passwords. NOTE: Change of SALT key will cause a loss of all existing users' and customers' passwords!\n";
@@ -350,7 +363,7 @@ class ControllerPagesInstall extends AController {
 		}
 		//clear earlier created cache by AConfig and ALanguage classes in previous step
 		$cache = new ACache();
-        $cache->delete('*');
+        $cache->remove('*');
 		return null;
 	}	
 

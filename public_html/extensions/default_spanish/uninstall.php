@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -38,5 +38,4 @@ $lm->deleteAllLanguageEntries($language_id);
 //delete langauge
 $this->db->query("DELETE FROM ".DB_PREFIX."languages WHERE `code`='".$language_code."'");
 
-$this->cache->delete('language');
-$this->cache->delete('lang.'.$language_code);
+$this->cache->remove('localization');

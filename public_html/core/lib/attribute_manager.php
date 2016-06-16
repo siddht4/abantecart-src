@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -23,11 +23,11 @@ if (! defined ( 'DIR_CORE' )) {
 
 /**
  * Class to handle access to global attributes
- * @property Asession $session
+ * @property ASession $session
  */
  
 class AAttribute_Manager extends AAttribute {
-	
+	public $error = array();
 	public function __construct($attribute_type = '', $language_id = 0 ) {
 		parent::__construct($attribute_type, $language_id );
 		if (!IS_ADMIN) { // forbid for non admin calls
@@ -36,10 +36,8 @@ class AAttribute_Manager extends AAttribute {
 	}
 
     public function clearCache() {
-        $this->cache->delete('attribute.types');
-        $this->cache->delete('attribute.groups');
-        $this->cache->delete('attributes');
-        $this->cache->delete('attribute.values');
+        $this->cache->remove('attribute');
+        $this->cache->remove('attributes');
     }
 
 	/**
@@ -611,7 +609,7 @@ class AAttribute_Manager extends AAttribute {
 			$sql .= " AND ga.attribute_type_id = ".(int)$data['attribute_type_id'];
 		}
 
-		//If for total, we done bulding the query
+		//If for total, we done building the query
 		if ($mode == 'total_only') {
 		    $query = $this->db->query($sql);
 		    return $query->row['total'];

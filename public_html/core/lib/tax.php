@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -22,6 +22,10 @@ if (! defined ( 'DIR_CORE' )) {
 }
 /**
  * Class ATax
+ * @property ASession $session
+ * @property AConfig $config
+ * @property ACache $cache
+ * @property ADB $db
  */
 final class ATax {
 	private $taxes = array();
@@ -30,21 +34,9 @@ final class ATax {
 	 */
 	private $registry;
 	/**
-	 * @var AConfig
-	 */
-	private $config;
-	/**
-	 * @var ACache
-	 */
-	private $cache;
-	/**
-	 * @var ADB
-	 */
-	private $db;
-	/**
 	 * @var ASession or customer's data
 	 */
-	private $cust_data;
+	private $customer_data;
 
 	/**
 	 * @param $registry Registry
@@ -52,20 +44,17 @@ final class ATax {
 	 */
 	public function __construct($registry, &$c_data = null) {
 		$this->registry = $registry;
-		$this->cache = $registry->get('cache');
-		$this->db = $registry->get('db');
-		$this->config = $registry->get('config');
 
-		//if nothing is passed (default) use session array. Customer session, can function on storefrnt only 
+		//if nothing is passed (default) use session array. Customer session, can function on storefront only
 		if ($c_data == null) {
-			$this->cust_data =& $this->session->data;
+			$this->customer_data =& $this->session->data;
 		} else {
-			$this->cust_data =& $c_data;  		
+			$this->customer_data =& $c_data;
 		}
 
-		if (isset($this->cust_data['country_id']) && isset($this->cust_data['zone_id'])) {
-			$country_id = $this->cust_data['country_id'];
-	 		$zone_id = $this->cust_data['zone_id'];
+		if (isset($this->customer_data['country_id']) && isset($this->customer_data['zone_id'])) {
+			$country_id = $this->customer_data['country_id'];
+	 		$zone_id = $this->customer_data['zone_id'];
 		} else {
 			if($this->config->get('config_tax_store')){
 				$country_id = $this->config->get('config_country_id');
@@ -103,37 +92,40 @@ final class ATax {
 				'threshold_condition'    => $result['threshold_condition'],
 				'threshold'    => $result['threshold'],
         		'description' => $result['description'],
+        		'tax_exempt_groups' => unserialize($result['tax_exempt_groups']),
 				'priority'    => $result['priority']
       		);
     	}
 
-		$this->cust_data['country_id'] = $country_id;
-		$this->cust_data['zone_id'] = $zone_id;
+		$this->customer_data['country_id'] = $country_id;
+		$this->customer_data['zone_id'] = $zone_id;
 	}
 
 	/**
 	 * Get available tax classes for country ID and zone ID
 	 * Storefront use only!!!
-	 * @param $country_id
-	 * @param $zone_id
+	 * @param int $country_id
+	 * @param int $zone_id
 	 * @return mixed|null
 	 */
-
 	public function getTaxes($country_id, $zone_id){
 		$country_id = (int)$country_id;
 		$zone_id = (int)$zone_id;
 		
 		$language = $this->registry->get('language');
 		$language_id = $language->getLanguageID();
+		$default_lang_id = $language->getDefaultLanguageID();
 		
-		$cache_name = 'tax_class.'.$country_id.'.'.$zone_id;
-		$results = $this->cache->get($cache_name, $language_id);
+		$cache_key = 'localization.tax_class.'.$country_id.'.'.$zone_id.'.lang_'.$language_id;
+		$results = $this->cache->pull($cache_key);
 
-		if(is_null($results)){
+		if($results === false){
 			//Note: Default language text is picked up if no selected language available
 			$sql = "SELECT tr.tax_class_id,
 							tr.rate AS rate, tr.rate_prefix AS rate_prefix, 
-							tr.threshold_condition AS threshold_condition, tr.threshold AS threshold,
+							tr.threshold_condition AS threshold_condition, 
+							tr.threshold AS threshold,
+							tr.tax_exempt_groups AS tax_exempt_groups,
 							COALESCE( td1.title,td2.title) as title,
 							COALESCE( NULLIF(trd1.description, ''),
 									  NULLIF(td1.description, ''),
@@ -159,7 +151,7 @@ final class ATax {
 					ORDER BY tr.priority ASC";
 			$tax_rate_query = $this->db->query( $sql );
 			$results = $tax_rate_query->rows;
-			$this->cache->set($cache_name,$results, $language_id);
+			$this->cache->push($cache_key,$results);
 		}
 
 		return $results;
@@ -178,7 +170,7 @@ final class ATax {
 		if (($calculate) && (isset($this->taxes[$tax_class_id])))  {
       		return $value + $this->calcTotalTaxAmount($value, $tax_class_id);
     	} else {
-    		//skip culculation
+    		//skip calculation
       		return $value;
     	}
   	}
@@ -228,14 +220,25 @@ final class ATax {
 	}
 
 	/**
-	 * Get array with applicable rates for tax class based on the provided amount
-	 * Array returns Absolute and Percent rates in separate arrays
-	 *
+	 * @deprecated
+	 * @since 1.2.7
 	 * @param float $amount
 	 * @param $tax_class_id
 	 * @return array
 	 */
-	public function getAplicableRates($amount, $tax_class_id) {
+	public function getAplicableRates($amount, $tax_class_id){
+		return $this->getApplicableRates($amount, $tax_class_id);
+	}
+
+	/**
+	 * Get array with applicable rates for tax class based on the provided amount
+	 * Array returns Absolute and Percent rates in separate arrays
+	 * @since 1.2.7
+	 * @param float $amount
+	 * @param $tax_class_id
+	 * @return array
+	 */
+	public function getApplicableRates($amount, $tax_class_id) {
   		$rates = array();
 		if (isset($this->taxes[$tax_class_id])) {
 			foreach ($this->taxes[$tax_class_id] as $tax_rate) {
@@ -258,7 +261,8 @@ final class ATax {
 		
 	/**
 	 * Get accumulative tax rate (deprecated)
-	 * @deprecated	since 1.1.8
+	 * @deprecated
+	 * @since 1.1.8
 	 * @param int $tax_class_id
 	 * @return float
 	 */

@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright  2011-2015 Belavier Commerce LLC
+  Copyright  2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -110,6 +110,9 @@ class AExtensionManager {
 							 `version` = '" . $this->db->escape($version) . "',
 							 `license_key` = '" . $this->db->escape($license_key) . "',
 							 `date_added` = NOW()");
+
+		$this->cache->remove('extensions');
+
 		return $this->db->getLastId();
 	}
 
@@ -147,10 +150,8 @@ class AExtensionManager {
 	}
 
 	/**
-	 * @param $extension_txt_id
-	 * @param $extension_parent_txt_id
-	 * @internal param int $extension_id
-	 * @internal param int $extension_parent_id
+	 * @param string $extension_txt_id
+	 * @param string $extension_parent_txt_id
 	 * @return bool
 	 */
 	public function addDependant($extension_txt_id, $extension_parent_txt_id) {
@@ -168,6 +169,9 @@ class AExtensionManager {
 							VALUES ('" . $extension_id . "', '" . $extension_parent_id . "')";
 			$this->db->query($sql);
 		}
+
+		$this->cache->remove('extensions');
+
 		return true;
 	}
 
@@ -175,8 +179,6 @@ class AExtensionManager {
 	 * function delete extension dependants from table by given id's
 	 * @param string $extension_txt_id
 	 * @param string $extension_parent_txt_id
-	 * @internal param string $extension_id
-	 * @internal param string $extension_parent_id
 	 * @return bool
 	 */
 	public function deleteDependant($extension_txt_id = '', $extension_parent_txt_id = '') {
@@ -200,6 +202,8 @@ class AExtensionManager {
 		}
 		$sql .= implode(' AND ', $where);
 		$this->db->query($sql);
+
+		$this->cache->remove('extensions');
 
 		return true;
 	}
@@ -352,8 +356,9 @@ class AExtensionManager {
 						SET `date_modified` = NOW()
 						WHERE  `key` = '" . $this->db->escape($extension_txt_id) . "'";
 		$this->db->query($sql);
-		$this->cache->delete('admin_menu');
-		$this->cache->delete('settings');
+		$this->cache->remove('admin_menu');
+		$this->cache->remove('settings');
+		$this->cache->remove('extensions');
 
 		return true;
 	}
@@ -365,8 +370,9 @@ class AExtensionManager {
 	public function deleteSetting($group) {
 		$this->db->query("DELETE FROM " . $this->db->table("settings") . " WHERE `group` = '" . $this->db->escape($group) . "';");
 		$this->db->query("DELETE FROM " . $this->db->table("language_definitions") . " WHERE `block` = '" . $this->db->escape($group) . "_" . $this->db->escape($group)."';");
-		$this->cache->delete('settings');
-		$this->cache->delete('language_definitions');
+		$this->cache->remove('settings');
+		$this->cache->remove('extensions');
+		$this->cache->remove('localization');
 	}
 
 	/**
@@ -443,7 +449,6 @@ class AExtensionManager {
 		// refresh data about updates
 		$this->load->model('tool/updater');
 		$this->model_tool_updater->check4updates();
-
 
 		//save default settings for all stores
 		$this->load->model('setting/store');
@@ -546,6 +551,8 @@ class AExtensionManager {
 		// refresh data about updates
 		$this->load->model('tool/updater');
 		$this->model_tool_updater->check4updates();
+
+		$this->cache->remove('extensions');
 		return true;
 	}
 

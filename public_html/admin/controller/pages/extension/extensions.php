@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -340,19 +340,23 @@ class ControllerPagesExtensionExtensions extends AController {
 			}
 			$data['name'] = $item['name'];
 			$data['type'] = $item['type'];
-			$data['value'] = $item['value'];
+			$data['value'] = isset($this->request->post[$item['name']]) ? $this->request->post[$item['name']] : $item['value'];
 			$data['required'] = (bool)$item['required'];
 
 			if($item['note']){
 				$data['note'] = $item['note'];
 			} else {
-				$note_text = $this->language->get($data['name']);
+				if($data['name'] == $extension.'_status' || $data['name'] == $extension.'_sort_order' ){
+					$note_text = $this->language->get(str_replace($extension . '_','text_',$data['name']), 'extension/extensions');
+				}else{
+					$note_text = $this->language->get($data['name'], '', true);
+				}
 				// if text definition not found - seek it in default settings definitions
 				if ($note_text == $data['name']) {
 					$new_text_key = str_replace($extension . '_','text_',$data['name']);
 					$note_text = $this->language->get($new_text_key, 'extension/extensions');
 					if ($note_text == $new_text_key) {
-						$note_text = $this->language->get($new_text_key.'_'.$this->data['extension_info']['type']);
+						$note_text = $this->language->get($new_text_key.'_'.$this->data['extension_info']['type'], '', true);
 					}
 				}
 				$data['note'] = $note_text;
@@ -431,15 +435,14 @@ class ControllerPagesExtensionExtensions extends AController {
 					} else {
 						$data['resource_path'] = $item['value'];
 					}
-					
+
 					if (!$result['rl_scripts']) {
 						$scripts = $this->dispatch('responses/common/resource_library/get_resources_scripts',
 												array(
 													'object_name' => '',
 													'object_id' => '',
 													'types' => array($item['resource_type']),
-													'onload' => true,
-													'mode' => 'single'
+													'onload' => true
 												));
 						$result['rl_scripts'] = $scripts->dispatchGetOutput();
 						unset($scripts);
@@ -479,7 +482,7 @@ class ControllerPagesExtensionExtensions extends AController {
 		//check if we restore settings to default values
 		if (has_value($this->request->get['reload'])) {
 			$this->extension_manager->editSetting($extension, $ext->getDefaultSettings());
-			$this->cache->delete('settings.extension');
+			$this->cache->remove('settings');
 			$this->session->data['success'] = $this->language->get('text_restore_success');
 			$this->redirect($this->data['target_url']);
 		}
@@ -495,7 +498,7 @@ class ControllerPagesExtensionExtensions extends AController {
 
 			$save_data['store_id'] = $store_id;
 			$this->extension_manager->editSetting($extension, $save_data);
-			$this->cache->delete('settings.extension');
+			$this->cache->remove('settings');
 			$this->session->data['success'] = $this->language->get('text_save_success');
 			$this->redirect($this->data['target_url']);
 		}
@@ -588,7 +591,7 @@ class ControllerPagesExtensionExtensions extends AController {
 		}
 
 		//info about available updates
-		$upd = $this->cache->get('extensions.updates');
+		$upd = $this->cache->pull('extensions.updates');
 		if( is_array($upd) && in_array($extension,array_keys($upd)) ){
 			$this->data['info'] = sprintf(  $this->language->get('text_update_available'),
 											$upd[$extension]['version'],

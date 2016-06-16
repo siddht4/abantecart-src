@@ -18,11 +18,12 @@
 <?php } ?>
 
 <div class="contentpanel addresses">
-	<section class="formbox old_address">
+	<div class="col-md-6 col-xs-12">
+	<section class="old_address">
+	<h4 class="heading4"><?php echo $text_entries; ?></h4>
 	<?php if ($addresses) {
 	  echo  $form0['form_open'];
 	?>
-	<h4 class="heading4"><?php echo $text_entries; ?></h4>
 		<div class="registerbox form-horizontal">
 			<table class="table table-striped">
 			<?php foreach ($addresses as $address) { ?>		
@@ -44,12 +45,14 @@
 		</div>		
 	</form>
 	</section>
+	</div>
 	
-	<section class="formbox ml10 new_address">
+	<div class="col-md-6 col-xs-12">
+	<section class="new_address">
+	<h4 class="heading4"><?php echo $text_new_address; ?></h4>
 	<?php }
 	   echo $form['form_open'];
 	?>
-	<h4 class="heading4"><?php echo $text_new_address; ?></h4>
 	<div class="registerbox">
 		<fieldset>
 		<?php
@@ -59,16 +62,16 @@
 								'address_1' => 'address_1', 
 								'address_2' => 'address_2', 
 								'city' => 'city',
+								'zone' => 'zone',
 								'postcode' => 'postcode',
 								'country' => 'country_id', 
-								'zone' => 'zone',
 								);
 			
 			foreach ($field_list as $field_name => $field_id) {
 		?>
 			<div class="form-group <?php if (${'error_'.$field_name}) echo 'has-error'; ?>">
-				<label class="control-label col-md-4"><?php echo ${'entry_'.$field_name}; ?></label>
-				<div class="input-group col-md-6">
+				<label class="control-label col-md-5"><?php echo ${'entry_'.$field_name}; ?></label>
+				<div class="input-group col-md-7">
 				    <?php echo $form[$field_id]; ?>
 				</div>
 				<span class="help-block"><?php echo ${'error_'.$field_name}; ?></span>
@@ -89,13 +92,14 @@
 	</div>	
 	</form>
 	</section>
+	</div>
 
 </div>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
 <?php $cz_url = $this->html->getURL('common/zone', '&zone_id='. $zone_id); ?>
 $('#Address2Frm_country_id').change(function() {
     $('select[name=\'zone_id\']').load('<?php echo $cz_url;?>&country_id=' + $(this).val());
 });
 $('select[name=\'zone_id\']').load('<?php echo $cz_url;?>&country_id='+$('#Address2Frm_country_id').val());
-//--></script>
+</script>

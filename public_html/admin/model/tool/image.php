@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -21,6 +21,12 @@ if (! defined ( 'DIR_CORE' ) || !IS_ADMIN) {
 	header ( 'Location: static_pages/' );
 }
 class ModelToolImage extends Model {
+	/**
+	 * @param string $filename
+	 * @param int $width
+	 * @param int $height
+	 * @return null|string
+	 */
 	function resize($filename, $width, $height) {
 		if (!is_file(DIR_IMAGE . $filename)) {
 			return null;
@@ -49,8 +55,13 @@ class ModelToolImage extends Model {
 				}
 
 				$image = new AImage(DIR_IMAGE . $old_image);
-				$image->resize($width, $height);
-				$image->save(DIR_IMAGE . $new_image);
+				$image->resizeAndSave(DIR_IMAGE . $new_image,
+										$width,
+										$height,
+										array(
+												'quality' => $this->config->get('config_image_quality')
+										));
+
 				unset($image);
 			}
 		}

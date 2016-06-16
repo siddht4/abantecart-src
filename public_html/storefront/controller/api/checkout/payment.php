@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   Lincence details is bundled with this package in the file LICENSE.txt.
@@ -140,7 +140,7 @@ class ControllerApiCheckoutPayment extends AControllerAPI {
 		}
 		$this->data['success'] = $this->session->data[ 'success' ];
 		$this->data[ 'coupon' ] = isset($request[ 'coupon' ]) ? $request[ 'coupon' ] : $this->session->data[ 'coupon' ];
-		$this->data[ 'address' ] = $this->customer->getFormatedAdress($payment_address, $payment_address[ 'address_format' ] );
+		$this->data[ 'address' ] = $this->customer->getFormattedAddress($payment_address, $payment_address[ 'address_format' ] );
 		$this->data['payment_methods'] = $this->session->data[ 'payment_methods' ];
 		if( $this->data['payment_methods']){
 			$this->data['payment_method'] = isset($request[ 'payment_method' ]) ? $request[ 'payment_method' ] : $this->session->data[ 'payment_method' ][ 'id' ];

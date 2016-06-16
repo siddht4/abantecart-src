@@ -121,7 +121,8 @@
 
 <?php echo $resources_scripts ?>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
+
 jQuery(function ($) {
     $('#template').load('<?php echo $template_image; ?>&template=' + encodeURIComponent($('select[name=\'config_storefront_template\']').attr('value')));
     
@@ -157,14 +158,5 @@ jQuery(function () {
 
 });
 <?php } ?>
-//--></script>
-<script type="text/javascript"><!--
-$(document).ready(function () {
 
-    if ($('#settingFrm_config_description_<?php echo $content_language_id; ?>').length) {
-
-	    var ck = wrapCKEditor('settingFrm_config_description_<?php echo $content_language_id; ?>');
-	   	addRL2CKE(ck);
-    }
-});
-//--></script>
+</script>

@@ -51,7 +51,7 @@
 	<div class="headerbar">
 
 		<a class="menutoggle"><i class="fa fa-bars"></i></a>
-
+		
 		<select id="global_search" name="search" data-placeholder="<?php echo $search_everywhere; ?>" class="chosen-select form-control aselect ">
 		<option></option>
 		</select>
@@ -80,7 +80,13 @@
 						</div>
 					<?php } ?>
 				</li>
-
+				
+				<li class="hidden-xs">
+				<div class="btn-group">
+						<a href="<?php echo $rl_manager_url; ?>" class="btn btn-default tp-icon"><i class="fa fa-photo"></i></a>
+					</div>
+				</li>
+				
 				<?php if ($ant) { ?>
 					<li>
 						<div class="btn-group ant_window">
@@ -158,8 +164,7 @@
 										<?php } ?>
 									</ul>
 									<input type="hidden" name="language_code" value=""/>
-									<input type="hidden" name="redirect"
-										   value="<?php echo str_replace('&', '&amp;', $redirect); ?>"/>
+									<input type="hidden" name="redirect" value="<?php echo $redirect; ?>"/>
 								</form>
 							</div>
 						</div>
@@ -181,6 +186,8 @@
 							<ul class="dropdown-list gen-list">
 								<li><a href="<?php echo $account_edit; ?>"><i
 												class="fa fa-edit"></i> <?php echo $text_edit_details; ?></a></li>
+								<li><a href="<?php echo $im_settings_edit; ?>"><i
+												class="fa fa-bullhorn"></i> <?php echo $text_edit_notifications; ?></a></li>
 								<li><a href="<?php echo $logout; ?>"><i
 												class="fa fa-unlock"></i><?php echo $text_logout; ?></a></li>
 							</ul>

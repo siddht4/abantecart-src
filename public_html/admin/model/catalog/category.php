@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -78,7 +78,7 @@ class ModelCatalogCategory extends Model {
 								AND language_id = '".(int)$this->language->getContentLanguageID()."'");
 		}
 
-		$this->cache->delete('category');
+		$this->cache->remove('category');
 
 		return $category_id;
 	}
@@ -143,7 +143,7 @@ class ModelCatalogCategory extends Model {
 
 		}
 
-		$this->cache->delete('category');
+		$this->cache->remove('category');
 
 	}
 
@@ -156,16 +156,31 @@ class ModelCatalogCategory extends Model {
 		$this->db->query("DELETE FROM " . $this->db->table("categories_to_stores") . " WHERE category_id = '" . (int)$category_id . "'");
 		$this->db->query("DELETE FROM " . $this->db->table("url_aliases") . " WHERE query = 'category_id=" . (int)$category_id . "'");
 		$this->db->query("DELETE FROM " . $this->db->table("products_to_categories") . " WHERE category_id = '" . (int)$category_id . "'");
+
+		//delete resources
+		$rm = new AResourceManager();
+		$resources = $rm->getResourcesList(	array( 'object_name' => 'categories', 'object_id'   => (int)$category_id) );
+		foreach($resources as $r){
+			$rm->unmapResource(	'products',	$category_id, $r['resource_id'] );
+			//if resource became orphan - delete it
+			if(!$rm->isMapped($r['resource_id'])){
+				$rm->deleteResource($r['resource_id']);
+			}
+		}
+		//remove layout
+		$lm = new ALayoutManager();
+		$lm->deletePageLayout('pages/product/category','path',$category_id);
 		
 		//delete children categories
-		$query = $this->db->query("SELECT category_id FROM " . $this->db->table("categories") . " WHERE parent_id = '" . (int)$category_id . "'");
-		$lm = new ALayoutManager();
+		$query = $this->db->query( "SELECT category_id
+									FROM " . $this->db->table("categories") . "
+									WHERE parent_id = '" . (int)$category_id . "'");
+
 		foreach ($query->rows as $result) {
 			$this->deleteCategory($result['category_id']);
-			$lm->deletePageLayout('pages/product/category','path',$result['category_id']);
 		}
-		$lm->deletePageLayout('pages/product/category','path',$category_id);
-		$this->cache->delete('category');
+
+		$this->cache->remove('category');
 	}
 
 	/**
@@ -190,11 +205,11 @@ class ModelCatalogCategory extends Model {
 	 */
 	public function getCategories($parent_id, $store_id = null) {
 		$language_id = $this->language->getContentLanguageID();
-		$category_data = $this->cache->get('category.' . $parent_id . $store_id, $language_id);
+		$cache_key = 'category.' . $parent_id .'.store_'. $store_id.'_lang_'.$language_id;
+		$category_data = $this->cache->pull($cache_key);
 
-		if (!$category_data) {
+		if ($category_data === false) {
 			$category_data = array();
-
 			$sql = "SELECT *
 					FROM " . $this->db->table("categories") . " c
 					LEFT JOIN " . $this->db->table("category_descriptions") . " cd
@@ -206,7 +221,6 @@ class ModelCatalogCategory extends Model {
 			$sql .=	"WHERE c.parent_id = '" . (int)$parent_id . "'
 						AND cd.language_id = '" . (int)$language_id . "'
 					ORDER BY c.sort_order, cd.name ASC";
-
 			$query = $this->db->query($sql);
 
 			foreach ($query->rows as $result) {
@@ -221,7 +235,7 @@ class ModelCatalogCategory extends Model {
 				$category_data = array_merge($category_data, $this->getCategories($result['category_id'], $store_id));
 			}
 
-			$this->cache->set('category.' . $parent_id . $store_id, $category_data, $language_id );
+			$this->cache->push($cache_key, $category_data );
 		}
 
 		return $category_data;

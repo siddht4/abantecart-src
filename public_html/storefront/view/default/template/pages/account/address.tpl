@@ -23,29 +23,15 @@
 	<div class="registerbox form-horizontal">
 		<fieldset>
 		<?php
-			$field_list = array('firstname' => 'firstname',
-								'lastname' => 'lastname',
-								'company' => 'company', 
-								'address_1' => 'address_1', 
-								'address_2' => 'address_2', 
-								'city' => 'city',
-								'postcode' => 'postcode',
-								'country' => 'country_id', 
-								'zone' => 'zone_id',
-								);
-			
-			foreach ($field_list as $field_name => $field_id) {
-		?>
+			foreach ($form['fields'] as $field_name => $field) { ?>
 			<div class="form-group <?php if (${'error_'.$field_name}) echo 'has-error'; ?>">
 				<label class="control-label col-md-4"><?php echo ${'entry_'.$field_name}; ?></label>
 				<div class="input-group col-md-4">
-				    <?php echo $form[$field_id]; ?>
+				    <?php echo $field; ?>
 				</div>
 				<span class="help-block"><?php echo ${'error_'.$field_name}; ?></span>
 			</div>		
-		<?php
-			}
-		?>	
+		<?php } ?>
 			<div class="form-group">
 				<label class="control-label col-md-4"><?php echo $entry_default; ?></label>
 				<div class="input-group">
@@ -72,11 +58,12 @@
 	</form>
 </div>
 
+<script type="text/javascript">
 
-<script type="text/javascript"><!--
 <?php $cz_url = $this->html->getURL('common/zone', '&zone_id='. $zone_id); ?>
 $('#AddressFrm_country_id').change(function() {
     $('select[name=\'zone_id\']').load('<?php echo $cz_url;?>&country_id=' + $(this).val());
 });
 $('select[name=\'zone_id\']').load('<?php echo $cz_url;?>&country_id=' + $('#AddressFrm_country_id').val());
-//--></script>
+
+</script>

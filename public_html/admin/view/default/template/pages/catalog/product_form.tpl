@@ -73,10 +73,9 @@
 
 <?php echo $resources_scripts; ?>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
 
 $(document).ready(function () {
-
 	$('#productFrm_generate_seo_keyword').click(function(){
 		var seo_name = $('#productFrm_product_descriptionname').val().replace('%','');
 		$.get('<?php echo $generate_seo_url;?>&seo_name='+seo_name, function(data){
@@ -84,10 +83,6 @@ $(document).ready(function () {
 		});
 	});
 
-	if (document.getElementById('productFrm_product_descriptiondescription')) {
-		var ck = wrapCKEditor('productFrm_product_descriptiondescription');
-		addRL2CKE(ck);
-	}
-
 });
-//--></script>
+
+</script>

@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -78,18 +78,20 @@ class ControllerPagesAccountWishlist extends AController {
 			$this->loadModel('tool/seo_url'); 
 	 		$this->loadModel('catalog/product');
 						
-      		$products = array();
-			$resource = new AResource('image');
 
+
+            //get thumbnails by one pass
+            $resource = new AResource('image');
+            $thumbnails = $resource->getMainThumbList(
+                    'products',
+                    array_keys($whishlist),
+                    $this->config->get('config_image_cart_width'),
+                    $this->config->get('config_image_cart_width')
+            );
+		    $products = array();
       		foreach ($whishlist as $product_id => $timestamp) {
- 
 				$product_info = $this->model_catalog_product->getProduct($product_id);
-
- 				$thumbnail = $resource->getMainThumb('products',
-			                                     $product_id,
-			                                     (int)$this->config->get('config_image_cart_width'),
-			                                     (int)$this->config->get('config_image_cart_height'),true);
-
+ 				$thumbnail = $thumbnails[$product_id];
  		    	$options = $this->model_catalog_product->getProductOptions($product_id);
 		    	if ($options) {
 		    		$add = $this->html->getSEOURL('product/product','&product_id=' . $product_id, '&encode');

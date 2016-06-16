@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -160,12 +160,22 @@ class ControllerPagesCatalogProductRelations extends AController {
 			$this->loadModel('catalog/product');
 			$filter = array('subsql_filter' => 'p.product_id in (' . implode(',', $this->data['product_related']) . ')' );
 			$results = $this->model_catalog_product->getProducts($filter);
+
+			$product_ids = array();
+			foreach($results as $result){
+				$product_ids[] = (int)$result['product_id'];
+			}
+			//get thumbnails by one pass
+			$resource = new AResource('image');
+			$thumbnails = $resource->getMainThumbList(
+					'products',
+					$product_ids,
+					$this->config->get('config_image_grid_width'),
+					$this->config->get('config_image_grid_height')
+					);
+
 			foreach( $results as $r ) {
-				$thumbnail = $resource->getMainThumb('products',
-												$r['product_id'],
-												(int)$this->config->get('config_image_grid_width'),
-												(int)$this->config->get('config_image_grid_height'),
-												true);
+				$thumbnail = $thumbnails[$r['product_id']];
 				$this->data['products'][$r['product_id']]['name'] = $r['name']." (".$r['model'].")";
 				$this->data['products'][$r['product_id']]['image'] = $thumbnail['thumb_html'];
 			}

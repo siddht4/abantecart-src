@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -59,14 +59,21 @@ class ControllerResponsesListingGridProduct extends AController {
 		$response->userdata->classes = array();
 		$results = $this->model_catalog_product->getProducts($data);
 
+		$product_ids = array();
+		foreach($results as $result){
+			$product_ids[] = (int)$result['product_id'];
+		}
+
 		$resource = new AResource('image');
+		$thumbnails = $resource->getMainThumbList(
+						'products',
+						$product_ids,
+						$this->config->get('config_image_grid_width'),
+						$this->config->get('config_image_grid_height')
+		);
 		$i = 0;
 		foreach ($results as $result) {
-			$thumbnail = $resource->getMainThumb('products',
-												$result['product_id'],
-												(int)$this->config->get('config_image_grid_width'),
-												(int)$this->config->get('config_image_grid_height'),
-												true);
+			$thumbnail = $thumbnails[ $result['product_id'] ];
 
 			$response->rows[ $i ]['id'] = $result['product_id'];
 			if( dateISO2Int($result['date_available'])> time()){
@@ -167,10 +174,13 @@ class ControllerResponsesListingGridProduct extends AController {
 					}
 
 				break;
-
+			case 'relate':
+				$ids = explode(',', $this->request->post['id']);
+				if (!empty($ids)){
+					$this->model_catalog_product->relateProducts($ids);
+				}
+				break;
 			default:
-				//print_r($this->request->post);
-
 		}
 
 		//update controller data

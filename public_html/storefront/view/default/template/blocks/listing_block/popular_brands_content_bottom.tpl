@@ -1,5 +1,6 @@
 <!-- Popular Brands-->
-<section id="popularbrands" class="container-fluid mt40">
+<section id="popularbrands" class="container-fluid mt20">
+<h4 class="hidden">&nbsp;</h4>
     <div class="container-fluid">
 <?php if ( $block_framed ) { ?>
 		<div class="block_frame block_frame_<?php echo $block_details['block_txt_id']; ?>"
@@ -14,9 +15,9 @@
 		if ($item[ 'resource_code' ]) {
 		    echo $item[ 'resource_code' ];
 		} else {
-		
+	
 		    if(!$item['resource_code']){
-		    	$image = '<img class="internal" src="'. $item['image']['thumb_url']. '" alt="'. $item['name'] . '" />';
+		    	$image = '<img class="internal" src="'. $item['image']['thumb_url']. '" width="'. $item['image']['width']. '" height="'. $item['image']['height']. '" alt="'. $item['name'] . '" />';
 		    	$image = '<a href="'. $item['href']. '">' . $image . '</a>';
 		    	echo '<div class="image">'. $image .'</div><div style="clear: both;"></div>';
 		    	if($item['image']['title']){
@@ -26,8 +27,6 @@
 		}
 		echo '</li>';
 		}
-
-
    ?>  
    </ul>
    <div class="clearfix"></div>

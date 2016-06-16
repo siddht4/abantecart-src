@@ -1,11 +1,12 @@
-<ul class="thumbnails grid row list-inline">
+<div class="thumbnails grid row list-inline">
 	<?php
+	$icount = 0;
 	foreach ($products as $product) {
 		$item = array();
 		$item['image'] = $product['thumb']['thumb_html'];
 		$item['title'] = $product['name'];
 		$item['description'] = $product['model'];
-		$item['rating'] = ($product['rating']) ? "<img src='" . $this->templateResource('/image/stars_' . $product['rating'] . '.png') . "' alt='" . $product['stars'] . "' />" : '';
+		$item['rating'] = ($product['rating']) ? "<img class=\"rating\" src='" . $this->templateResource('/image/stars_' . $product['rating'] . '.png') . "' alt='" . $product['stars'] . "' width='64' height='12' />" : '';
 
 		$item['info_url'] = $product['href'];
 		$item['buy_url'] = $product['add'];
@@ -18,8 +19,15 @@
 		if ($item['rating']) {
 			$review = $item['rating'];
 		}
+		if($icount == 4) {
+			$icount = 0;
 	?>
-		<li class="col-md-3 col-sm-6 col-xs-12">
+			<div class="clearfix"></div>
+	<?php
+		}
+		$icount++;
+	?>
+		<div class="col-md-3 col-sm-6 col-xs-12">
 			<div class="fixed_wrapper">
 				<div class="fixed">
 					<a class="prdocutname" href="<?php echo $item['info_url'] ?>"
@@ -70,19 +78,19 @@
 					</div>
 				<?php } ?>
 			</div>
-		</li>
+		</div>
 	<?php
 	}
 	?>
-</ul>
+</div>
 
-<ul class="thumbnails list row">
+<div class="thumbnails list row">
 	<?php
 	foreach ($products as $product) {
 		$item = array();
 		$item['image'] = $product['thumb']['thumb_html'];
 		$item['title'] = $product['name'];
-		$item['rating'] = ($product['rating']) ? "<img src='" . $this->templateResource('/image/stars_' . $product['rating'] . '.png') . "' alt='" . $product['stars'] . "' />" : '';
+		$item['rating'] = ($product['rating']) ? "<img class=\"rating\" src='" . $this->templateResource('/image/stars_' . $product['rating'] . '.png') . "' alt='" . $product['stars'] . "' />" : '';
 
 		$item['info_url'] = $product['href'];
 		$item['buy_url'] = $product['add'];
@@ -96,7 +104,7 @@
 		}
 
 		?>
-		<li>
+		<div>
 			<div class="thumbnail">
 				<div class="row">
 					<div class="col-md-4">
@@ -154,8 +162,8 @@
 
 				</div>
 			</div>
-		</li>
+		</div>
 	<?php
 	}
 	?>
-</ul>
+</div>

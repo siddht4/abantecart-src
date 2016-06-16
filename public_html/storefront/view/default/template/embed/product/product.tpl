@@ -42,7 +42,7 @@
 				    $image_url = $image_main['main_url'];
 				    $thumb_url = $image_main['thumb_url'];
 				?>
-				    <a class="local_image" href="<?php echo $image_url; ?>" target="_image" title="<?php echo $image_main['title']; ?>">
+				    <a class="local_image" href="<?php echo $image_url; ?>" target="_blank" title="<?php echo $image_main['title']; ?>">
 				    	<img src="<?php echo $thumb_url; ?>" alt="<?php echo $image['title']; ?>" title="<?php echo $image['title']; ?>" />
 				    <i class="fa fa-arrows"></i>
 				    </a>
@@ -58,7 +58,7 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<h1 class="productname"><span class="bgnone"><?php echo $heading_title; ?></span></h1>
-
+						<span class="blurb"><?php echo $product_info['blurb'] ?></span>
 						<div class="productprice">
 							<?php
 
@@ -341,7 +341,7 @@
 					<div class="tab-pane" id="relatedproducts">
 						<ul class="row side_prd_list">
 						<?php foreach ($related_products as $related_product) {
-								$item['rating'] = ($related_product['rating']) ? "<img src='" . $this->templateResource('/image/stars_' . $related_product['rating'] . '.png') . "' alt='" . $related_product['stars'] . "' />" : '';
+								$item['rating'] = ($related_product['rating']) ? "<img src='" . $this->templateResource('/image/stars_' . $related_product['rating'] . '.png') . "' alt='" . $related_product['stars'] . "' width='64' height='12' />" : '';
 								if (!$display_price) {
 									$related_product['price'] = $related_product['special'] = '';
 								}
@@ -390,7 +390,7 @@
 	</div>
 </div>
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
 
 	var orig_imgs = $('ul.bigimage').html();
 	var orig_thumbs = $('ul.smallimage').html();
@@ -642,5 +642,5 @@
 		});
 	}
 
-//--></script>
+</script>
 <?php echo $footer; ?>	

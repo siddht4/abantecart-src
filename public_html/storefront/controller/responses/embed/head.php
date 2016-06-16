@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -67,27 +67,7 @@ class ControllerResponsesEmbedHead extends AController {
 		
 		$this->processTemplate('embed/head.tpl');
 
-		//Log Online Customers
-		$ip = '';
-		if (isset($this->request->server['REMOTE_ADDR'])) {
-		        $ip = $this->request->server['REMOTE_ADDR'];
-		}
-		$url = '';
-		if (isset($this->request->server['HTTP_HOST']) && isset($this->request->server['REQUEST_URI'])) {
-		        $url = 'http://' . $this->request->server['HTTP_HOST'] . $this->request->server['REQUEST_URI'];
-		}
-		$referer = '';
-		if (isset($this->request->server['HTTP_REFERER'])) {
-		        $referer = $this->request->server['HTTP_REFERER'];
-		}
-		$customer_id = '';
-		if ( is_object($this->customer)) {
-			$customer_id = $this->customer->getId();
-		}
-		$this->loadModel('tool/online_now');		
-		$this->model_tool_online_now->setOnline($ip, $customer_id, $url, $referer);
- 
-        //init controller data
+      	//init controller data
         $this->extensions->hk_UpdateData($this,__FUNCTION__);
 
 	}	

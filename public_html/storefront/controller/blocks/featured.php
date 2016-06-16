@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -26,35 +26,42 @@ class ControllerBlocksfeatured extends AController {
 
 	public function main() {
 
+		if($this->html_cache()){
+			return;
+		}
+
         //init controller data
         $this->extensions->hk_InitData($this,__FUNCTION__);
 
-      	$this->data['heading_title'] = $this->language->get('heading_title');
+      	$this->data['heading_title'] = $this->language->get('heading_title','blocks/featured');
 		
 		$this->loadModel('catalog/product');
 		$this->loadModel('catalog/review');
 		$this->loadModel('tool/image');
 		
 		$this->data['button_add_to_cart'] = $this->language->get('button_add_to_cart');
-			
 		$this->data['products'] = array();
 		
 		$results = $this->model_catalog_product->getfeaturedProducts($this->config->get('config_featured_limit'));
-		
+		$product_ids = array();
 		foreach($results as $result){
 			$product_ids[] = (int)$result['product_id'];
 		}
 
 		$products_info = $this->model_catalog_product->getProductsAllInfo($product_ids);
+		//get thumbnails by one pass
 		$resource = new AResource('image');
+		$thumbnails = $resource->getMainThumbList(
+						'products',
+						$product_ids,
+						$this->config->get('config_image_product_width'),
+						$this->config->get('config_image_product_height')
+		);
+		$stock_info = $this->model_catalog_product->getProductsStockInfo($product_ids);
 
 		foreach ($results as $result) {
 
-			$thumbnail = $resource->getMainThumb('products',
-			                                     $result['product_id'],
-			                                     $this->config->get('config_image_product_width'),
-			                                     $this->config->get('config_image_product_height'),true);
-
+			$thumbnail = $thumbnails[ $result['product_id'] ];
 			$rating = $products_info[$result['product_id']]['rating'];
 
 			$special = FALSE;
@@ -88,9 +95,9 @@ class ControllerBlocksfeatured extends AController {
 			$in_stock = false;
 			$no_stock_text = $result['stock'];
 			$total_quantity = 0;
-			if ( $this->model_catalog_product->isStockTrackable($result['product_id']) ) {
+			if ( $stock_info[$result['product_id']]['subtract'] ) {
 				$track_stock = true;
-    			$total_quantity = $this->model_catalog_product->hasAnyStock($result['product_id']);
+    			$total_quantity = $stock_info[$result['product_id']]['quantity'];
     			//we have stock or out of stock checkout is allowed
     			if ($total_quantity > 0 || $this->config->get('config_stock_checkout')) {
 	    			$in_stock = true;
@@ -114,7 +121,8 @@ class ControllerBlocksfeatured extends AController {
 				'track_stock' => $track_stock,
 				'in_stock'		=> $in_stock,
 				'no_stock_text' => $no_stock_text,
-				'total_quantity'=> $total_quantity			
+				'total_quantity'=> $total_quantity,
+				'date_added'    => $result['date_added']
 			);
 		}
 

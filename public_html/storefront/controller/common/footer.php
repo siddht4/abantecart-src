@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -59,8 +59,7 @@ class ControllerCommonFooter extends AController {
 		
 		$this->data['text_project_label'] = $this->language->get('text_powered_by') . ' ' . project_base();
 
-		$this->view->assign('scripts_bottom', $this->document->getScriptsBottom());		
-
+		$this->view->assign('scripts_bottom', $this->document->getScriptsBottom());
 		$this->view->batchAssign($this->data);
 		$this->processTemplate('common/footer.tpl');
 

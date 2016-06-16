@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -36,7 +36,7 @@ class ModelLocalisationStockStatus extends Model {
 											 )) );
 		}
 		
-		$this->cache->delete('stock_status');
+		$this->cache->remove('localization');
 
 		return $stock_status_id;
 	}
@@ -52,13 +52,13 @@ class ModelLocalisationStockStatus extends Model {
 												 )) );
 
 		}
-		$this->cache->delete('stock_status');
+		$this->cache->remove('localization');
 	}
 	
 	public function deleteStockStatus($stock_status_id) {
 		$this->db->query("DELETE FROM " . $this->db->table("stock_statuses") . " 
 						WHERE stock_status_id = '" . (int)$stock_status_id . "'");
-		$this->cache->delete('stock_status');
+		$this->cache->remove('localization');
 	}
 		
 	public function getStockStatus($stock_status_id) {
@@ -105,15 +105,16 @@ class ModelLocalisationStockStatus extends Model {
 		
 			return $query->rows;
 		} else {
-			$stock_status_data = $this->cache->get('stock_status', $language_id);
+			$cache_key = 'localization.stock_status.lang_'. $language_id;
+			$stock_status_data = $this->cache->pull($cache_key);
 		
-			if (!$stock_status_data) {
+			if ($stock_status_data === false) {
 				$query = $this->db->query( "SELECT stock_status_id, name
 											FROM " . $this->db->table("stock_statuses") . " 
 											WHERE language_id = '" . $language_id . "'
 											ORDER BY name");
 				$stock_status_data = $query->rows;
-				$this->cache->set('stock_status', $stock_status_data, $language_id);
+				$this->cache->push($cache_key, $stock_status_data);
 			}	
 	
 			return $stock_status_data;			

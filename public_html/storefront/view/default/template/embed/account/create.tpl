@@ -27,15 +27,13 @@
 	<div class="registerbox form-horizontal">
 		<fieldset>
 		<?php
-			$field_list = array();
-			if ($noemaillogin) { array_push($field_list, 'loginname'); }
-			array_push($field_list, 'firstname', 'lastname', 'email', 'telephone', 'fax');
-			foreach ($field_list as $field_name) {
+
+			foreach ($form['fields']['general'] as $field_name=>$field) {
 		?>
 			<div class="form-group <?php echo ${'error_'.$field_name} ? 'has-error' : ''; ?>">
 				<label class="control-label col-sm-4"><?php echo ${'entry_'.$field_name}; ?></label>
 				<div class="input-group col-sm-4">
-				    <?php echo $form[$field_name]; ?>
+				    <?php echo $field; ?>
 				</div>
 				<span class="help-block"><?php echo ${'error_'.$field_name}; ?></span>
 			</div>		
@@ -49,21 +47,13 @@
 	<div class="registerbox form-horizontal ">
 		<fieldset>
 		<?php
-			$field_list = array('company' => 'company', 
-								'address_1' => 'address_1', 
-								'address_2' => 'address_2', 
-								'city' => 'city',
-								'postcode' => 'postcode',
-								'country' => 'country_id', 
-								'zone' => 'zone_id',
-								);
 			
-			foreach ($field_list as $field_name => $field_id) {
+			foreach ($form['fields']['address'] as $field_name=>$field) {
 		?>
 			<div class="form-group <?php if (${'error_'.$field_name}) echo 'has-error'; ?>">
 				<label class="control-label col-sm-4"><?php echo ${'entry_'.$field_name}; ?></label>
 				<div class="input-group col-sm-4">
-				    <?php echo $form[$field_id]; ?>
+				    <?php echo $field; ?>
 				</div>
 				<span class="help-block"><?php echo ${'error_'.$field_name}; ?></span>				
 			</div>		
@@ -79,14 +69,14 @@
 			<div class="form-group <?php if ($error_password) echo 'has-error'; ?>">
 				<label class="col-sm-4 control-label"><?php echo $entry_password; ?></label>
 				<div class="input-group col-sm-4">
-				    <?php echo $form['password']; ?>
+				    <?php echo $form['fields']['password']['password']; ?>
 				</div>
 				<span class="help-block"><?php echo $error_password; ?></span>
 			</div>
 			<div class="form-group <?php if ($error_confirm) echo 'has-error'; ?>">
 				<label class="col-sm-4 control-label"><?php echo $entry_confirm; ?></label>
 				<div class="input-group col-sm-4">
-				    <?php echo $form['confirm']; ?>
+				    <?php echo $form['fields']['password']['confirm']; ?>
 				</div>
 				<span class="help-block"><?php echo $error_confirm; ?></span>
 			</div>
@@ -101,7 +91,7 @@
 			<div class="form-group">
 				<label class="col-sm-4 control-label"><?php echo $entry_newsletter; ?></label>
 				<div class="input-group col-sm-4">
-				    <?php echo $form['newsletter']; ?>
+				    <?php echo $form['fields']['newsletter']['newsletter']; ?>
 				</div>
 			</div>
 		</fieldset>
@@ -114,7 +104,7 @@
 				<label class="col-sm-4 control-label"><?php echo $entry_captcha; ?></label>
 				<?php } ?>
 				<div class="input-group col-sm-4">
-				    <?php echo $form['captcha']; ?>
+				    <?php echo $form['fields']['newsletter']['captcha']; ?>
 				</div>
 				<span class="help-block"><?php echo $error_captcha; ?></span>
 			</div>
@@ -161,13 +151,14 @@
 </div>
 </div>  
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
+
 <?php $cz_url = $this->html->getURL('common/zone', '&zone_id='. $zone_id); ?>
 $('#AccountFrm_country_id').change( function(){
     $('select[name=\'zone_id\']').load('<?php echo $cz_url;?>&country_id=' + $(this).val());
 });
 $('select[name=\'zone_id\']').load('<?php echo $cz_url;?>&country_id='+ $('#AccountFrm_country_id').val());
 
-//--></script>
+</script>
 
 <?php echo $footer; ?>

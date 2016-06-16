@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -29,7 +29,7 @@ class ControllerBlocksCart extends AController {
 
 		$this->loadModel('tool/seo_url');
 		$this->loadLanguage('total/total');
-    	$this->data['heading_title'] = $this->language->get('heading_title');
+    	$this->data['heading_title'] = $this->language->get('heading_title', 'blocks/cart');
     	
 		$this->data['text_subtotal'] = $this->language->get('text_subtotal');
 		$this->data['text_empty'] = $this->language->get('text_empty');
@@ -45,18 +45,25 @@ class ControllerBlocksCart extends AController {
 		$this->data['checkout'] = $this->html->getURL('checkout/shipping');
 		
 		$products = array();
-		
+
 		$qty = 0;
+		$cart_products = $this->cart->getProducts();
+		$product_ids = array();
+		foreach($cart_products as $product){
+			$product_ids[] = $product['product_id'];
+		}
 
 		$resource = new AResource('image');
+		$thumbnails = $resource->getMainThumbList(
+						'products',
+						$product_ids,
+						$this->config->get('config_image_additional_width'),
+						$this->config->get('config_image_additional_width')
+						);
 
-    	foreach ($this->cart->getProducts() as $result) {
+    	foreach ($cart_products as $result) {
         	$option_data = array();
-
-			$thumbnail = $resource->getMainThumb('products',
-			                                     $result['product_id'],
-			                                     $this->config->get('config_image_additional_width'),
-			                                     $this->config->get('config_image_additional_width'),true);
+			$thumbnail = $thumbnails[ $result['product_id'] ];
 
         	foreach ($result['option'] as $option) {
 		        if($option['element_type']=='H'){ continue;} //hide hidden options

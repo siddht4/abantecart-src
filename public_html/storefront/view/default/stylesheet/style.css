@@ -1,10 +1,4 @@
 @charset "utf-8";
-@import url('bootstrap.min.css');
-@import url('flexslider.css');
-@import url('onebyone.css');
-@import url('print.css');
-@import url('font-awesome.min.css');
-
 /*
 AbanteCart storefront main CSS style.css
 
@@ -76,6 +70,10 @@ ul {
 	text-transform: uppercase;
 	padding: 0 14px 4px 0;
 	font-family: 'Crete Round', serif;
+}
+
+.hidden {
+	display: none;
 }
 
 .heading1 .subtext img {
@@ -757,9 +755,14 @@ ul.categorymenu > li ul > li img {
 .breadcrumb {
 	margin-bottom: 10px
 }
-
 .breadcrumb-separator {
 	padding: 0 5px 0 5px;
+}
+.breadcrumb > li + li::before {
+    color: #ccc;
+	font-family: FontAwesome;
+	content: "\f101"; 
+    padding: 0 5px;
 }
 
 /* ------------ Promo Section ------------ */
@@ -804,6 +807,10 @@ ul.categorymenu > li ul > li img {
 	clear: both;
 }
 
+.banner_block_23_11 .container-fluid{
+	text-align: center;
+}
+
 /* ------------ newsletter ------------ */
 #newslettersignup .pull-right {
 	margin-top: 15px
@@ -834,12 +841,6 @@ ul.categorymenu > li ul > li img {
 
 .addresses>section{
 	display: inline-block;
-}
-.addresses .old_address{
-	float: left;
-}
-.addresses .new_address{
-	float: right;
 }
 
 
@@ -872,6 +873,11 @@ ul.categorymenu > li ul > li img {
 	overflow: auto;
 }
 
+.list-inline > div {
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
 .thumbnails .prdocutname {
 	font-size: 14px;
 	color: #5e626b;
@@ -893,7 +899,7 @@ ul.categorymenu > li ul > li img {
 
 .thumbnail .blurb {
 	max-height: 60px;
-	overflow: hidden;
+	overflow: auto;
 	text-overflow: ellipsis;
 }
 
@@ -1071,7 +1077,7 @@ ul.productpagecart .nostock {
 }
 
 .thumbnail .shortlinks a.compare {
-	background-position: 0 -462px
+	background-position: 0 -462px;
 }
 
 a.compare>img{
@@ -1119,6 +1125,10 @@ a.compare>img{
 }
 .thumbnail_small {
 	width: 60px;
+}
+
+.container .jumbotron, .container-fluid .jumbotron {
+    border-radius: 0;
 }
 
 #featured .thumbnails li:hover .thumbnail img,
@@ -1327,8 +1337,10 @@ h1.pagetitle {
 .easyzoom img {
 	vertical-align: bottom;
 }
-.local_image img {
-	width: 340px;
+a.local_image {
+	min-width: 340px;
+	display: inline-block;
+	min-height: 340px;
 }
 .easyzoom.is-loading img {
 	cursor: progress;
@@ -1953,7 +1965,7 @@ ul.total li span.extra {
 	padding: 5px 5px 5px 5px;
 }
 
-.newcustomer, .returncustomer, .formbox {
+.newcustomer, .returncustomer {
 	width: 48%;
 	float: left;
 	border: 1px solid #E7E7E7;
@@ -2176,6 +2188,19 @@ ul.side_prd_list li img {
 	margin: -5px 5px 10px 0;
 	padding: 5px;
 	background: #fff;
+}
+ul.side_prd_list li img.rating {
+	padding: 0;
+	margin: 5px 5px 0 0;
+}
+
+img.rating{
+	border: none !important;
+	padding: 0;
+}
+
+a.compare img.rating{
+	margin-bottom: 3px;
 }
 
 .sidebanner {
@@ -2591,6 +2616,10 @@ label.error {
 /* fix for lable inside of input-group */
 .input-group label {
 	padding-top: 7px;
+	margin-right: 5px;
+}
+.input-group label>input[type="checkbox"]{
+	vertical-align: sub;
 }
 
 form .help-block {
@@ -3226,12 +3255,6 @@ paypal pro styles
 		display: inline-block;
 		width: 45% !important;
 	}
-	.addresses .old_address{
-		float: left;
-	}
-	.addresses .new_address{
-		float: right;
-	}
 	.cart-info .estimate{
 		float: right;
 	}
@@ -3320,10 +3343,10 @@ paypal pro styles
 		margin-left: 25px;
 	}
 
-	#banner_banner_block_1773 .container-fluid{
+	.banner_block_23_11 .container-fluid{
 		text-align: center;
 	}
-	#banner_banner_block_1773.container-fluid.mt20 .pull-left{
+	.banner_block_23_11.container-fluid.mt20 .pull-left{
 		display: inline-block;
 		float: none;
 		margin-left: 50px;
@@ -3372,12 +3395,16 @@ paypal pro styles
 
 /* END @media FULL */
 
+@media (max-width: 850px) {
+	#customernav {
+		display: none;
+	}
+}	
+
+
 @media (max-width: 979px) {
 	.header-logo {
-		width: 250px;
-	}
-	.logo img {
-		max-width: 240px;
+		width: 270px;
 	}
 
 	#categorymenu {
@@ -3474,11 +3501,6 @@ paypal pro styles
 		-o-transition: all 0.8s; /* Opera */
 	}
 
-	.formbox {
-		width: 85%;
-		margin-bottom: 10px;
-	}
-
 	.newcustomer, .returncustomer{
 		width: 97%;
 		margin-bottom: 10px;
@@ -3571,10 +3593,6 @@ paypal pro styles
 		border-right: 1px solid #E7E7E7 !important;
 	}
 
-	.formbox.ml10 {
-		margin-left: 0;
-	}
-
 	.block_frame_cart  .buttonwrap {
 		text-align: center;
 	}
@@ -3591,15 +3609,15 @@ paypal pro styles
 		display: none;
 	}
 
-	#banner_banner_block_1773{
+	.banner_block_23_11{
 		padding-left: 0;
 	}
-	#banner_banner_block_1773 .container-fluid{
+	.banner_block_23_11 .container-fluid{
 		text-align: center;
 		padding-left: 0;
 		max-width: 700px;
 	}
-	#banner_banner_block_1773.container-fluid.mt20 .pull-left{
+	.banner_block_23_11.container-fluid.mt20 .pull-left{
 		display: inline-block;
 		float: none;
 		margin-left: 0;
@@ -3620,7 +3638,7 @@ paypal pro styles
 
 /* END @media (max-width: 979px) */
 
-@media (max-width: 760px) {
+@media (max-width: 768px) {
 	.smbanner {
 		width: auto;
 	}
@@ -3653,13 +3671,9 @@ paypal pro styles
 		text-transform: none;
 	}
 
-	.top-search {
-		margin-top: -5px
-	}
-
 	#topnav {
 		width: auto;
-		text-align: center
+		text-align: center;
 	}
 
 	#topnav ul {
@@ -3678,7 +3692,7 @@ paypal pro styles
 	}
 
 	.footerlinks {
-		text-align: center
+		text-align: center;
 	}
 
 	.footerlinks .info, #social_icons, .social_icons {
@@ -3824,11 +3838,6 @@ paypal pro styles
 		text-align: center;
 	}
 
-	.formbox {
-		width: 85%;
-		margin-bottom: 10px;
-	}
-
 	.newcustomer, .returncustomer{
 		width: 97%;
 		margin-bottom: 10px;
@@ -3845,6 +3854,36 @@ paypal pro styles
 /* END @media (max-width: 760px) */
 
 @media only screen and (min-width: 480px) and (max-width: 767px) {
+	.header-logo {
+		background: none;
+		width: auto;
+		height: auto;	
+		line-height: normal;
+		text-align: left;
+	}
+	.logo img {
+		background: white;
+	}
+	.logo {
+		padding: 10px;
+	}
+
+	.headerstrip_blocks .block_4 {
+		float: left;
+	}
+	.headerdetails {
+		padding-top: 10px;
+	}
+	.headerdetails .block_8 {
+		float: left;
+	}
+	.heading1 .maintext, .heading2 {
+		font-size: 20px;
+	}
+
+	#product_details .thumbnail img {
+		max-width: 300px !important;
+	}
 
 	.payment_icon img{
 		max-width: 350px;
@@ -3873,10 +3912,6 @@ paypal pro styles
 
 	.sorting.well .pull-right {
 		margin-top: 0;
-	}
-
-	.formbox.ml10 {
-		margin-left: 0;
 	}
 
 	.returncustomer, .newcustomer {
@@ -3909,17 +3944,16 @@ paypal pro styles
 		margin-top: 0;
 	}
 
-	#banner_banner_block_1773 .container-fluid{
+	.banner_block_23_11 .container-fluid{
 		text-align: center;
 	}
-	#banner_banner_block_1773.container-fluid.mt20 .pull-left{
+	.banner_block_23_11.container-fluid.mt20 .pull-left{
 		display: inline-block;
 		float: none;
 		margin-left: 0;
 		margin-top: 10px;
 		text-align: center;
 	}
-
 
 	.addresses>section{
 		display: inline-block;
@@ -3938,7 +3972,7 @@ paypal pro styles
 		border-right: 1px solid #E7E7E7 !important;
 	}
 
-	.cart-info .coupon button, .cart-info .estimate button {
+	.cart-info .coupon button, .cart-info {
 		margin-top: 10px;
 	}
 
@@ -3952,6 +3986,21 @@ paypal pro styles
 		margin-top: 10px;
 	}
 
+	.search-bar {
+		position: absolute;
+		z-index: 1000;
+	}
+
+	#customernav {
+		display: block;
+		width: 200px;
+	}
+	#customernav.navbar{
+		margin-bottom: 5px;
+	}
+	#customernav .navbar-nav{
+		margin: 0;
+	}
 }
 
 @media only screen and (max-width: 480px) {
@@ -3962,14 +4011,15 @@ paypal pro styles
 		line-height: normal;
 		text-align: left;
 	}
+	.logo img {
+		background: white;
+	}
+	.logo {
+		padding: 0px;
+	}
 
 	.payment_icon img{
 		max-width: 200px;
-	}
-
-	.logo img {
-		background: white;
-		padding: 5px;
 	}
 
 	.headerstrip_blocks .block_4 {
@@ -4225,12 +4275,8 @@ paypal pro styles
 		margin-left: 37%;
 	}
 
-	.newcustomer, .returncustomer, .formbox {
+	.newcustomer, .returncustomer {
 		width: 100%;
-	}
-
-	.formbox.ml10 {
-		margin-left: 0;
 	}
 
 	.pagination.pull-right {
@@ -4258,7 +4304,31 @@ paypal pro styles
 
 	.transaction-table td:nth-child(2), .transaction-table th:nth-child(2){ display: none; }
 	.transaction-table td:nth-child(6), .transaction-table th:nth-child(6){ display: none; }
+
+	#popularbrands #prev {
+		left: -20px;
+		top: 30px
+	}
 	
+	#popularbrands #next {
+		right: -20px;
+		top: 30px
+	}
+	
+	.info_links_footer li {
+		padding: 5px;
+	}
+	
+	.contentpanel {
+    	padding: 5px;
+	}
+	.container-fluid .col-xs-12 {
+ 		padding-left: 5px;
+    	padding-right: 5px;	
+	}
+	.mainimage.bigimage img {
+		width: 300px;
+	}
 }
 
 /* END @media (max-width: 480px) */
@@ -4294,4 +4364,9 @@ paypal pro styles
     #footer{
     	display: none;
     }
+}
+
+/* phone input css*/
+.intl-tel-input .country-list{
+	z-index: 4 !important;
 }

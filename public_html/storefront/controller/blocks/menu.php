@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -25,19 +25,26 @@ class ControllerBlocksMenu extends AController {
 	private $menu_items;
 	public function main() {
 
+		//HTML cache only for non-customer
+		if(!$this->customer->isLogged() && !$this->customer->isUnauthCustomer()){
+			if($this->html_cache()){
+				return;
+			}
+		}
+
 		$this->loadLanguage('blocks/menu');
 		$this->loadLanguage('common/header');
 
-		$this->data['heading_title'] = $this->language->get('heading_title');
+		$this->data['heading_title'] = $this->language->get('heading_title','blocks/menu');
 
-		$cache_name = 'storefront_menu.'.(int)$this->config->get('config_store_id');
-		$this->menu_items = $this->cache->get($cache_name, $this->config->get('storefront_language_id'));
-		if(!$this->menu_items){
+		$cache_key = 'storefront_menu.store_'.(int)$this->config->get('config_store_id').'_lang_'.$this->config->get('storefront_language_id');
+		$this->menu_items = $this->cache->pull($cache_key);
+		if($this->menu_items === false){
 			$menu = new AMenu_Storefront();
 			$this->menu_items = $menu->getMenuItems();
 			$this->menu_items = $this->_buildMenu('');
 			//writes into cache result of calling _buildMenu func!
-			$this->cache->set($cache_name, $this->menu_items, $this->config->get('storefront_language_id'));
+			$this->cache->push($cache_key, $this->menu_items);
 		}
 		$storefront_menu = $this->menu_items;
 		$this->session->data['storefront_menu'] = $storefront_menu;

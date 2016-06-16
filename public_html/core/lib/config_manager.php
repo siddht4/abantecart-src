@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -30,9 +30,14 @@ if (!defined('DIR_CORE')) {
  * @property ModelLocalisationWeightClass $model_localisation_weight_class
  * @property ModelLocalisationStockStatus $model_localisation_stock_status
  * @property ModelLocalisationOrderStatus $model_localisation_order_status
+ * @property ModelSaleCustomerGroup $model_sale_customer_group
  * @property ASession $session
  * @property ALanguageManager $language
  * @property ALoader $load
+ * @property AIMManager $im
+ * @property AConfig $config
+ *
+ * @method array() _build_form_general $method_name
  *
  */
 class AConfigManager {
@@ -91,6 +96,7 @@ class AConfigManager {
 	 * @return array
 	 */
 	public function getFormFields($group, $form, $data) {
+
 		$method_name = "_build_form_" . $group;
 		if (!method_exists($this, $method_name)) {
 			return array();
@@ -153,7 +159,7 @@ class AConfigManager {
 			'style' => 'large-field',
 		));
 		$fields['description'] = $form->getFieldHtml($props[] = array(
-			'type' => 'textarea',
+			'type' => 'texteditor',
 			'name' => 'config_description_' . $this->session->data['content_language_id'],
 			'value' => $data['config_description_' . $this->session->data['content_language_id']],
 			'style' => 'xl-field',
@@ -194,7 +200,7 @@ class AConfigManager {
 
 
 		$results = $this->language->getAvailableLanguages();
-		$languages = array();
+		$languages = $language_codes = array();
 		foreach ($results as $v) {
 			$languages[$v['code']] = $v['name'];
 			$lng_code = $this->language->getLanguageCodeByLocale($v['locale']);
@@ -529,6 +535,12 @@ class AConfigManager {
 			'value' => $data['config_tax_customer'],
 			'options' => array($this->language->get('entry_tax_customer_0'), $this->language->get('entry_tax_customer_1')),
 		));
+		$fields['start_order_id'] = $form->getFieldHtml($props[] = array(
+			'type' => 'input',
+			'name' => 'config_start_order_id',
+			'value' => $data['config_start_order_id'],
+			'style' => 'small-field',
+		));
 		$fields['invoice'] = $form->getFieldHtml($props[] = array(
 			'type' => 'input',
 			'name' => 'starting_invoice_id',
@@ -620,6 +632,13 @@ class AConfigManager {
 			'options' => $order_statuses,
 			'style' => 'chosen'
 		));
+
+		$fields['expire_order_days'] = $form->getFieldHtml($props[] = array(
+			'type' => 'input',
+			'name' => 'config_expire_order_days',
+			'value' => $data['config_expire_order_days'],
+			'style' => 'small-field',
+		));
 		$fields['cart_weight'] = $form->getFieldHtml($props[] = array(
 			'type' => 'checkbox',
 			'name' => 'config_cart_weight',
@@ -671,7 +690,7 @@ class AConfigManager {
 	private function _build_form_appearance($form, $data) {
 		$fields = array();
 
-		//this method ca build filds for general apearance or template specific
+		//this method ca build fields for general appearance or template specific
 		//for template settings, need to specify 'tmpl_id' as template_id for settings section
 		if( empty($data['tmpl_id']) ){
 			//general appearance section
@@ -839,6 +858,20 @@ class AConfigManager {
 				'type' => 'input',
 				'name' => 'config_image_category_height',
 				'value' => $data['config_image_category_height'],
+				'style' => 'small-field',
+				'required' => true,
+			));
+			$fields['image_manufacturer_width'] = $form->getFieldHtml($props[] = array(
+				'type' => 'input',
+				'name' => 'config_image_manufacturer_width',
+				'value' => $data['config_image_manufacturer_width'],
+				'style' => 'small-field',
+				'required' => true,
+			));
+			$fields['image_manufacturer_height'] = $form->getFieldHtml($props[] = array(
+				'type' => 'input',
+				'name' => 'config_image_manufacturer_height',
+				'value' => $data['config_image_manufacturer_height'],
 				'style' => 'small-field',
 				'required' => true,
 			));
@@ -1035,9 +1068,69 @@ class AConfigManager {
 	 * @param array $data
 	 * @return array
 	 */
+	private function _build_form_im($form, $data) {
+		$fields = array();
+
+		$protocols = $this->im->getProtocols();
+		$im_drivers = $this->im->getIMDriversList();
+
+
+		foreach($protocols as $protocol){
+			//skip email protocol. it cannot be disabled
+			if($protocol=='email'){
+				continue;
+			}
+
+			if($im_drivers[$protocol]){
+				$options = array_merge(array(''=> $this->language->get('text_select')), $im_drivers[$protocol]);
+				$no_driver = false;
+			}else{
+				$options = array('' => $this->language->get('text_no_driver'));
+				$no_driver = true;
+			}
+
+			$fields[$protocol]['driver'] = $form->getFieldHtml($props[] = array (
+					'type'    => 'selectbox',
+					'name'    => 'config_'.$protocol.'_driver',
+					'value'   => $data['config_sms_driver'],
+					'options' => $options,
+					'attr' => $no_driver ? 'disabled' :''
+			));
+
+			if(!$no_driver){
+				$fields[$protocol]['storefront_status'] = $form->getFieldHtml($props[] = array (
+						'type'       => 'checkbox',
+						'name'       => 'config_storefront_' . $protocol . '_status',
+						'value'      => 1,
+						'checked'    => $data['config_storefront_' . $protocol . '_status'] ? true : false,
+						'label_text' => $this->language->get('text_storefront'),
+					//'style' => 'btn_switch',
+				));
+
+				$fields[$protocol]['admin_status'] = $form->getFieldHtml($props[] = array (
+						'type'       => 'checkbox',
+						'name'       => 'config_admin_' . $protocol . '_status',
+						'value'      => 1,
+						'checked'    => $data['config_admin_' . $protocol . '_status'] ? true : false,
+						'label_text' => $this->language->get('text_admin'),
+					//'style' => 'btn_switch',
+				));
+			}
+
+		}
+
+
+		return $fields;
+	}
+
+	/**
+	 * @var AForm $form
+	 * @param array $data
+	 * @return array
+	 */
 	private function _build_form_api($form, $data) {
 		$fields = array();
-		//api section 
+		//api section
 		$fields['storefront_api_status'] = $form->getFieldHtml($props[] = array(
 			'type' => 'checkbox',
 			'name' => 'config_storefront_api_status',
@@ -1091,8 +1184,9 @@ class AConfigManager {
 		$fields['session_ttl'] = $form->getFieldHtml($props[] = array(
 			'type' => 'input',
 			'name' => 'config_session_ttl',
-			'value' => $data['config_session_ttl'],
-		));
+			'value' => $data['config_session_ttl']
+		)) . sprintf($this->language->get('text_setting_php_exceed'), 'session.gc_maxlifetime', (int)ini_get('session.gc_maxlifetime')/60);
+
 		$fields['maintenance'] = $form->getFieldHtml($props[] = array(
 			'type' => 'checkbox',
 			'name' => 'config_maintenance',
@@ -1105,7 +1199,7 @@ class AConfigManager {
 			'value' => $data['config_voicecontrol'],
 			'style' => 'btn_switch',
 		));
-		//backwards compatability. Can remove in the future. 
+		//backwards compatibility. Can remove in the future.
 		if (!defined('ENCRYPTION_KEY')) {
 			$fields['encryption'] = $form->getFieldHtml($props[] = array(
 				'type' => 'input',
@@ -1126,22 +1220,68 @@ class AConfigManager {
 			'value' => $data['config_retina_enable'],
 			'style' => 'btn_switch',
 		));
+		$fields['image_quality'] = $form->getFieldHtml($props[] = array(
+			'type' => 'selectbox',
+			'name' => 'config_image_quality',
+			'options' => array (
+					10  => '10%',
+					15  => '15%',
+					20  => '20%',
+					25  => '25%',
+					30  => '30%',
+					35  => '35%',
+					40  => '40%',
+					45  => '45%',
+					50  => '50%',
+					55  => '55%',
+					60  => '60%',
+					65  => '65%',
+					70  => '70%',
+					75  => '75%',
+					80  => '80%',
+					85  => '85%',
+					90  => '90%',
+					95  => '95%',
+					100 => '100%'),
+			'value' => $data['config_image_quality']
+		));
+
 		$fields['compression'] = $form->getFieldHtml($props[] = array(
 			'type' => 'input',
 			'name' => 'config_compression',
 			'value' => $data['config_compression'],
 		));
+
+		$all_cache_drivers = $this->registry->get('cache')->getCacheStorageDrivers();
+		$cache_drivers = array();
+		foreach($all_cache_drivers as $drv){
+			$name = strtoupper($drv['driver_name']);
+			$cache_drivers[$name] = $name;
+		}
+		sort($cache_drivers, SORT_STRING);
+		$current_cache_driver = strtoupper(defined('CACHE_DRIVER') ? CACHE_DRIVER : 'file');
+		unset($cache_drivers[$current_cache_driver]);
+
 		$fields['cache_enable'] = $form->getFieldHtml($props[] = array(
+					'type' => 'checkbox',
+					'name' => 'config_cache_enable',
+					'value' => $data['config_cache_enable'],
+					'style' => 'btn_switch',
+		)).'<br/>'.sprintf($this->language->get('text_setting_cache_drivers'), $current_cache_driver, implode(', ', $cache_drivers));
+		;
+
+
+		$fields['html_cache'] = $form->getFieldHtml($props[] = array(
 			'type' => 'checkbox',
-			'name' => 'config_cache_enable',
-			'value' => $data['config_cache_enable'],
+			'name' => 'config_html_cache',
+			'value' => $data['config_html_cache'],
 			'style' => 'btn_switch',
 		));
 		$fields['upload_max_size'] = $form->getFieldHtml($props[] = array(
 					'type' => 'input',
 					'name' => 'config_upload_max_size',
 					'value' => (int)$data['config_upload_max_size']
-				)) . 'This value can not exceed your php.ini setting (<= ' . ini_get('post_max_size') . ')';
+				)) . sprintf($this->language->get('text_setting_php_exceed'), 'post_max_size', (int)ini_get('post_max_size'));
 
 		$fields['error_display'] = $form->getFieldHtml($props[] = array(
 			'type' => 'checkbox',
@@ -1211,7 +1351,7 @@ class AConfigManager {
 	private function _filterField($fields, $props, $field_name) {
 		$output = array();
 		foreach ($props as $n => $properties) {
-			if ($field_name == $properties['name']
+			if (preformatTextID($field_name) == preformatTextID($properties['name'])
 					|| (is_int(strpos($field_name, 'config_description')) && is_int(strpos($properties['name'], 'config_description')))
 			) {
 				$names = array_keys($fields);
@@ -1230,7 +1370,7 @@ class AConfigManager {
 			return false;
 		}
 		$this->load->language('setting/setting');
-
+		$error = null;
 		foreach ($fields as $field_name => $field_value) {
 			switch ($group) {
 				case 'details':
@@ -1301,6 +1441,10 @@ class AConfigManager {
 						$error['image_category_height'] = $this->language->get('error_image_category');
 					}
 
+					if (($field_name == 'config_image_manufacturer_width' && !$field_value) || ($field_name == 'config_image_manufacturer_height' && !$field_value)) {
+						$error['image_manufacturer_height'] = $this->language->get('error_image_manufacturer');
+					}
+
 					if (($field_name == 'config_image_product_width' && !$field_value) || ($field_name == 'config_image_product_height' && !$field_value)) {
 						$error['image_product_height'] = $this->language->get('error_image_product');
 					}
@@ -1323,6 +1467,16 @@ class AConfigManager {
 					break;
 
 				case 'checkout':
+					if ($field_name == 'config_start_order_id' && $field_value &&  !(int)$field_value) {
+						$error['start_order_id'] = $this->language->get('error_start_order_id');
+					}
+					if ($field_name == 'starting_invoice_id' && $field_value && !(int)$field_value) {
+						$error['starting_invoice_id'] = $this->language->get('error_starting_invoice_id');
+					}
+					if ($field_name == 'config_expire_order_days' && $field_value && !(int)$field_value) {
+						$error['expire_order_days'] = $this->language->get('error_expire_order_days');
+					}
+
 					break;
 
 				case 'api':

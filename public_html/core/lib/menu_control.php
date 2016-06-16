@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -244,7 +244,7 @@ class AMenu {
 		$result = $this->dataset->addRows(array( $item ));
 		// rebuild menu var after changing
 		$this->_build_menu($this->dataset->getRows());
-		$this->registry->get('cache')->delete('admin_menu');
+		$this->registry->get('cache')->remove('admin_menu');
 		return $result;
 	}
 
@@ -258,7 +258,7 @@ class AMenu {
 		//
 		$this->dataset->deleteRows(array( "column_name" => "item_id", "operator" => "=", "value" => $item_id ));
 		$this->_build_menu($this->dataset->getRows());
-		$this->registry->get('cache')->delete('admin_menu');
+		$this->registry->get('cache')->remove('admin_menu');
 		return true;
 	}
 
@@ -276,7 +276,7 @@ class AMenu {
 
 		$this->dataset->updateRows(array( "column_name" => "item_id", "operator" => "=", "value" => $item_id ), $new_values);
 		$this->_build_menu($this->dataset->getRows());
-		$this->registry->get('cache')->delete('admin_menu');
+		$this->registry->get('cache')->remove('admin_menu');
 		return true;
 	}
 }

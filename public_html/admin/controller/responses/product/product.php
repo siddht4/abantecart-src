@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -58,13 +58,22 @@ class ControllerResponsesProductProduct extends AController{
 							'match' => 'all'
 			                ));
 			$products = $this->model_catalog_product->getProducts($filter);
+
+			$product_ids = array();
+			foreach($products as $result){
+				$product_ids[] = (int)$result['product_id'];
+			}
+
 			$resource = new AResource('image');
+			$thumbnails = $resource->getMainThumbList(
+							'products',
+							$product_ids,
+							$this->config->get('config_image_grid_width'),
+							$this->config->get('config_image_grid_height')
+			);
+
 			foreach($products as $pdata){
-				$thumbnail = $resource->getMainThumb('products',
-						$pdata['product_id'],
-						(int)$this->config->get('config_image_grid_width'),
-						(int)$this->config->get('config_image_grid_height'),
-						true);
+				$thumbnail = $thumbnails[ $pdata['product_id'] ];
 
 				if($this->request->get['currency_code']){
 					$price = round($this->currency->convert($pdata['price'],
@@ -130,7 +139,7 @@ class ControllerResponsesProductProduct extends AController{
 		$this->extensions->hk_InitData($this, __FUNCTION__);
 
 		$this->loadModel('catalog/product');
-		$promoton = new APromotion($this->request->get['customer_group_id']);
+		$promotion = new APromotion($this->request->get['customer_group_id']);
 
 		if(isset($this->request->get['category_id'])){
 			$category_id = $this->request->get['category_id'];
@@ -142,12 +151,12 @@ class ControllerResponsesProductProduct extends AController{
 		$results = $this->model_catalog_product->getProductsByCategoryId($category_id);
 		foreach($results as $result){
 
-			$discount = $promoton->getProductDiscount($result['product_id']);
+			$discount = $promotion->getProductDiscount($result['product_id']);
 			if($discount){
 				$price = $discount;
 			} else{
 				$price = $result['price'];
-				$special = $promoton->getProductSpecial($result['product_id']);
+				$special = $promotion->getProductSpecial($result['product_id']);
 				if($special){
 					$price = $special;
 				}
@@ -1227,11 +1236,11 @@ class ControllerResponsesProductProduct extends AController{
 	 * @return bool
 	 */
 	private function _validateDownloadForm($data = array()){
+		$this->error = array();
 		if(!$this->user->canModify('catalog/product_files')){
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
-		$this->error = array();
 		$this->loadLanguage('catalog/files');
 		$this->loadModel('catalog/download');
 
@@ -1239,7 +1248,7 @@ class ControllerResponsesProductProduct extends AController{
 			$this->error['download_id'] = $this->language->get('error_download_exists');
 		}
 
-		if(mb_strlen($data['name']) < 2 || mb_strlen($data['name']) > 64){
+		if(mb_strlen($data['name']) < 2 || mb_strlen($data['name']) > 40){
 			$this->error['name'] = $this->language->get('error_download_name');
 		}
 

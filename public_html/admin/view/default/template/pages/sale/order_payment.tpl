@@ -71,7 +71,7 @@
 	</form>
 </div><!-- <div class="tab-content"> -->
 
-<script type="text/javascript"><!--
+<script type="text/javascript">
 	jQuery(function ($) {
 
 		getZones = function (country_id) {
@@ -105,30 +105,25 @@
 			var selectObj = $('#orderFrm_payment_zone_id');
 
 			selectObj.html(options);
-			var selected_name = $('#orderFrm_payment_zone_id :selected').text();
-			selectObj.parent().find('span').text(selected_name);
-			selectObj.after('<input id="payment_zone_name" name="payment_zone" value="' + selected_name + '" type="hidden" />');
+			var selected_country = $('#orderFrm_payment_country_id :selected').text();
+			var selected_zone = $('#orderFrm_payment_zone_id :selected').text();
+			selectObj.parent().find('#payment_zone_name').remove();
+			selectObj.parent().find('#payment_country_name').remove();
+			selectObj.after('<input id="payment_zone_name" name="payment_zone" value="' + selected_zone + '" type="hidden" />');
+			selectObj.after('<input id="payment_country_name" name="payment_country" value="' + selected_country + '" type="hidden" />');
 
 		}
 
 		getZones();
 
 		$('#orderFrm_payment_zone_id').on('change', function () {
-			$('#payment_zone_name').val($('#payment_zone select :selected').text());
+			$('#payment_zone_name').val($('#orderFrm_payment_zone_id option:selected').text());
 		});
 
 		$('#orderFrm_payment_country_id').change(function () {
 			getZones($(this).val());
-			$('#payment_zone select').aform({triggerChanged: false})
-
 		});
-
-		$('#orderFrm').submit(function () {
-			$('input[name="payment_country"]', this).val($('#payment_country option:selected').text());
-			$('input[name="payment_zone"]', this).val($('#payment_zone select option:selected').text());
-		});
-
 
 	});
-	-->
+
 </script>

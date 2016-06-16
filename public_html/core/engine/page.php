@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -21,6 +21,11 @@ if (! defined ( 'DIR_CORE' )) {
 	header ( 'Location: static_pages/' );
 }
 
+/**
+ * Class APage
+ * @property ARouter $router
+ * @property ALayout $layout
+ */
 final class APage {
 	/**
 	 * @var Registry
@@ -60,14 +65,20 @@ final class APage {
 			 * @var ADispatcher $pre_dispatch
 			 */
 			$result = $pre_dispatch->dispatch();					
-			if ($result) {
-				//Something happened. Need to run different page
+			//Processing has finished, Example: we have cache generated. 
+			if($result == 'completed'){
+				return;
+			} else if ($result) {
+				//Something happened. Need to run different dispatcher
 				$dispatch_rt = $result;
-				break;
+				//Rule exception for SEO_URL. DO not break with pre_dispatch for SEO_URL 
+				if($pre_dispatch->getController() != 'common/seo_url') {
+					break;
+				}
 			}
 		}
 
-		//Process disparcher in while in case we have new dispatch back
+		//Process dispatcher in while in case we have new dispatch back
 		while ($dispatch_rt){
 			//Process main level controller			
 			// load page layout

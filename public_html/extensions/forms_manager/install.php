@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   Lincence details is bundled with this package in the file LICENSE.txt.
@@ -65,5 +65,5 @@ if(!$result->num_rows){
 			(".$block_id.", 7, 'blocks/custom_form_block_content.tpl', NOW() ),
 			(".$block_id.", 8, 'blocks/custom_form_block_header.tpl', NOW() )";
 	$this->db->query($sql);
-	$this->cache->delete('layout.blocks');
+	$this->cache->remove('layout');
 }

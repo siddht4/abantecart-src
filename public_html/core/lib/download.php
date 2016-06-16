@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -28,6 +28,8 @@ if (! defined ( 'DIR_CORE' )) {
  * @property ACustomer $customer
  * @property AConfig $config
  * @property ALoader $load
+ * @property ExtensionsAPI $extensions
+ * @property ARequest $request
  */
 final class ADownload {
 
@@ -82,13 +84,12 @@ final class ADownload {
 
 	public function getDownloadInfo($download_id){
 		if(!(int)$download_id){ return array(); }
-		if(!$language_id){
-			if(IS_ADMIN===true){
-				$language_id = $this->language->getContentLanguageID();
-			}else{
-				$language_id = $this->language->getLanguageID();
-			}
+		if(IS_ADMIN===true){
+			$language_id = $this->language->getContentLanguageID();
+		}else{
+			$language_id = $this->language->getLanguageID();
 		}
+
 
 		$result = $this->db->query("SELECT dd.*, d.*
 									FROM ". $this->db->table('downloads')." d
@@ -253,8 +254,8 @@ final class ADownload {
 	/**
 	 * @param int $download_id
 	 * @param string $mode - can be "full" - all download attributes (with empty values too),
-	 * "to_customer" - download atributes with values that allowed to display for customers,
-	 * "to_display"  - all download atributes with values
+	 * "to_customer" - download attributes with values that allowed to display for customers,
+	 * "to_display"  - all download attributes with values
 	 * @return array
 	 */
 	public function getDownloadAttributesValues($download_id, $mode='full') {

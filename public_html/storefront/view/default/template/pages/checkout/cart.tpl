@@ -130,12 +130,12 @@ echo $form['form_open'];
 								
 								<div class="form-group">
 									<label class="control-label col-sm-4"><?php echo $text_estimate_postcode; ?></label>
-						    		<div class="input-group col-sm-6">
+						    		<div class="input-group col-sm-8">
 						    		<?php echo $form_estimate['postcode']; ?>
 						    		<span class="input-group-btn">
-						    			<button title="<?php echo $form_estimate['submit']->name; ?>" class="btn btn-default mr10"
+						    			<button title="<?php echo $form_estimate['submit']->name; ?>" class="btn btn-default"
 						    				value="<?php echo $form_estimate['submit']->form ?>" type="submit">
-						    			<i class="fa fa-check"></i>
+						    			<i class="fa fa-calculator"></i>
 						    			<?php echo $form_estimate['submit']->name; ?>
 						    			</button>
 						    		</span>
@@ -190,7 +190,7 @@ echo $form['form_open'];
 	    </div>
 	</div>
 </div>
-<script type="text/javascript"><!--
+<script type="text/javascript">
 
 		jQuery(function ($) {
 
@@ -300,4 +300,4 @@ echo $form['form_open'];
 			$(parent_element).before(html);
 		}
 
-//--></script>
+</script>

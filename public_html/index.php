@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -22,6 +22,10 @@
 define('MIN_PHP_VERSION', '5.3.0');
 if (version_compare(phpversion(), MIN_PHP_VERSION, '<') == TRUE) {
     die( MIN_PHP_VERSION . '+ Required for AbanteCart to work properly! Please contact your system administrator or host service provider.');
+}
+
+if (!function_exists('simplexml_load_file')) {
+    exit("simpleXML functions are not available. Please contact your system administrator or host service provider.");
 }
 
 // Load Configuration
@@ -70,8 +74,8 @@ if (!defined('IS_ADMIN') || !IS_ADMIN ) { // storefront load
 	// Cart
 	$registry->set('cart', new ACart($registry));
 
-} else {// Admin load
-
+} else {
+	// Admin template load
 	// Relative paths and directories
 	define('RDIR_TEMPLATE',  'admin/view/default/');
 	
@@ -83,7 +87,6 @@ if (!defined('IS_ADMIN') || !IS_ADMIN ) { // storefront load
 // Currency
 $registry->set('currency', new ACurrency($registry));
 
-
 //Route to request process
 $router = new ARouter($registry);
 $registry->set('router', $router);
@@ -92,6 +95,10 @@ $router->processRoute(ROUTE);
 // Output
 $registry->get('response')->output();
 
+//Show cache stats if debugging
+if($registry->get('config')->get('config_debug')){
+    ADebug::variable('Cache statistics: ', $registry->get('cache')->stats() . "\n");
+}
 
 ADebug::checkpoint('app end');
 

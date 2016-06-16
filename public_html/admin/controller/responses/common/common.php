@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -111,22 +111,21 @@ class ControllerResponsesCommonCommon extends AController {
 		$logs_link = $this->html->getSecureURL('tool/error_log');
 
 		//if enabled system check for all 0 or for admin only 1
-		if(!$this->config->get('config_system_check') || $this->config->get('config_system_check') == 1 ) {
-			//run system check to make sure system is stable to run the request
-			list($system_messages, $counts) = run_system_check($this->registry, 'log');
-			if(count($system_messages) > 0){
-				if($counts['error_count']) {
-					$result ['error'] = sprintf($this->language->get('text_system_error'), $message_link, $logs_link);
-				}
-				if($counts['warning_count']) {
-					$result ['warning'] = sprintf($this->language->get('text_system_warning'), $message_link);
-				}
-				if($counts['notice_count']) {
-					$result ['notice'] = sprintf($this->language->get('text_system_notice'), $message_link);
-				}
+		//run system check to make sure system is stable to run the request
+		list($system_messages, $counts) = run_system_check($this->registry, 'log');
+		if(count($system_messages) > 0){
+			if($counts['error_count']) {
+				$result ['error'] = sprintf($this->language->get('text_system_error'), $message_link, $logs_link);
 			}
-			$this->session->data['system_check_last_time'] = time();
+			if($counts['warning_count']) {
+				$result ['warning'] = sprintf($this->language->get('text_system_warning'), $message_link);
+			}
+			if($counts['notice_count']) {
+				$result ['notice'] = sprintf($this->language->get('text_system_notice'), $message_link);
+			}
 		}
+		$this->session->data['system_check_last_time'] = time();
+
 
 		//update controller data
 		$this->extensions->hk_UpdateData($this, __FUNCTION__);

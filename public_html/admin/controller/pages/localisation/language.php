@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -225,7 +225,7 @@ class ControllerPagesLocalisationLanguage extends AController {
 		if ($this->request->post['source_language']) {
 			$this->session->data['success'] = $this->language->fillMissingLanguageEntries( $this->request->get['language_id'], $this->request->post['source_language'], $this->request->post['translate_method']);
 			//This update effect cross system data. Clean whole cache
-			$this->cache->delete('*');
+			$this->cache->remove('*');
 		}
 		$this->redirect($this->html->getSecureURL('localisation/language/update', '&language_id=' . $this->request->get['language_id'] ));
         $this->extensions->hk_UpdateData($this,__FUNCTION__);

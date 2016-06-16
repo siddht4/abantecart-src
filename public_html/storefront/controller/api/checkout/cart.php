@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   Lincence details is bundled with this package in the file LICENSE.txt.
@@ -55,9 +55,11 @@ class ControllerApiCheckoutCart extends AControllerAPI {
       	}
 
 		//request to remove
-      	if (isset($request['remove'])) {
+      	if (isset($request['remove']) && is_array($request['remove']) ) {
 	        foreach (array_keys($request['remove']) as $key) {
-            	$this->cart->remove($key);
+ 	        	if($key) {
+     	      		$this->cart->remove($key);
+     	      	}
 		    }
       	}
 				
@@ -71,15 +73,24 @@ class ControllerApiCheckoutCart extends AControllerAPI {
 			$this->loadModel('tool/image');
 			
       		$products = array();
-			$resource = new AResource('image');
+		    $cart_products = $this->cart->getProducts();
 
-      		foreach ($this->cart->getProducts() as $result) {
+            $product_ids = array();
+            foreach($cart_products as $result){
+                $product_ids[] = (int)$result['product_id'];
+            }
+
+            $resource = new AResource('image');
+            $thumbnails = $resource->getMainThumbList(
+                            'products',
+                            $product_ids,
+                            $this->config->get('config_image_cart_width'),
+                            $this->config->get('config_image_cart_height')
+            );
+
+      		foreach ($cart_products as $result) {
         		$option_data = array();
-			    $thumbnail = $resource->getMainThumb('products',
-			                                     $result['product_id'],
-			                                     $this->config->get('config_image_cart_width'),
-			                                     $this->config->get('config_image_cart_height'),true);
-
+		        $thumbnail = $thumbnails[ $result['product_id'] ];
 
         		foreach ($result['option'] as $option) {
           			$option_data[] = array(
@@ -128,13 +139,20 @@ class ControllerApiCheckoutCart extends AControllerAPI {
 	public function delete() {
 	    $request = $this->rest->getRequestParams();
       	
-      	if (isset($request['remove'])) {
+      	$count = 0;
+      	if (isset($request['remove']) && is_array($request['remove'])) {
 	        foreach (array_keys($request['remove']) as $key) {
-            	$this->cart->remove($key);
+	        	if($key) {
+            		$this->cart->remove($key);
+            		$count++;	        	
+	        	}
 		    }
       	}	
-	}	
 
+		$this->rest->setResponseData( array('success' => "$count removed" ) );
+		$this->rest->sendResponse(200);	
+		return null;
+	}	
 	
 	public function put() {
 	

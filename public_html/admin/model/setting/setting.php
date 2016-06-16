@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -111,6 +111,7 @@ class ModelSettingSetting extends Model {
 
 			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
 		}
+
 		$query = $this->db->query($sql);
 		return $query->rows;
 	}
@@ -228,8 +229,14 @@ class ModelSettingSetting extends Model {
 				          NOW())";
 			$this->db->query($sql);
 		}
-		$this->cache->delete('settings');
-		$this->cache->delete('stores');
+		// if change cache status - flush cache
+		if(isset($data['config_cache_enable'])){
+			$this->cache->remove('*');
+		}
+
+		$this->cache->remove('settings');
+		$this->cache->remove('extensions');
+		$this->cache->remove('stores');
 	}
 
 	/**
@@ -242,7 +249,8 @@ class ModelSettingSetting extends Model {
 						  WHERE `group` = '" . $this->db->escape($group) . "'
 						  AND `store_id` = '".$store_id."'");
 
-		$this->cache->delete('settings');
-		$this->cache->delete('stores');
+		$this->cache->remove('settings');
+		$this->cache->remove('extensions');
+		$this->cache->remove('stores');
 	}
 }

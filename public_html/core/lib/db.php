@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2015 Belavier Commerce LLC
+  Copyright © 2011-2016 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -124,7 +124,8 @@ final class ADB {
 						$query = str_replace("`ac_", "`" . DB_PREFIX, $query);
 						$result = $this->_query($query);
 						if (!$result) {
-							$this->error = mysql_error();
+							$err = $this->driver->getDBError();
+							$this->error = $err['error_text'];
                             return null;
 						}
 						$query = '';
