@@ -1,5 +1,5 @@
 /* 
- Credit Card Valildation JavaScript Class
+ Credit Card Validation JavaScript Class
  aCCValidator class to validate details on creditcard form
  Features: Check credit card type while entering numbers. Full number validation, Validation of name, and CVV data.
  Easy and clean UI based on bootstrap v3
@@ -7,7 +7,7 @@
  Developer: Pavel Rojkov (projkov@abantecart.com)
 
 
- Credit Card Valildation class
+ Credit Card Validation class
  */
 
 (function ($) {
@@ -51,13 +51,13 @@
                 name: "MasterCard",
                 code: "mc",
                 length: "16",
-                prefixes: "51,52,53,54,55",
+                prefixes: "51,52,53,54,55,2221,2222,2223,2224,2225,2226,2227,2228,2229,2230,2231,2232,2233,2234,2235,2236,2237,2238,2239,2240,2241,2242,2243,2244,2245,2246,2247,2248,2249,2250,2251,2252,2253,2254,2255,2256,2257,2258,2259,2260,2261,2262,2263,2264,2265,2266,2267,2268,2269,2270,2271,2272,2273,2274,2275,2276,2277,2278,2279,2280,2281,2282,2283,2284,2285,2286,2287,2288,2289,2290,2291,2292,2293,2294,2295,2296,2297,2298,2299,2300,2301,2302,2303,2304,2305,2306,2307,2308,2309,2310,2311,2312,2313,2314,2315,2316,2317,2318,2319,2320,2321,2322,2323,2324,2325,2326,2327,2328,2329,2330,2331,2332,2333,2334,2335,2336,2337,2338,2339,2340,2341,2342,2343,2344,2345,2346,2347,2348,2349,2350,2351,2352,2353,2354,2355,2356,2357,2358,2359,2360,2361,2362,2363,2364,2365,2366,2367,2368,2369,2370,2371,2372,2373,2374,2375,2376,2377,2378,2379,2380,2381,2382,2383,2384,2385,2386,2387,2388,2389,2390,2391,2392,2393,2394,2395,2396,2397,2398,2399,2400,2401,2402,2403,2404,2405,2406,2407,2408,2409,2410,2411,2412,2413,2414,2415,2416,2417,2418,2419,2420,2421,2422,2423,2424,2425,2426,2427,2428,2429,2430,2431,2432,2433,2434,2435,2436,2437,2438,2439,2440,2441,2442,2443,2444,2445,2446,2447,2448,2449,2450,2451,2452,2453,2454,2455,2456,2457,2458,2459,2460,2461,2462,2463,2464,2465,2466,2467,2468,2469,2470,2471,2472,2473,2474,2475,2476,2477,2478,2479,2480,2481,2482,2483,2484,2485,2486,2487,2488,2489,2490,2491,2492,2493,2494,2495,2496,2497,2498,2499,2500,2501,2502,2503,2504,2505,2506,2507,2508,2509,2510,2511,2512,2513,2514,2515,2516,2517,2518,2519,2520,2521,2522,2523,2524,2525,2526,2527,2528,2529,2530,2531,2532,2533,2534,2535,2536,2537,2538,2539,2540,2541,2542,2543,2544,2545,2546,2547,2548,2549,2550,2551,2552,2553,2554,2555,2556,2557,2558,2559,2560,2561,2562,2563,2564,2565,2566,2567,2568,2569,2570,2571,2572,2573,2574,2575,2576,2577,2578,2579,2580,2581,2582,2583,2584,2585,2586,2587,2588,2589,2590,2591,2592,2593,2594,2595,2596,2597,2598,2599,2600,2601,2602,2603,2604,2605,2606,2607,2608,2609,2610,2611,2612,2613,2614,2615,2616,2617,2618,2619,2620,2621,2622,2623,2624,2625,2626,2627,2628,2629,2630,2631,2632,2633,2634,2635,2636,2637,2638,2639,2640,2641,2642,2643,2644,2645,2646,2647,2648,2649,2650,2651,2652,2653,2654,2655,2656,2657,2658,2659,2660,2661,2662,2663,2664,2665,2666,2667,2668,2669,2670,2671,2672,2673,2674,2675,2676,2677,2678,2679,2680,2681,2682,2683,2684,2685,2686,2687,2688,2689,2690,2691,2692,2693,2694,2695,2696,2697,2698,2699,2700,2701,2702,2703,2704,2705,2706,2707,2708,2709,2710,2711,2712,2713,2714,2715,2716,2717,2718,2719,2720",
                 checkdigit: true
             }, {
                 name: "MasterCard",
                 code: "mastercard",
                 length: "16",
-                prefixes: "51,52,53,54,55",
+                prefixes: "51,52,53,54,55,2221,2222,2223,2224,2225,2226,2227,2228,2229,2230,2231,2232,2233,2234,2235,2236,2237,2238,2239,2240,2241,2242,2243,2244,2245,2246,2247,2248,2249,2250,2251,2252,2253,2254,2255,2256,2257,2258,2259,2260,2261,2262,2263,2264,2265,2266,2267,2268,2269,2270,2271,2272,2273,2274,2275,2276,2277,2278,2279,2280,2281,2282,2283,2284,2285,2286,2287,2288,2289,2290,2291,2292,2293,2294,2295,2296,2297,2298,2299,2300,2301,2302,2303,2304,2305,2306,2307,2308,2309,2310,2311,2312,2313,2314,2315,2316,2317,2318,2319,2320,2321,2322,2323,2324,2325,2326,2327,2328,2329,2330,2331,2332,2333,2334,2335,2336,2337,2338,2339,2340,2341,2342,2343,2344,2345,2346,2347,2348,2349,2350,2351,2352,2353,2354,2355,2356,2357,2358,2359,2360,2361,2362,2363,2364,2365,2366,2367,2368,2369,2370,2371,2372,2373,2374,2375,2376,2377,2378,2379,2380,2381,2382,2383,2384,2385,2386,2387,2388,2389,2390,2391,2392,2393,2394,2395,2396,2397,2398,2399,2400,2401,2402,2403,2404,2405,2406,2407,2408,2409,2410,2411,2412,2413,2414,2415,2416,2417,2418,2419,2420,2421,2422,2423,2424,2425,2426,2427,2428,2429,2430,2431,2432,2433,2434,2435,2436,2437,2438,2439,2440,2441,2442,2443,2444,2445,2446,2447,2448,2449,2450,2451,2452,2453,2454,2455,2456,2457,2458,2459,2460,2461,2462,2463,2464,2465,2466,2467,2468,2469,2470,2471,2472,2473,2474,2475,2476,2477,2478,2479,2480,2481,2482,2483,2484,2485,2486,2487,2488,2489,2490,2491,2492,2493,2494,2495,2496,2497,2498,2499,2500,2501,2502,2503,2504,2505,2506,2507,2508,2509,2510,2511,2512,2513,2514,2515,2516,2517,2518,2519,2520,2521,2522,2523,2524,2525,2526,2527,2528,2529,2530,2531,2532,2533,2534,2535,2536,2537,2538,2539,2540,2541,2542,2543,2544,2545,2546,2547,2548,2549,2550,2551,2552,2553,2554,2555,2556,2557,2558,2559,2560,2561,2562,2563,2564,2565,2566,2567,2568,2569,2570,2571,2572,2573,2574,2575,2576,2577,2578,2579,2580,2581,2582,2583,2584,2585,2586,2587,2588,2589,2590,2591,2592,2593,2594,2595,2596,2597,2598,2599,2600,2601,2602,2603,2604,2605,2606,2607,2608,2609,2610,2611,2612,2613,2614,2615,2616,2617,2618,2619,2620,2621,2622,2623,2624,2625,2626,2627,2628,2629,2630,2631,2632,2633,2634,2635,2636,2637,2638,2639,2640,2641,2642,2643,2644,2645,2646,2647,2648,2649,2650,2651,2652,2653,2654,2655,2656,2657,2658,2659,2660,2661,2662,2663,2664,2665,2666,2667,2668,2669,2670,2671,2672,2673,2674,2675,2676,2677,2678,2679,2680,2681,2682,2683,2684,2685,2686,2687,2688,2689,2690,2691,2692,2693,2694,2695,2696,2697,2698,2699,2700,2701,2702,2703,2704,2705,2706,2707,2708,2709,2710,2711,2712,2713,2714,2715,2716,2717,2718,2719,2720",
                 checkdigit: true
             }, {
                 name: "American Express",
@@ -135,7 +135,7 @@
             cc_field_cvv: 'cc_cvv2',
             cc_field_month: 'cc_expire_date_month',
             cc_field_year: 'cc_expire_date_year',
-            wrapper: '<span class="input-group-addon"></span>',
+            wrapper: '<div class="right-inner-addon"></div>',
             warning: '<i class="fa fa-exclamation"></i>',
             success: '<i class="fa fa-check"></i>',
             error_class: 'has-error',
@@ -161,11 +161,7 @@
                         failed = true;
                     }
                 }
-                if ($field.attr('name') == o.cc_field_type) {
-                    if (!$field.val() || $field.val() == 'notfound') {
-                        failed = true;
-                    }
-                }
+
                 if ($field.attr('name') == o.cc_field_cvv) {
                     if (!$.aCCValidator.checkCVV($field)) {
                         failed = true;
@@ -187,7 +183,7 @@
             } else {
                 return true;
             }
-        }
+        };
 
         /* Prefill creditcard type based on first set of numbers */
         $.aCCValidator.precheckCCNumber = function ($el) {
@@ -210,7 +206,7 @@
                 }
             }
 
-        }
+        };
 
         /* Validate full number (when leave the field) */
         $.aCCValidator.checkCCNumber = function ($el) {
@@ -230,7 +226,7 @@
             //all good
             show_success($el, '.input-group');
             return true;
-        }
+        };
 
         /* Validate Name */
         $.aCCValidator.checkCCName = function ($el, mode) {
@@ -248,7 +244,7 @@
                 show_success($el, '.form-group');
                 return true;
             }
-        }
+        };
 
         /* Validate CVV */
         $.aCCValidator.checkCVV = function ($el, mode) {
@@ -266,7 +262,7 @@
                 show_success($el, '.form-group');
                 return true;
             }
-        }
+        };
 
         /* Validate exp month */
         $.aCCValidator.checkExp = function ($el, mode) {
@@ -283,23 +279,42 @@
                 show_success($el, '.input-group', 'no_icon');
                 return true;
             }
-        }
+        };
+        $.aCCValidator.checkType = function ($el, mode) {
+            var $ig = $el.closest('.input-group');
+            if (mode == 'reset') {
+                $ig.removeClass(o.error_class);
+                $ig.removeClass(o.success_class);
+                return false;
+            }
+            if (!$el.val() || $el.val()=='notfound') {
+                show_error($el, '.input-group', 'no_icon');
+                return false;
+            } else {
+                show_success($el, '.input-group', 'no_icon');
+                return true;
+            }
+        };
 
         select_cctype = function ($el, cc_type) {
-            var $cct = $el.closest('form').find('#cc_type');
+            var $cct = $el.closest('form').find('[name=' + o.cc_field_type + ']');
             if ($cct.length) {
                 //select cc_type in the select box
                 var empty;
                 var found;
-                $cct.find('option').each(function () {
-                    if ($(this).val().toLowerCase() == cc_type.toLowerCase()) {
-                        $(this).prop('selected', true);
-                        found = true;
-                        return;
-                    } else if ($(this).val() == 'notfound') {
-                        empty = true;
-                    }
-                });
+                if($cct.attr('type') == 'hidden'){
+                    $cct.val(cc_type.toLowerCase());
+                }else {
+                    $cct.find('option').each(function () {
+                        if ($(this).val().toLowerCase() == cc_type.toLowerCase()) {
+                            $(this).prop('selected', true);
+                            found = true;
+                            return;
+                        } else if ($(this).val() == 'notfound') {
+                            empty = true;
+                        }
+                    });
+                }
                 if (found) {
                     show_success($cct, '.input-group', 'no_icon');
                 } else {
@@ -315,7 +330,7 @@
                     show_error($cct, '.input-group', 'no_icon');
                 }
             }
-        }
+        };
 
         /* Show bootstrap field input-group-addon */
         show_addon = function ($el, html) {
@@ -324,14 +339,14 @@
                 $ig.append(o.wrapper);
             }
             $ig.find('.input-group-addon').html(html);
-        }
+        };
 
         hide_addon = function ($el) {
             var $ig = $el.closest('.input-group');
             if ($ig.find('.input-group-addon').length) {
                 $ig.find('.input-group-addon').remove();
             }
-        }
+        };
 
         show_success = function ($el, selector, mode) {
             var $att = $el.closest(selector);
@@ -341,7 +356,7 @@
                 hide_addon($el);
                 show_addon($el, o.success);
             }
-        }
+        };
 
         show_error = function ($el, selector, mode) {
             var $att = $el.closest(selector);
@@ -351,10 +366,10 @@
                 hide_addon($el);
                 show_addon($el, o.warning);
             }
-        }
+        };
 
         lookupCreditCardType = function (cardnumber) {
-            //look for matching cc type bakwards
+            //look for matching cc type backwards
             for (i = o.cards.length - 1; i >= 0; i--) {
                 prefix_arr = o.cards[i].prefixes.split(",");
                 //Check if number begins with prefix
@@ -367,11 +382,11 @@
                 }
             }
             return false;
-        }
+        };
 
         CheckDigits = function (cardnumber) {
             var card_rec;
-            //look for matching cc type bakwards
+            //look for matching cc type backwards
             for (i = o.cards.length - 1; i >= 0; i--) {
                 prefix_arr = o.cards[i].prefixes.split(",");
                 //Check if number begins with prefix
@@ -387,7 +402,6 @@
             // Now check the modulus 10 check digit - if required
             if (card_rec && card_rec.checkdigit) {
                 var checksum = 0;
-                var mychar = "";
                 var j = 1;
 
                 // Process each digit one by one starting on the right
@@ -442,7 +456,7 @@ jQuery(document).ready(function () {
     //event to log creditcard entering
     $('form.validate-creditcard').aCCValidator({});
 
-    $('form.validate-creditcard #cc_number').bind({
+    $('form.validate-creditcard [name=cc_number]').bind({
         change: function () {
             //check as number is entered
             $.aCCValidator.precheckCCNumber($(this));
@@ -452,7 +466,7 @@ jQuery(document).ready(function () {
             $.aCCValidator.checkCCNumber($(this));
         },
         keyup: function (e) {
-            if (e.keyCode == 13) {
+            if (e.keyCode === 13) {
                 //enter pressed. validate all data
                 $('form.validate-creditcard').submit();
             } else if ($(this).val()) {
@@ -461,7 +475,7 @@ jQuery(document).ready(function () {
         }
     });
 
-    $('form.validate-creditcard #cc_owner').bind({
+    $('form.validate-creditcard [name=cc_owner]').bind({
         change: function () {
             $.aCCValidator.checkCCName($(this), 'reset');
         },
@@ -469,7 +483,7 @@ jQuery(document).ready(function () {
             $.aCCValidator.checkCCName($(this));
         },
         keyup: function (e) {
-            if (e.keyCode == 13) {
+            if (e.keyCode === 13) {
                 //enter pressed. validate all data
                 $('form.validate-creditcard').submit();
             } else {
@@ -478,7 +492,7 @@ jQuery(document).ready(function () {
         }
     });
 
-    $('form.validate-creditcard #cc_cvv2').bind({
+    $('form.validate-creditcard [name=cc_cvv2]').bind({
         change: function () {
             $.aCCValidator.checkCVV($(this), 'reset');
         },
@@ -486,11 +500,27 @@ jQuery(document).ready(function () {
             $.aCCValidator.checkCVV($(this));
         },
         keyup: function (e) {
-            if (e.keyCode == 13) {
+            if (e.keyCode === 13) {
                 //enter pressed. validate all data
                 $('form.validate-creditcard').submit();
             } else {
                 $.aCCValidator.checkCVV($(this), 'reset');
+            }
+        }
+    });
+    $('form.validate-creditcard #cc_type, form.validate-creditcard [name="cc_type"]').bind({
+        change: function () {
+            $.aCCValidator.checkType($(this), 'reset');
+        },
+        blur: function () {
+            $.aCCValidator.checkType($(this));
+        },
+        keyup: function (e) {
+            if (e.keyCode === 13) {
+                //enter pressed. validate all data
+                $('form.validate-creditcard').submit();
+            } else {
+                $.aCCValidator.checkType($(this), 'reset');
             }
         }
     });

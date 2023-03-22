@@ -1,4 +1,4 @@
-<div id="<?php echo $id;?>" class="modal fade <?php echo $style; ?>" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+<div id="<?php echo $id;?>" class="modal fade <?php echo $style ?? ''; ?>" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
 	 aria-hidden="true">
 	<?php if (!$modal_type) { $modal_type = 'lg'; } ?> 
 	<div class="modal-dialog modal-<?php echo $modal_type; ?>">
@@ -33,7 +33,7 @@
 		<?php echo $js_onclose; ?>
 	});
 
-	$('#<?php echo $id;?>').on('loaded.bs.modal', function () {
+	$('#<?php echo $id;?>').on('loaded.bs.modal', function (e) {
 		formOnExit();
 		$('.modal-content div.afield').show();
 		$('.modal-content .chosen-select').chosen({'width':'100%','white-space':'nowrap'});
@@ -43,7 +43,7 @@
 
 <?php }else{ //js for static modal?>
 
-	$('#<?php echo $id;?>').on('shown.bs.modal', function () {
+	$('#<?php echo $id;?>').on('shown.bs.modal', function (e) {
 		formOnExit();
 		$('.modal-content div.afield').show();
 		$('.modal-content .chosen-select').chosen({'width':'100%','white-space':'nowrap'});

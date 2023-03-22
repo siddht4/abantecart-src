@@ -178,7 +178,7 @@
 	</definition>
 	<definition>
 		<key>notice_out_of_stock_body</key>
-		<value><![CDATA[Il prodotto "%s" è esaurito. <br> Per impostazione predefinita il prodotto (%s) è stato disabilitato!]]></value>
+		<value><![CDATA[Il prodotto "%s" è esaurito. <br> Per impostazione predefinita il prodotto (%s) è stato disabilitato! <br> Per maggiori dettagli visita %s]]></value>
 	</definition>
 	<definition>
 		<key>no_payment_required</key>
@@ -319,5 +319,25 @@
 	<definition>
 		<key>button_pay_with_balance</key>
 		<value><![CDATA[Paga con equilibrio]]></value>
+	</definition>
+	<definition>
+		<key>text_click_browse_file</key>
+		<value><![CDATA[Clicca per caricare il file]]></value>
+	</definition>
+	<definition>
+		<key>text_out_of_stock</key>
+		<value><![CDATA[Esaurito]]></value>
+	</definition>
+	<definition>
+		<key>text_act_on_behalf</key>
+		<value><![CDATA[Avviso: modalità impersonata per il cliente "%s" da "%s"]]></value>
+	</definition>
+	<definition>
+		<key>price_with_tax</key>
+		<value><![CDATA[IVA inclusa]]></value>
+	</definition>
+	<definition>
+		<key>text_back_on_top</key>
+		<value><![CDATA[Torna in cima]]></value>
 	</definition>
 </definitions>

@@ -1,14 +1,15 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+
 /*------------------------------------------------------------------------------
   $Id$
 
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2016 Belavier Commerce LLC
+  Copyright © 2011-2021 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
-  Lincence details is bundled with this package in the file LICENSE.txt.
+  License details is bundled with this package in the file LICENSE.txt.
   It is also available at this URL:
   <http://www.opensource.org/licenses/OSL-3.0>
 
@@ -18,310 +19,394 @@
    needs please refer to http://www.AbanteCart.com for more information.
 ------------------------------------------------------------------------------*/
 if (!defined('DIR_CORE')) {
-	header('Location: static_pages/');
+    header('Location: static_pages/');
 }
-/** @noinspection PhpUndefinedClassInspection */
-class ControllerResponsesProductProduct extends AController {
 
-	public $data = array();
+class ControllerResponsesProductProduct extends AController
+{
+    public function main()
+    {
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
+        $this->data['output'] = '';
+        try {
+            $this->config->set('embed_mode', true);
+            $cntr = $this->dispatch('pages/product/product');
+            $this->data['output'] = $cntr->dispatchGetOutput();
+        }catch(Exception $e){}
 
-	public function main() {
-		//init controller data
-        $this->extensions->hk_InitData($this,__FUNCTION__);
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
+        $this->response->setOutput($this->data['output']);
+    }
 
-		try{
-			$this->config->set('embed_mode', true);
-			$cntr = $this->dispatch('pages/product/product');
-			$html_out = $cntr->dispatchGetOutput();
-		}catch(AException $e){	}
+    public function is_group_option()
+    {
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
 
-        $this->extensions->hk_UpdateData($this,__FUNCTION__);
+        $this->loadModel('catalog/product');
+        $group_options = $this->model_catalog_product->getProductGroupOptions(
+            $this->request->get['product_id'],
+            $this->request->get['option_id'],
+            $this->request->get['option_value_id']
+        );
 
-		$this->response->setOutput($html_out);
+        foreach ($group_options as $option_id => $option_values) {
+            foreach ($option_values as $option_value_id => $option_value) {
+                $name = $option_value['name'];
+                $this->data['group_option'][$option_id][$option_value_id] = $name;
+            }
+        }
 
-  	}
+        //update controller data
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
 
+        $this->load->library('json');
+        $this->response->addJSONHeader();
+        $this->response->setOutput(AJson::encode($this->data['group_option']));
+    }
 
-	public function is_group_option() {
-		//init controller data
-		$this->extensions->hk_InitData($this, __FUNCTION__);
+    /*
+     * Load images for product option
+     * */
+    public function get_option_resources()
+    {
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
+        $product_id = (int) $this->request->post_or_get('product_id');
+        $attribute_value_id = (int) $this->request->post_or_get('attribute_value_id');
+        $output = [];
+        if ($attribute_value_id) {
+            $resource = new AResource('image');
 
-		$this->loadModel('catalog/product');
-		$group_options = $this->model_catalog_product->getProductGroupOptions(
-			$this->request->get['product_id'],
-			$this->request->get['option_id'],
-			$this->request->get['option_value_id']
-		);
+            // main product image
+            $mSizes = [
+                'main'  =>
+                    [
+                        'width'  => $this->config->get('config_image_popup_width'),
+                        'height' => $this->config->get('config_image_popup_height'),
+                    ],
+                'thumb' => [
+                    'width'  => $this->config->get('config_image_thumb_width'),
+                    'height' => $this->config->get('config_image_thumb_height'),
+                ],
+            ];
 
-		foreach ($group_options as $option_id => $option_values) {
-			foreach ($option_values as $option_value_id => $option_value) {
-				$name = $option_value['name'];
-				$this->data['group_option'][$option_id][$option_value_id] = $name;
-			}
-		}
+            $output['main'] = $resource->getResourceAllObjects(
+                'product_option_value',
+                $attribute_value_id,
+                $mSizes,
+                1,
+                false
+            );
 
-		//update controller data
-		$this->extensions->hk_UpdateData($this, __FUNCTION__);
+            if (!$output['main']) {
+                unset($output['main']);
+            }
 
-		$this->load->library('json');
-		$this->response->addJSONHeader();
-		$this->response->setOutput(AJson::encode($this->data['group_option']));
-	}
+            // additional images
+            $oSizes = [
+                'main'   =>
+                    [
+                        'width'  => $this->config->get('config_image_popup_width'),
+                        'height' => $this->config->get('config_image_popup_height'),
+                    ],
+                'thumb'  =>
+                    [
+                        'width'  => $this->config->get('config_image_additional_width'),
+                        'height' => $this->config->get('config_image_additional_height'),
+                    ],
+                //product image zoom related thumbnail
+                'thumb2' =>
+                    [
+                        'width'  => $this->config->get('config_image_thumb_width'),
+                        'height' => $this->config->get('config_image_thumb_height'),
+                    ],
+            ];
 
-	/*
-	 * Load images for product option
-	 * */
-	public function get_option_resources() {
-		//init controller data
-		$this->extensions->hk_InitData($this, __FUNCTION__);
-		$attribute_value_id = (int)$this->request->get['attribute_value_id'];
-		$output = array();
-		if ($attribute_value_id) {
-			$resource = new AResource('image');
+            $output['images'] = $resource->getResourceAllObjects(
+                'product_option_value',
+                $attribute_value_id,
+                $oSizes,
+                0,
+                false
+            );
 
-			// main product image
-			$sizes = array('main' =>
-					               array('width' => $this->config->get('config_image_popup_width'),
-						               	'height' => $this->config->get('config_image_popup_height')
-					      ),
-							'thumb' => array(
-									'width' => $this->config->get('config_image_thumb_width'),
-									'height' => $this->config->get('config_image_thumb_height')
-							)
-			);
+            //no image? see images for other selected options
+            if (!$output['images'] && $product_id && $this->request->post['selected_options']) {
+                foreach($this->request->post['selected_options'] as $optValId) {
+                    //case for multiselect options
+                    $optValId = is_array($optValId) ? current($optValId) : $optValId;
+                    $images = $resource->getResourceAllObjects(
+                        'product_option_value',
+                        $optValId,
+                        $oSizes,
+                        0,
+                        false
+                    );
+                    if ($images) {
+                        $output['main'] = $resource->getResourceAllObjects(
+                            'product_option_value',
+                            $optValId,
+                            $mSizes,
+                            1,
+                            false
+                        );
+                        $output['images'] = $images;
+                        break;
+                    }
+                }
+            }
+            if (!$output['images']) {
+                unset($output['images']);
+            }
+        }
+        $this->data['output'] = $output;
+        //update controller data
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
 
-			$output['main'] = $resource->getResourceAllObjects('product_option_value', $attribute_value_id, $sizes, 1, false);
+        $this->load->library('json');
+        $this->response->addJSONHeader();
+        $this->response->setOutput(AJson::encode($this->data['output']));
+    }
 
-			if (!$output['main']) {
-				unset($output['main']);
-			}
+    public function addToCart()
+    {
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
 
-			// additional images
-			$sizes = array('main' =>
-					               array(
-							               'width' => $this->config->get('config_image_popup_width'),
-											'height' => $this->config->get('config_image_popup_height')
-					               ),
-							'thumb' =>
-									array(
-											'width' => $this->config->get('config_image_additional_width'),
-											'height' => $this->config->get('config_image_additional_height')
-									),
-				//product image zoom related thumbnail
-							'thumb2' =>
-									array(
-											'width' => $this->config->get('config_image_thumb_width'),
-											'height' => $this->config->get('config_image_thumb_height')
-									)
-			);
+        $this->loadModel('catalog/product');
+        $product_info = $this->model_catalog_product->getProduct($this->request->get['product_id']);
+        if ($product_info) {
+            $this->cart->add(
+                $this->request->get['product_id'], ($product_info['minimum'] ? : 1)
+            );
+        }
 
-			$output['images'] = $resource->getResourceAllObjects('product_option_value', $attribute_value_id, $sizes, 0, false);
-			if (!$output['images']) {
-				unset($output['images']);
-			}
-		}
-		//update controller data
-		$this->extensions->hk_UpdateData($this, __FUNCTION__);
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
+        $this->getCartContent($this->request->get['product_id']);
+    }
 
-		$this->load->library('json');
-		$this->response->addJSONHeader();
-		$this->response->setOutput(AJson::encode($output));
-	}
+    public function getCartContent($productCartKey = null)
+    {
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
 
-	public function addToCart() {
-		//init controller data
-		$this->extensions->hk_InitData($this, __FUNCTION__);
+        $display_totals = $this->cart->buildTotalDisplay();
+        /** @see get_cart_details() */
+        $dispatch = $this->dispatch('responses/product/product/get_cart_details', [$display_totals]);
 
-		$this->loadModel('catalog/product');
-		$product_info = $this->model_catalog_product->getProduct($this->request->get['product_id']);
-		if($product_info){
-			$this->cart->add($this->request->get['product_id'], ($product_info['minimum'] ? $product_info['minimum'] : 1));
-		}
+        $this->data['cart_details'] = $dispatch->dispatchGetOutput();
+        $this->data['item_count'] = $this->cart->countProducts() + count($this->cart->getVirtualProducts()) ;
 
-		$this->extensions->hk_UpdateData($this, __FUNCTION__);
-		return $this->getCartContent();
-	}
+        $this->data['total'] = $this->currency->format($display_totals['total']);
+        if($productCartKey){
+            $product = $this->cart->getProduct($productCartKey);
+            $this->data['added_item_quantity'] = $product['qty'];
+        }
+        //update controller data
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
 
-	public function getCartContent() {
-		//init controller data
-		$this->extensions->hk_InitData($this, __FUNCTION__);
+        $this->load->library('json');
+        $this->response->addJSONHeader();
+        $this->response->setOutput(AJson::encode($this->data));
+    }
 
-		$display_totals = $this->cart->buildTotalDisplay();
+    public function get_cart_details($totals)
+    {
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
 
-		$dispatch = $this->dispatch('responses/product/product/get_cart_details',array($display_totals));
+        if (!$this->view->isTemplateExists('responses/checkout/cart_details.tpl')) {
+            return;
+        }
 
-		$this->data['cart_details'] = $dispatch->dispatchGetOutput();
-		$this->data['item_count'] = $this->cart->countProducts();
-
-		$this->data['total'] = $this->currency->format($display_totals['total']);
-		//update controller data
-		$this->extensions->hk_UpdateData($this, __FUNCTION__);
-
-		$this->load->library('json');
-		$this->response->addJSONHeader();
-		$this->response->setOutput(AJson::encode($this->data));	
-	}
-	
-	public function get_cart_details($totals){
-		//init controller data
-		$this->extensions->hk_InitData($this, __FUNCTION__);
-
-		if(!$this->view->isTemplateExists('responses/checkout/cart_details.tpl')){
-			return '';
-		}
-
-		$cart_products = $this->cart->getProducts();
-
-		$product_ids = array();
-		foreach($cart_products as $result){
-			$product_ids[] = (int)$result['product_id'];
-		}
-
-		$resource = new AResource('image');
-		$thumbnails = $resource->getMainThumbList(
-						'products',
-						$product_ids,
-						$this->config->get('config_image_product_width'),
-						$this->config->get('config_image_product_height')
-		);
-
-		foreach ($cart_products as $result) {
-			$option_data = array();
-			$thumbnail = $thumbnails[ $result['product_id'] ];
-			foreach ($result['option'] as $option) {
-				$value = $option['value'];
+        $cart_products = $this->cart->getProducts() + $this->cart->getVirtualProducts();
+        $product_ids = array_column($cart_products, 'product_id');
+        $resource = new AResource('image');
+        $thumbnails = $product_ids
+            ? $resource->getMainThumbList(
+                'products',
+                $product_ids,
+                $this->config->get('config_image_product_width'),
+                $this->config->get('config_image_product_height')
+            )
+            : $product_ids;
+        $qty = 0;
+        foreach ($cart_products as $result) {
+            $option_data = [];
+            $thumbnail = $thumbnails[$result['product_id']] ?: $result['thumb'];
+            foreach ($result['option'] as $option) {
+                $value = $option['value'];
                 // hide binary value for checkbox
-                if($option['element_type']=='C' && in_array($value, array(0,1))){
+                if ($option['element_type'] == 'C' && in_array($value, [0, 1])) {
                     $value = '';
                 }
                 // strip long textarea value
-                if($option['element_type']=='T'){
+                $title = '';
+                if ($option['element_type'] == 'T') {
                     $title = strip_tags($value);
-                    $title = str_replace('\r\n',"\n",$title);
+                    $title = str_replace('\r\n', "\n", $title);
 
-                    $value = str_replace('\r\n',"\n",$value);
-	                if(mb_strlen($value) > 64){
-		                $value = mb_substr($value, 0, 64) . '...';
-	                }
-		        }
+                    $value = str_replace('\r\n', "\n", $value);
+                    if (mb_strlen($value) > 64) {
+                        $value = mb_substr($value, 0, 64).'...';
+                    }
+                }
 
-				$option_data[] = array(
-					'name'  => $option['name'],
-					'value' => $value,
-					'title' => $title
-				);
-			}
+                $option_data[] = [
+                    'name'  => $option['name'],
+                    'value' => $value,
+                    'title' => $title,
+                ];
+                // product image by option value
+                $mSizes = [
+                    'main'  =>
+                        [
+                            'width'  => $this->config->get('config_image_cart_width'),
+                            'height' => $this->config->get('config_image_cart_height'),
+                        ],
+                    'thumb' => [
+                        'width'  => $this->config->get('config_image_cart_width'),
+                        'height' => $this->config->get('config_image_cart_height'),
+                    ],
+                ];
+                $main_image = $resource->getResourceAllObjects(
+                    'product_option_value',
+                    $option['product_option_value_id'],
+                    $mSizes,
+                    1,
+                    false
+                );
 
-			$qty += $result['quantity'];
+                if (!empty($main_image)) {
+                    $thumbnail['origin'] = $main_image['origin'];
+                    $thumbnail['title'] = $main_image['title'];
+                    $thumbnail['description'] = $main_image['description'];
+                    $thumbnail['thumb_html'] = $main_image['thumb_html'];
+                    $thumbnail['thumb_url'] = $main_image['thumb_url'];
+                }
+            }
 
-			$this->data['products'][] = array(
-				'key' => $result['key'],
-				'name' => $result['name'],
-				'option' => $option_data,
-				'quantity' => $result['quantity'],
-				'stock' => $result['stock'],
-				'price' => $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax'))),
-				'href' => $this->html->getSEOURL('product/product', '&product_id=' . $result['product_id']),
-				'thumb' => $thumbnail,
-			);
-		}
+            $qty += $result['quantity'];
 
+            $this->data['products'][] = [
+                'key'      => $result['key'],
+                'name'     => $result['name'],
+                'option'   => $option_data,
+                'quantity' => $result['quantity'],
+                'stock'    => $result['stock'],
+                'price'    => $this->currency->format(
+                    $this->tax->calculate(
+                        $result['price'] ?: $result['amount'],
+                        $result['tax_class_id'],
+                        $this->config->get('config_tax')
+                    )
+                ),
+                'href'     => $result['product_id'] ? $this->html->getSEOURL('product/product', '&product_id='.$result['product_id']) : null,
+                'thumb'    => $thumbnail,
+            ];
+        }
 
-		$this->data['totals'] = $totals['total_data'];
-		$this->data['subtotal'] = $this->currency->format($this->tax->calculate($totals['total'], $result['tax_class_id'], $this->config->get('config_tax')));
-		$this->data['taxes'] = $totals['taxes'];
-		$this->data['view'] = $this->html->getURL('checkout/cart');
-		
-		$this->view->batchAssign($this->data);
+        $this->data['totals'] = $totals['total_data'];
+        $this->data['subtotal'] = $this->currency->format(
+            $this->tax->calculate(
+                $totals['total'],
+                $result['tax_class_id'],
+                $this->config->get('config_tax')
+            )
+        );
+        $this->data['taxes'] = $totals['taxes'];
+        $this->data['view'] = $this->html->getURL('checkout/cart');
 
-		//update controller data
-		$this->extensions->hk_UpdateData($this, __FUNCTION__);
-		$this->processTemplate('responses/checkout/cart_details.tpl');
-	}
+        $this->view->batchAssign($this->data);
 
+        //update controller data
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
+        $this->processTemplate('responses/checkout/cart_details.tpl');
+    }
 
-	/*
-	 * Calculate product total based on options selected
-	 * */
-	public function calculateTotal() {
-		//init controller data
-		$this->extensions->hk_InitData($this, __FUNCTION__);
+    /*
+     * Calculate product total based on options selected
+     * */
+    public function calculateTotal()
+    {
+        $this->load->library('json');
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
 
-		$output = array();
-		//can not show price
-		if (!$this->config->get('config_customer_price') && !$this->customer->isLogged()) {
-			return $output;
-		}
+        $config_tax = $this->request->get['admin'] ? 0 : (int) $this->config->get('config_tax');
 
-		if (has_value($this->request->post['product_id']) && is_numeric($this->request->post['product_id'])) {
-			$product_id = $this->request->post['product_id'];
-			if (isset($this->request->post['option'])) {
-				$option = $this->request->post['option'];
-			} else {
-				$option = array();
-			}
+        $output = [];
+        //can not show price
+        if (!$this->config->get('config_customer_price') && !$this->customer->isLogged()) {
+            $this->response->setOutput(AJson::encode($output));
+            return;
+        }
 
-			if (isset($this->request->post['quantity'])) {
-				$quantity = (int)$this->request->post['quantity'];
-			} else {
-				$quantity = 1;
-			}
-			$result = $this->cart->buildProductDetails($product_id, $quantity, $option);
-			$output['total'] = $this->tax->calculate(
-				$result['total'],
-				$result['tax_class_id'],
-				(int)$this->config->get('config_tax')
-			);
-			$output['price'] = $this->tax->calculate(
-				$result['price'],
-				$result['tax_class_id'],
-				(int)$this->config->get('config_tax')
-			);
-			$output['total'] = $this->currency->format($output['total']);
-			$output['price'] = $this->currency->format($output['price']);
-		}
+        if (has_value($this->request->post['product_id']) && is_numeric($this->request->post['product_id'])) {
+            $product_id = $this->request->post['product_id'];
 
-		//init controller data
-		$this->extensions->hk_UpdateData($this, __FUNCTION__);
+            $option = $this->request->post['option'] ?? [];
+            $quantity = (int)$this->request->post['quantity'] ?: 1;
 
-		$this->load->library('json');
-		$this->response->setOutput(AJson::encode($output));
-	}
+            $result = $this->cart->buildProductDetails($product_id, $quantity, $option);
+            $output['price'] = $this->tax->calculate(
+                $result['price'],
+                $result['tax_class_id'],
+                $config_tax
+            );
+            $output['total'] = $this->currency->format_total($output['price'], $quantity);
+            $output['price'] = $this->currency->format($output['price']);
+        }
 
-	public function editCartProduct() {
+        $this->data['output'] = $output;
+        //init controller data
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
 
-		//init controller data
-		$this->extensions->hk_InitData($this, __FUNCTION__);
-		$this->loadLanguage('checkout/cart');
+        $this->load->library('json');
+        $this->response->setOutput(AJson::encode($this->data['output']));
+    }
 
-		if (!empty($this->request->post['quantity'])) {
-			foreach ($this->request->post['quantity'] as $key => $value) {
-				$this->cart->update($key, $value);
-			}
-			unset($this->session->data['shipping_method']);
-			unset($this->session->data['shipping_methods']);
-			unset($this->session->data['payment_method']);
-			unset($this->session->data['payment_methods']);
-			$this->extensions->hk_UpdateData($this, __FUNCTION__);
-		}
-		return $this->getCartContent();
-	}
+    public function editCartProduct()
+    {
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
+        $this->loadLanguage('checkout/cart');
 
-	public function removeFromCart() {
-		//init controller data
-		$this->extensions->hk_InitData($this, __FUNCTION__);
-		$this->loadLanguage('checkout/cart');
+        if (!empty($this->request->post['quantity'])) {
+            foreach ($this->request->post['quantity'] as $key => $value) {
+                $this->cart->update($key, $value);
+            }
+            unset(
+                $this->session->data['shipping_method'],
+                $this->session->data['shipping_methods'],
+                $this->session->data['payment_method'],
+                $this->session->data['payment_methods']
+            );
+            $this->extensions->hk_UpdateData($this, __FUNCTION__);
+        }
+        $this->getCartContent();
+    }
 
-		// Remove
-		if ($this->request->post_or_get('key')){
-			$this->cart->remove($this->request->post_or_get('key'));
-			$this->session->data['success'] = $this->language->get('text_remove');
-			unset($this->session->data['shipping_method']);
-			unset($this->session->data['shipping_methods']);
-			unset($this->session->data['payment_method']);
-			unset($this->session->data['payment_methods']);
-			$this->extensions->hk_UpdateData($this, __FUNCTION__);
-		}
-		return $this->getCartContent();
-	}
+    public function removeFromCart()
+    {
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
+        $this->loadLanguage('checkout/cart');
+
+        // Remove
+        if ($this->request->post_or_get('key')) {
+            $this->cart->remove($this->request->post_or_get('key'));
+            $this->session->data['success'] = $this->language->get('text_remove');
+            unset(
+                $this->session->data['shipping_method'],
+                $this->session->data['shipping_methods'],
+                $this->session->data['payment_method'],
+                $this->session->data['payment_methods']
+            );
+            $this->extensions->hk_UpdateData($this, __FUNCTION__);
+        }
+        $this->getCartContent();
+    }
 }

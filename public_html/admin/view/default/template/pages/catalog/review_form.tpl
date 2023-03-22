@@ -3,6 +3,15 @@
 <div id="content" class="panel panel-default">
 	<div class="panel-heading col-xs-12">
 		<div class="primary_content_actions pull-left">
+
+			<?php if (!empty ($list_url)) { ?>
+			<div class="btn-group">
+				<a class="btn btn-white tooltips" href="<?php echo $list_url; ?>" data-toggle="tooltip" data-original-title="<?php echo $text_back_to_list; ?>">
+					<i class="fa fa-arrow-left fa-lg"></i>
+				</a>
+			</div>
+			<?php } ?>
+
 			<a href="<?php echo $preview; ?>" class="btn btn-small btn-default" target="_new"><i class="fa fa-external-link"></i> <?php echo $text_view; ?></a>
 		</div>
 		<?php include($tpl_common_dir . 'content_buttons.tpl'); ?>
@@ -30,10 +39,17 @@
 			echo "has-error";
 		} ?>">
 			<label class="control-label col-sm-3 col-xs-12"
-				   for="<?php echo $field->element_id; ?>"><?php echo ${'entry_' . $name}; ?></label>
+				   for="<?php echo $field->element_id; ?>"><?php
+                if ($name === 'author' && $customerUrl) {
+                    echo '<a href="'.$customerUrl.'" target="_blank">'.${'entry_' . $name}.'</a>';
+                } else {
+                    echo ${'entry_'.$name};
+				}
+				   ?></label>
 
 			<div class="input-group afield <?php echo $widthcasses; ?> <?php echo($name == 'description' ? 'ml_ckeditor' : '') ?>">
 				<?php echo $field; ?>
+
 			</div>
 			<?php if (!empty($error[$name])) { ?>
 				<span class="help-block field_err"><?php echo $error[$name]; ?></span>

@@ -356,4 +356,36 @@
 		<key>text_transaction_notification_message</key>
 		<value><![CDATA[Nueva transacción se ha registrado en su %s en cuenta la cantidad de %s. Para más detalles, acceda a %s cuenta]]></value>
 	</definition>
+	<definition>
+		<key>text_total_order</key>
+		<value><![CDATA[El total de pedidos:]]></value>
+	</definition>
+	<definition>
+		<key>text_last_login</key>
+		<value><![CDATA[Último acceso:]]></value>
+	</definition>
+	<definition>
+		<key>text_never</key>
+		<value><![CDATA[Nunca]]></value>
+	</definition>
+	<definition>
+		<key>text_other_type_placeholder</key>
+		<value><![CDATA[escriba el nuevo nombre aquí]]></value>
+	</definition>
+	<definition>
+		<key>text_register_date</key>
+		<value><![CDATA[Fecha de registro:]]></value>
+	</definition>
+	<definition>
+		<key>column_id</key>
+		<value><![CDATA[CARNÉ DE IDENTIDAD]]></value>
+	</definition>
+	<definition>
+		<key>error_incorrect_debit_credit</key>
+		<value><![CDATA[Error: el valor de débito o crédito no puede ser mayor que 99999999999.9999]]></value>
+	</definition>
+	<definition>
+		<key>error_email_exists</key>
+		<value><![CDATA[¡El cliente con esta dirección de correo electrónico ya existe!]]></value>
+	</definition>
 </definitions>

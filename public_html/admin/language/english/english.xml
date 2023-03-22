@@ -239,7 +239,7 @@
 	<definition>
 		<key>button_message</key>
 		<value><![CDATA[Contact this customer]]></value>
-	</definition>	
+	</definition>
 	<definition>
 		<key>button_approve</key>
 		<value><![CDATA[Approve]]></value>
@@ -371,7 +371,7 @@
 	</definition>
 	<definition>
 		<key>error_upload_999</key>
-		<value><![CDATA[Warning: No error code avaiable!]]></value>
+		<value><![CDATA[Warning: No error code available!]]></value>
 	</definition>
 	<definition>
 		<key>text_choose_action</key>
@@ -534,6 +534,10 @@
 		<value><![CDATA[All]]></value>
 	</definition>
 	<definition>
+		<key>text_all_stores</key>
+		<value><![CDATA[All Stores]]></value>
+	</definition>
+	<definition>
 		<key>text_create_new_block</key>
 		<value><![CDATA[ Create New Block ]]></value>
 	</definition>
@@ -656,7 +660,7 @@
 	<definition>
 		<key>text_select_from_lookup</key>
 		<value><![CDATA[Start typing (name, model, sku, etc.) to look up and select result]]></value>
-	</definition>	
+	</definition>
 	<definition>
 		<key>text_continue_typing</key>
 		<value><![CDATA[Continue typing ...]]></value>
@@ -684,6 +688,10 @@
 	<definition>
 		<key>text_copy_embed_code</key>
 		<value><![CDATA[Сopy and paste this into your HTML-code where you'd like to sell]]></value>
+	</definition>
+	<definition>
+		<key>text_copy_embed_url</key>
+		<value><![CDATA[Сopy and paste this URL into your another site where you'd like to sell]]></value>
 	</definition>
 	<definition>
 		<key>button_retry</key>
@@ -732,5 +740,37 @@
 	<definition>
 		<key>text_texteditor_extended_mode</key>
 		<value><![CDATA[<a class="texteditor_ext_mode" href="%s" ><i class="fa fa-external-link"></i> Edit in Extended Mode</a>]]></value>
+	</definition>
+	<definition>
+		<key>text_quick_view</key>
+		<value><![CDATA[Quick View]]></value>
+	</definition>
+	<definition>
+		<key>text_more_current</key>
+		<value><![CDATA[Full page edit]]></value>
+	</definition>
+	<definition>
+		<key>text_more_new</key>
+		<value><![CDATA[New tab edit]]></value>
+	</definition>
+	<definition>
+		<key>text_back_to_list</key>
+		<value><![CDATA[Back to listing]]></value>
+	</definition>
+	<definition>
+		<key>text_help_link</key>
+		<value><![CDATA[<a href="http://www.abantecart.com/contact-us" target="_abantecart">Need help?</a>]]></value>
+	</definition>
+	<definition>
+		<key>text_subtract_order</key>
+		<value><![CDATA[Subtract Order]]></value>
+	</definition>
+	<definition>
+		<key>button_preview</key>
+		<value><![CDATA[Preview]]></value>
+	</definition>
+	<definition>
+		<key>warning_extensions_with_layouts</key>
+		<value><![CDATA[ Following extensions <br> %s <br> includes pages or layouts that are not present in the selected template. To include features from these extensions you will need to reinstall extensions after you enable new template. If reinstallation does not help, contact original developers of the above extensions for help.  ]]></value>
 	</definition>
 </definitions>

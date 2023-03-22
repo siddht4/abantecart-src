@@ -452,4 +452,24 @@
 		<key>text_rl_manager</key>
 		<value><![CDATA[Медиа менеджер]]></value>
 	</definition>
+	<definition>
+		<key>text_analytics</key>
+		<value><![CDATA[Аналитика]]></value>
+	</definition>
+	<definition>
+		<key>text_server_time</key>
+		<value><![CDATA[Время сервера]]></value>
+	</definition>
+	<definition>
+		<key>text_taxes</key>
+		<value><![CDATA[Налоги]]></value>
+	</definition>
+	<definition>
+		<key>email_templates</key>
+		<value><![CDATA[Шаблоны электронной почты]]></value>
+	</definition>
+	<definition>
+		<key>text_collection</key>
+		<value><![CDATA[Коллекции]]></value>
+	</definition>
 </definitions>

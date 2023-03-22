@@ -740,4 +740,44 @@
 		<key>text_texteditor_extended_mode</key>
 		<value><![CDATA[<a class="texteditor_ext_mode" href="%s" ><i class="fa fa-external-link"></i> Modifica in modalità estesa</a>]]></value>
 	</definition>
+	<definition>
+		<key>text_quick_view</key>
+		<value><![CDATA[Occhiata veloce]]></value>
+	</definition>
+	<definition>
+		<key>text_more_current</key>
+		<value><![CDATA[Pagina intera]]></value>
+	</definition>
+	<definition>
+		<key>text_more_new</key>
+		<value><![CDATA[Nuova scheda]]></value>
+	</definition>
+	<definition>
+		<key>text_back_to_list</key>
+		<value><![CDATA[Torna alla quotazione]]></value>
+	</definition>
+	<definition>
+		<key>text_all_stores</key>
+		<value><![CDATA[Tutti i negozi]]></value>
+	</definition>
+	<definition>
+		<key>text_help_link</key>
+		<value><![CDATA[<a href="http://www.abantecart.com/contact-us" target="_abantecart">Ho bisogno di aiuto?</a>]]></value>
+	</definition>
+	<definition>
+		<key>text_subtract_order</key>
+		<value><![CDATA[Sottrai ordine]]></value>
+	</definition>
+	<definition>
+		<key>text_copy_embed_url</key>
+		<value><![CDATA[Copia e incolla questo URL nel tuo altro sito in cui desideri vendere]]></value>
+	</definition>
+	<definition>
+		<key>button_preview</key>
+		<value><![CDATA[Anteprima]]></value>
+	</definition>
+	<definition>
+		<key>warning_extensions_with_layouts</key>
+		<value><![CDATA[Le seguenti estensioni <br/> %s <br/> includono pagine o layout che non sono presenti nel modello selezionato. Per includere le funzionalità di queste estensioni dovrai reinstallare le estensioni dopo aver abilitato il nuovo modello. Se la reinstallazione non aiuta, contattare gli sviluppatori originali delle estensioni di cui sopra per assistenza.]]></value>
+	</definition>
 </definitions>

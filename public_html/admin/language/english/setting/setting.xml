@@ -54,11 +54,23 @@
 	</definition>
 	<definition>
 		<key>text_mail</key>
-		<value><![CDATA[Mail]]></value>
+		<value><![CDATA[Inner Mailer]]></value>
 	</definition>
 	<definition>
 		<key>text_smtp</key>
 		<value><![CDATA[SMTP]]></value>
+	</definition>
+	<definition>
+		<key>text_native</key>
+		<value><![CDATA[Native ( sendmail binary and options "sendmail_path" setting of php.ini)]]></value>
+	</definition>
+	<definition>
+		<key>text_dsn</key>
+		<value><![CDATA[Take from system/config.php]]></value>
+	</definition>
+	<definition>
+		<key>text_dsn_description</key>
+		<value><![CDATA[Mailer combines a <a target="_blank" href="https://en.wikipedia.org/wiki/Data_source_name">DSN</a> from config.php file. Please read <a target="_blank" href="https://abantecart.atlassian.net/wiki/spaces/AD/pages/7372837/Mail+Settings">our documentation</a> for details  ]]></value>
 	</definition>
 	<definition>
 		<key>tab_all</key>
@@ -139,17 +151,17 @@
 	</definition>
 	<definition>
 		<key>entry_admin_language</key>
-		<value><![CDATA[Administration Language:]]></value>
+		<value><![CDATA[Administration Language: <span class="help">NOTE: works if no user preferred language is found in the browser</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_currency</key>
 		<value>
-			<![CDATA[Currency:<span class="help">NOTE: Changing default currency does not convert all product prices</span>]]></value>
+			<![CDATA[Base Currency:<span class="help">This is a base currency for all stores. Do not change if you do not understand what will happen. Warning: Changing of base currency will not change your base prices for products. You will need to review and adjust all the prices if needed. Base currency exchange rate will be set to 1.00 and all other currencies exchange rates will be adjusted in respect to new base currency.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_currency_auto</key>
 		<value>
-			<![CDATA[Auto Update Currency:<br /><span class="help">Set your store to automatically update currencies daily. Yahoo server is used.</span>]]></value>
+			<![CDATA[Auto Update Currency:<br /><span class="help">Set your store to automatically update currencies daily.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_weight_class</key>
@@ -268,7 +280,7 @@
 	<definition>
 		<key>entry_stock_display</key>
 		<value>
-			<![CDATA[Display Stock:<br /><span class="help">Display stock quantity on the product page.</span>]]></value>
+			<![CDATA[Display Stock Quantity:<br /><span class="help">Display stock quantity on the product page.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_nostock_autodisable</key>
@@ -278,16 +290,20 @@
 	<definition>
 		<key>entry_stock_checkout</key>
 		<value>
-			<![CDATA[Stock Checkout:<br /><span class="help">Allow customers to still checkout if the products they are ordering are not in stock.</span>]]></value>
+			<![CDATA[Default Stock Checkout:<br /><span class="help">Set default setting to allow customers checkout even if the products are out of stock</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_stock_status</key>
 		<value>
-			<![CDATA[Stock Status:<br /><span class="help">Default setting for out of stock status message for product. Used on product edit page.</span>]]></value>
+			<![CDATA[Default Pre-Order Stock Status:<br /><span class="help">Default setting for Pre-order status message for product. Used on product edit page.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_logo</key>
 		<value><![CDATA[Store Logo:]]></value>
+	</definition>
+	<definition>
+		<key>entry_mail_logo</key>
+		<value><![CDATA[Email Logo:]]></value>
 	</definition>
 	<definition>
 		<key>entry_icon</key>
@@ -352,11 +368,13 @@
 	</definition>
 	<definition>
 		<key>entry_image_product_height</key>
-		<value><![CDATA[Product List Height:<br /><span class="help">This is to control height of a preview image in the listing pages of admin and other places in the storefront. Note, this setting is shared between admin and default storefront template.</span>]]></value>
+		<value>
+			<![CDATA[Product List Height:<br /><span class="help">This is to control height of a preview image in the listing pages of admin and other places in the storefront. Note, this setting is shared between admin and default storefront template.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_image_product_width</key>
-		<value><![CDATA[Product List Width:<br /><span class="help">This is to control width of a preview image in the listing pages of admin and other places in the storefront. Note, this setting is shared between admin and default storefront template.</span>]]></value>
+		<value>
+			<![CDATA[Product List Width:<br /><span class="help">This is to control width of a preview image in the listing pages of admin and other places in the storefront. Note, this setting is shared between admin and default storefront template.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_image_additional</key>
@@ -400,11 +418,13 @@
 	</definition>
 	<definition>
 		<key>entry_image_grid_width</key>
-		<value><![CDATA[Grid Image Width:<br /><span class="help">This is to control width of a very small preview image in the listing grids of admin and other places in the storefront. Note, this setting is shared between admin and default storefront template.</span>]]></value>
+		<value>
+			<![CDATA[Grid Image Width:<br /><span class="help">This is to control width of a very small preview image in the listing grids of admin and other places in the storefront. Note, this setting is shared between admin and default storefront template.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_image_grid_height</key>
-		<value><![CDATA[Grid Image Height:<br /><span class="help">This is to control height of a very small preview image in the listing grids of admin and other places in the storefront. Note, this setting is shared between admin and default storefront template.</span>]]></value>
+		<value>
+			<![CDATA[Grid Image Height:<br /><span class="help">This is to control height of a very small preview image in the listing grids of admin and other places in the storefront. Note, this setting is shared between admin and default storefront template.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_alert_mail</key>
@@ -421,14 +441,14 @@
 			<![CDATA[Download Order Status:<br /><span class="help">Set the order status the customers order must reach before they are allowed to access their downloadable products.</span>]]></value>
 	</definition>
 	<definition>
-		<key>entry_mail_protocol</key>
+		<key>entry_mail_transporting</key>
 		<value>
-			<![CDATA[Mail Protocol:<span class="help">Mail: Default server mail server will be used. Make sure it is configured and able to send email with PHP mail.]]></value>
+			<![CDATA[Mail Transporting:]]></value>
 	</definition>
 	<definition>
-		<key>entry_mail_parameter</key>
+		<key>text_native_mail_description</key>
 		<value>
-			<![CDATA[Mail Parameters:<span class="help">When using 'Mail', additional mail parameters can be added here (e.g. "-femail@storeaddress.com".]]></value>
+			<![CDATA[Mailer uses the sendmail binary and options configured in the sendmail_path setting of php.ini. ]]></value>
 	</definition>
 	<definition>
 		<key>entry_smtp_host</key>
@@ -635,7 +655,7 @@
 	<definition>
 		<key>entry_reviews</key>
 		<value>
-			<![CDATA[Allow Reviews:<br /><span class="help">Enable/Disable new review entry and display of existing reviews</span>]]></value>
+			<![CDATA[Post Reviews:<br /><span class="help">Restrict who can post review for the products</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_maintenance</key>
@@ -707,7 +727,7 @@
 	</definition>
 	<definition>
 		<key>error_url</key>
-		<value><![CDATA[Store URL required!]]></value>
+		<value><![CDATA[Valid Store URL required!]]></value>
 	</definition>
 	<definition>
 		<key>error_title</key>
@@ -847,15 +867,26 @@
 	</definition>
 	<definition>
 		<key>entry_google_analytics</key>
-		<value><![CDATA[Google Analytics Account Number:<br /><span class="help">Add your <a href="https://support.google.com/analytics/answer/1032385?hl=en&ref_topic=1008082" target="_blank">Google Analytics Account Number</a> to enable site activity tracking. This also enables ecommerce activity tracking. You must enable ecommerce tracking in google on the profile settings page for your website</span>]]></value>
+		<value>
+			<![CDATA[Universal Google Analytics Account Number:<br /><span class="help">Add your <a href="https://support.google.com/analytics/answer/1032385?hl=en&ref_topic=1008082" target="_blank">Google Analytics Account Number</a> to enable site activity tracking. This also enables ecommerce activity tracking. You must enable ecommerce tracking in google on the profile settings page for your website</span>]]></value>
+	</definition>
+	<definition>
+		<key>entry_google_tag_manager</key>
+		<value><![CDATA[Universal Google Tag Manager ID:<br />]]></value>
+	</definition>
+	<definition>
+		<key>entry_google_api_key</key>
+		<value>
+			<![CDATA[Google API Key (to enable google maps):<br /><span class="help">You can see address on the map. To enable google maps add your Google maps API key <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Credentials Page</a>.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_ssl_url</key>
-		<value><![CDATA[Secure Store URL:<br /><span class="help">Include the full SSL URL(HTTPS) to your store. Make sure to add '/' at the end. Example: https://www.yourdomain.com/path/</span>]]></value>
+		<value>
+			<![CDATA[Secure Store URL:<br /><span class="help">Include the full SSL URL(HTTPS) to your store. Make sure to add '/' at the end. Example: https://www.yourdomain.com/path/</span>]]></value>
 	</definition>
 	<definition>
 		<key>error_ssl_url</key>
-		<value><![CDATA[Secure URL required!]]></value>
+		<value><![CDATA[Valid Secure URL required!]]></value>
 	</definition>
 	<definition>
 		<key>entry_customer_email_activation</key>
@@ -896,11 +927,13 @@
 	</definition>
 	<definition>
 		<key>entry_recaptcha_site_key</key>
-		<value><![CDATA[Google reCAPTCHA Site Key:<br /><span class="help">Add <a href="https://www.google.com/recaptcha" target="_blank">Google reCAPTCHA v2</a> to help your visitors with better captcha entry. If you enable reCAPTCHA site/secret keys, Google reCAPTCHA v2 will be activated instead of default AbanteCart captcha image</span>]]></value>
+		<value>
+			<![CDATA[Google reCAPTCHA Site Key:<br /><span class="help">Add <a href="https://www.google.com/recaptcha" target="_blank">Google reCAPTCHA v2</a> to help your visitors with better captcha entry. If you enable reCAPTCHA site/secret keys, Google reCAPTCHA v2 will be activated instead of default AbanteCart captcha image</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_recaptcha_secret_key</key>
-		<value><![CDATA[Google reCAPTCHA Secret Key:<br /><span class="help">Add <a href="https://www.google.com/recaptcha" target="_blank">Google reCAPTCHA v2</a> to help your visitors with better captcha entry. If you enable reCAPTCHA site/secret keys, Google reCAPTCHA v2 will be activated instead of default AbanteCart captcha image</span>]]></value>
+		<value>
+			<![CDATA[Google reCAPTCHA Secret Key:<br /><span class="help">Add <a href="https://www.google.com/recaptcha" target="_blank">Google reCAPTCHA v2</a> to help your visitors with better captcha entry. If you enable reCAPTCHA site/secret keys, Google reCAPTCHA v2 will be activated instead of default AbanteCart captcha image</span>]]></value>
 	</definition>
 	<definition>
 		<key>text_setting_php_exceed</key>
@@ -921,7 +954,7 @@
 	<definition>
 		<key>entry_expire_order_days</key>
 		<value>
-			<![CDATA[Incomplete Order Expiration:<br /><br /><span class="help">This value controls time interval in days before incomplete orders will be deleted. Empty value means that no orders will be to deleted.</span>]]></value>
+			<![CDATA[Incomplete Order Expiration:<br /><span class="help">This value controls time interval in days before incomplete orders will be deleted. Empty value means that no orders will be to deleted.</span>]]></value>
 	</definition>
 	<definition>
 		<key>error_expire_order_days</key>
@@ -969,6 +1002,96 @@
 	</definition>
 	<definition>
 		<key>entry_html_cache</key>
-		<value><![CDATA[HTML Cache:<br /><span class="help">Enabled HTML pages and blocks caching to get better speed for your pages. This is additional caching to regular data caching enabled in system/config.php file</span>]]></value>
+		<value>
+			<![CDATA[HTML Cache:<br /><span class="help">Enabled HTML pages and blocks caching to get better speed for your pages. This is additional caching to regular data caching enabled in system/config.php file</span>]]></value>
+	</definition>
+	<definition>
+		<key>entry_task_api_key</key>
+		<value>
+			<![CDATA[Tasks API Key:<br/><span class="help">This is a secret key to allow AbanteCart to run scheduled processes from the browser with /task.php file. If not set, tasks will not run via browser.<br/>NOTE: This API Key is not required for running tasks command line.</span>]]></value>
+	</definition>
+	<definition>
+		<key>entry_duplicate_contact_us</key>
+		<value><![CDATA[Duplicate Contact Enquiries to Messages]]></value>
+	</definition>
+	<definition>
+		<key>entry_tax_class</key>
+		<value><![CDATA[Default Tax Class:<br/><span class="help">Default value will be taken as default value for tax class of new creating product.</span>]]></value>
+	</definition>
+	<definition>
+		<key>entry_account_recaptcha_v3</key>
+		<value><![CDATA[Enable reCaptcha v3]]></value>
+	</definition>
+	<definition>
+		<key>text_review_disable</key>
+		<value><![CDATA[Do not allow]]></value>
+	</definition>
+	<definition>
+		<key>text_review_allow_all</key>
+		<value><![CDATA[Any customer or visitor]]></value>
+	</definition>
+	<definition>
+		<key>text_review_allow_only_registered</key>
+		<value><![CDATA[Registered Customer]]></value>
+	</definition>
+	<definition>
+		<key>text_review_allow_who_purchase</key>
+		<value><![CDATA[Customer with verified order]]></value>
+	</definition>
+	<definition>
+		<key>entry_display_reviews</key>
+		<value><![CDATA[Display Reviews:]]></value>
+	</definition>
+	<definition>
+		<key>entry_city</key>
+		<value><![CDATA[City:]]></value>
+	</definition>
+	<definition>
+		<key>entry_postcode</key>
+		<value><![CDATA[Postal Code:]]></value>
+	</definition>
+	<definition>
+		<key>entry_latitude</key>
+		<value><![CDATA[Latitude:]]></value>
+	</definition>
+	<definition>
+		<key>entry_longitude</key>
+		<value><![CDATA[Longitude:]]></value>
+	</definition>
+	<definition>
+		<key>entry_opening_hours</key>
+		<value><![CDATA[Opening Hours:]]></value>
+	</definition>
+	<definition>
+		<key>error_postcode</key>
+		<value><![CDATA[Postal code is required]]></value>
+	</definition>
+	<definition>
+		<key>error_city</key>
+		<value><![CDATA[City name is required]]></value>
+	</definition>
+	<definition>
+		<key>entry_image_resize_fill_color</key>
+		<value><![CDATA[Color of fill for image resize<br/><span class="help">Color that will be filled into empty areas during image resizing from rectangle into square</span>]]></value>
+	</definition>
+	<definition>
+		<key>warning_https_store_url</key>
+		<value><![CDATA[To maintain correct platform functionality in all browsers and maintain data security, HTTPS protocol is required. All requests should be sent to HTTPS]]></value>
+	</definition>
+	<definition>
+		<key>entry_default_logo</key>
+		<value><![CDATA[Default Store Logo:]]></value>
+	</definition>
+	<definition>
+		<key>entry_default_mail_logo</key>
+		<value><![CDATA[Default Email Logo:]]></value>
+	</definition>
+	<definition>
+		<key>entry_phone_validation_pattern</key>
+		<value><![CDATA[Phone Validation Regex Pattern:]]></value>
+	</definition>
+	<definition>
+		<key>entry_cron_command</key>
+		<value><![CDATA[Crontab in Linux command <span class="help">Run command crontab -e with the same Linux user running a web server for the AbanteCart. In the editor add the command</span>]]></value>
 	</definition>
 </definitions>

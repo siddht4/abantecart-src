@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2016 Belavier Commerce LLC
+  Copyright © 2011-2020 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -18,11 +18,11 @@
    needs please refer to http://www.AbanteCart.com for more information.
 ------------------------------------------------------------------------------*/
 
-if (! defined ( 'DIR_CORE' )) {
-	header ( 'Location: static_pages/' );
+if (!defined('DIR_CORE')) {
+    header('Location: static_pages/');
 }
 
-//before install validate it is unique 
+//before install validate it is unique
 $lng_code = 'es';
 $lng_name = 'Español';
 $lng_directory = 'spanish';
@@ -33,40 +33,42 @@ $lng_status = 0; // Status on installation of extension
 
 $query = $this->db->query("SELECT language_id FROM ".$this->db->table('languages')." WHERE code='".$lng_code."'");
 if ($query->row['language_id']) {
-	$this->session->data['error'] = "Error: Language with ".$lng_code." code is already installed! Can not install duplicate languages! Uninstall this extension before attempting again.";
-	$error = new AError ($this->session->data['error']);
-	$error->toLog()->toDebug();
-	return false;
+    $this->session->data['error'] = "Error: Language with ".$lng_code." code is already installed! Can not install duplicate languages! Uninstall this extension before attempting again.";
+    $error = new AError ($this->session->data['error']);
+    $error->toLog()->toDebug();
+    return false;
 }
 
 $this->db->query("INSERT INTO ".$this->db->table('languages')." (`name`,`code`,`locale`,`image`,`directory`,`filename`,`sort_order`, `status`)
 				  VALUES ('".$lng_name."', '".$lng_code."', '".$lng_locale."', '".$lng_flag_path."','".$lng_directory."','".$lng_directory."','".$lng_sort."',".$lng_status.");");
-				 				  				  
+
 $new_language_id = $this->db->getLastId();
 $xml = simplexml_load_file(DIR_EXT.'default_spanish/menu.xml');
 
 $routes = array(
-			'text_index_home_menu'=>'index/home',
-			'text_account_login_menu'=>'account/login',
-			'text_account_logout_menu'=>'account/logout',
-			'text_account_account_menu'=>'account/account',
-			'text_checkout_cart_menu'=>'checkout/cart',
-			'text_checkout_shipping_menu'=>'checkout/shipping'
+    'text_index_home_menu'        => 'index/home',
+    'text_product_special_menu'   => 'product/special',
+    'text_account_login_menu'     => 'account/login',
+    'text_account_logout_menu'    => 'account/logout',
+    'text_account_account_menu'   => 'account/account',
+    'text_account_invoice_menu'   => 'account/invoice',
+    'text_checkout_cart_menu'     => 'checkout/cart',
+    'text_checkout_shipping_menu' => 'checkout/shipping',
 );
 
-if($xml){
-	foreach($xml->definition as $item){
-		$translates[$routes[(string)$item->key]] = (string)$item->value;
-	}
+if ($xml) {
+    foreach ($xml->definition as $item) {
+        $translates[$routes[(string)$item->key]] = (string)$item->value;
+    }
 
-	$storefront_menu = new AMenu_Storefront();
-	$storefront_menu->addLanguage($new_language_id,$translates);
+    $storefront_menu = new AMenu_Storefront();
+    $storefront_menu->addLanguage($new_language_id, $translates);
 }
 
 //Load core content
 
 $this->db->query("INSERT INTO ".$this->db->table('country_descriptions')."
-(`country_id`,`language_id`, `name`) VALUES  
+(`country_id`,`language_id`, `name`) VALUES
 (1, ".$new_language_id.",'Afganistán'),
 (2, ".$new_language_id.",'Albania'),
 (3, ".$new_language_id.",'Argelia'),
@@ -309,9 +311,8 @@ $this->db->query("INSERT INTO ".$this->db->table('country_descriptions')."
 (240, ".$new_language_id.",'Irlanda del Norte');
 ");
 
-
 $this->db->query("INSERT INTO ".$this->db->table('zone_descriptions')."
-(`zone_id`,`language_id`, `name`) VALUES  
+(`zone_id`,`language_id`, `name`) VALUES
 (1, ".$new_language_id.",'Badakhshan'),
 (2, ".$new_language_id.",'Badghis'),
 (3, ".$new_language_id.",'Baghlan'),
@@ -3775,7 +3776,7 @@ $this->db->query("INSERT INTO ".$this->db->table('zone_descriptions')."
 (3481, ".$new_language_id.",'Chernihiv'),
 (3482, ".$new_language_id.",'Chernivtsi'),
 (3483, ".$new_language_id.",'Crimea'),
-(3484, ".$new_language_id.",'Dnipropetrovs&#39;k'),
+(3484, ".$new_language_id.",'Dnipro'),
 (3485, ".$new_language_id.",'Donets&#39;k'),
 (3486, ".$new_language_id.",'Ivano-Frankovsk'),
 (3487, ".$new_language_id.",'Kharkiv'),
@@ -4249,21 +4250,21 @@ $this->db->query("INSERT INTO ".$this->db->table('zone_descriptions')."
 ");
 
 $this->db->query("INSERT INTO ".$this->db->table('stock_statuses')."
-(`stock_status_id`,`language_id`, `name`) VALUES  
+(`stock_status_id`,`language_id`, `name`) VALUES
 (1, ".$new_language_id.", 'En stock'),
 (2, ".$new_language_id.", 'Agotado'),
 (3, ".$new_language_id.", 'Pre-Orden');
 ");
 
 $this->db->query("INSERT INTO ".$this->db->table('length_class_descriptions')."
-(`length_class_id`, `language_id`, `title`, `unit`) VALUES 
+(`length_class_id`, `language_id`, `title`, `unit`) VALUES
 (1, ".$new_language_id.", 'Centímetro', 'cm'),
 (2, ".$new_language_id.", 'Milímetro', 'mm'),
 (3, ".$new_language_id.", 'Pulgada', 'in');
 ");
 
 $this->db->query("INSERT INTO ".$this->db->table('weight_class_descriptions')."
-(`weight_class_id`, `language_id`, `title`, `unit`) VALUES 
+(`weight_class_id`, `language_id`, `title`, `unit`) VALUES
 (1, ".$new_language_id.", 'Kilogramo', 'kg'),
 (2, ".$new_language_id.", 'Gramo', 'g'),
 (5, ".$new_language_id.", 'Libra ', 'lb'),
@@ -4271,7 +4272,7 @@ $this->db->query("INSERT INTO ".$this->db->table('weight_class_descriptions')."
 ");
 
 $this->db->query("INSERT INTO ".$this->db->table('order_statuses')."
-(`order_status_id`, `language_id`, `name`) VALUES 
+(`order_status_id`, `language_id`, `name`) VALUES
 (0, ".$new_language_id.", 'Incompleto'),
 (1, ".$new_language_id.", 'Pendiente'),
 (2, ".$new_language_id.", 'Tratamiento'),
@@ -4287,7 +4288,7 @@ $this->db->query("INSERT INTO ".$this->db->table('order_statuses')."
 ");
 
 $this->db->query("INSERT INTO ".$this->db->table('page_descriptions')."
-(`page_id`, `language_id`, `name`, `title`, `seo_url`, `keywords`, `description`, `content`, `date_added`) VALUES 
+(`page_id`, `language_id`, `name`, `title`, `seo_url`, `keywords`, `description`, `content`, `date_added`) VALUES
 (1, ".$new_language_id.", 'Las demás páginas', '', '', '', '', '', now() ),
 (2, ".$new_language_id.", 'Página de inicio', '', '', '', '', '', now() ),
 (3, ".$new_language_id.", 'Pedido Páginas', '', '', '', '', '', now() ),
@@ -4298,18 +4299,18 @@ $this->db->query("INSERT INTO ".$this->db->table('page_descriptions')."
 ");
 
 $this->db->query("INSERT INTO ".$this->db->table('global_attributes_type_descriptions')."
-(`attribute_type_id`, `language_id`, `type_name`, `date_added`) VALUES 
+(`attribute_type_id`, `language_id`, `type_name`, `date_added`) VALUES
 (1, ".$new_language_id.", 'Opción del Producto', NOW()),
 (2, ".$new_language_id.", 'Descargar Atributo', NOW());
 ");
 
 $this->db->query("INSERT INTO ".$this->db->table('form_descriptions')."
-(`form_id`, `language_id`, `description`) VALUES 
+(`form_id`, `language_id`, `description`) VALUES
 (2, ".$new_language_id.",'Formulario de Contacto');
 ");
 
 $this->db->query("INSERT INTO ".$this->db->table('field_descriptions')."
-(`field_id`, `name`, `error_text`, `language_id`) VALUES 
+(`field_id`, `name`, `error_text`, `language_id`) VALUES
 (14,'Introduzca el código en el cuadro a continuación:','El código de verificación no coincide con la imagen!', ".$new_language_id."),
 (13,'Consulta:','La petición debe ser superior de 10 caracteres y menos de 1000!', ".$new_language_id."),
 (12,'Email:','El Correo electrónico no parece válido!', ".$new_language_id."),

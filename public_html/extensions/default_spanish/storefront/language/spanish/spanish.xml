@@ -182,7 +182,7 @@
 	</definition>
 	<definition>
 		<key>notice_out_of_stock_body</key>
-		<value><![CDATA[Producto "%s", habet nulla seu negative stirpe attigit, Numerabis main productum sive omnia bene. ut a praecessi of <br> autodisable occasum, uber (%s) disabled car erat!]]></value>
+		<value><![CDATA[Producto "%s", habet nulla seu negative stirpe attigit, Numerabis main productum sive omnia bene. ut a praecessi of <br> autodisable occasum, uber (%s) disabled car erat! <br> Para más detalles, visite %s]]></value>
 	</definition>
 	<definition>
 		<key>no_payment_required</key>
@@ -261,6 +261,10 @@
 		<value><![CDATA[Aviso: El modo de mantenimiento está encendido.]]></value>
 	</definition>
 	<definition>
+		<key>text_act_on_behalf</key>
+		<value><![CDATA[Aviso: Modo de suplantación para el cliente "%s" por "%s"]]></value>
+	</definition>
+	<definition>
 		<key>text_browse</key>
 		<value><![CDATA[Seleccione Archivo]]></value>
 	</definition>
@@ -319,5 +323,21 @@
 	<definition>
 		<key>button_pay_with_balance</key>
 		<value><![CDATA[Con el Balance de pagar]]></value>
+	</definition>
+	<definition>
+		<key>text_click_browse_file</key>
+		<value><![CDATA[Haga clic para examinar el archivo]]></value>
+	</definition>
+	<definition>
+		<key>price_with_tax</key>
+		<value><![CDATA[IVA Inc.]]></value>
+	</definition>
+	<definition>
+		<key>text_back_on_top</key>
+		<value><![CDATA[Volver arriba]]></value>
+	</definition>
+	<definition>
+		<key>text_out_of_stock</key>
+		<value><![CDATA[Agotado]]></value>
 	</definition>
 </definitions>

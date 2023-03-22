@@ -1,5 +1,6 @@
 <form action="<?php echo str_replace('&', '&amp;', $action); ?>" method="post" id="checkout">
 	<input type="hidden" name="sid" value="<?php echo $sid; ?>"/>
+	<input type="hidden" name="currency_code" value="<?php echo $currency_code; ?>"/>
 	<input type="hidden" name="total" value="<?php echo $total; ?>"/>
 	<input type="hidden" name="cart_order_id" value="<?php echo $cart_order_id; ?>"/>
 	<input type="hidden" name="merchant_order_id" value="<?php echo $cart_order_id; ?>"/>
@@ -19,6 +20,9 @@
 	<input type="hidden" name="ship_state" value="<?php echo $ship_state; ?>"/>
 	<input type="hidden" name="ship_zip" value="<?php echo $ship_zip; ?>"/>
 	<input type="hidden" name="ship_country" value="<?php echo $ship_country; ?>"/>
+<?php if($demo){ ?>
+    <input type="hidden" name="demo" value="Y"/>
+<?php } ?>
 	<?php $i = 0; ?>
 	<?php foreach ($products as $product) { ?>
 	<input type="hidden" name="c_prod_<?php echo $i; ?>"
@@ -29,14 +33,11 @@
 	<?php $i++; ?>
 	<?php } ?>
 	<input type="hidden" name="id_type" value="1"/>
-	<?php if (isset($demo)) { ?>
-	<input type="hidden" name="demo" value="<?php echo $demo; ?>"/>
-	<?php } ?>
 	<input type="hidden" name="lang" value="<?php echo $lang; ?>"/>
 
 	<div class="form-group action-buttons">
 	    <div class="col-md-12">
-	    	<button id="checkout_btn" class="btn btn-orange pull-right" title="<?php echo $button_confirm; ?>">
+	    	<button id="checkout_btn" class="btn btn-orange pull-right lock-on-click" title="<?php echo $button_confirm; ?>">
 	    	    <i class="fa fa-check"></i>
 	    	    <?php echo $button_confirm; ?>
 	    	</button>

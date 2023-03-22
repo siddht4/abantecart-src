@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2016 Belavier Commerce LLC
+  Copyright © 2011-2022 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   Lincence details is bundled with this package in the file LICENSE.txt.
@@ -17,116 +17,143 @@
    versions in the future. If you wish to customize AbanteCart for your
    needs please refer to http://www.AbanteCart.com for more information.
 ------------------------------------------------------------------------------*/
-if ( !defined ( 'DIR_CORE' )) {
-	header ( 'Location: static_pages/' );
-}
 
-class ModelExtensionDefaultFlatRateShipping extends Model {
-	function getQuote($address) {
-		$this->load->language('default_flat_rate_shipping/default_flat_rate_shipping');
-		$location_id = (int)$this->config->get('default_flat_rate_shipping_location_id');
+class ModelExtensionDefaultFlatRateShipping extends Model
+{
+    function getQuote($address)
+    {
+        //create new instance of language for case when model called from admin-side
+        $language = new ALanguage($this->registry, $this->language->getLanguageCode(), 0);
+        $language->load($language->language_details['directory']);
+        $language->load('default_flat_rate_shipping/default_flat_rate_shipping');
+        $status = false;
+        $method_data = [];
+        if ($this->config->get('default_flat_rate_shipping_status')) {
+            $default_cost = $this->config->get('default_flat_rate_shipping_default_cost');
+            $default_tax_class_id = (int)$this->config->get('default_flat_rate_shipping_default_tax_class_id');
+            $default_status = $this->config->get('default_flat_rate_shipping_default_status');
+            //get location_id
+            $sql = "SELECT location_id
+                    FROM ".$this->db->table('zones_to_locations')."
+                    WHERE country_id = '".(int)$address['country_id']."'
+                        AND (zone_id = '".(int)$address['zone_id']."')";
+            $result = $this->db->query($sql);
+            $customer_location_id = (int)$result->row['location_id'];
 
-		if ($this->config->get('default_flat_rate_shipping_status')) {
+            if ($customer_location_id) {
+                $cost = $this->config->get('default_flat_rate_shipping_cost_'.$customer_location_id);
+                $location_status = $this->config->get('default_flat_rate_shipping_status_'.$customer_location_id);
+                if (!$location_status && !$default_status) {
+                    $status = false;
+                } elseif ($location_status && $cost) {
+                    $tax_class_id = $this->config->get('default_flat_rate_shipping_tax_class_id_'.$customer_location_id);
+                    $status = true;
+                } else {
+                    $status = $default_status;
+                    $cost = $default_cost;
+                    $tax_class_id = $default_tax_class_id;
+                }
 
-			$zones = $this->db->query("SELECT *
-										FROM " . $this->db->table('zones_to_locations')."
-										WHERE location_id = '" . (int)$location_id . "'
-											AND country_id = '" . (int)$address['country_id'] . "'
-											AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
+            }else
+            //if cost not set or unknown location - try use default settings
+            {
+                if (empty($default_cost) || !$default_status) {
+                    $status = false;
+                } //use default settings for other locations
+                else {
+                    $status = true;
+                    $cost = $default_cost;
+                    $tax_class_id = $default_tax_class_id;
+                }
+            }
+        }
 
-      		if ($zones->num_rows) {
-				$status = TRUE;
-			}elseif (!$location_id) {
-        		$status = TRUE;
-      		}else {
-        		$status = FALSE;
-      		}
-		} else {
-			$status = FALSE;
-		}
+        if (!$status) {
+            return $method_data;
+        }
 
-		$method_data = array();
+        $quote_data = [];
+        //Process all products shipped together with not special shipping settings on a product level
+        if (count($this->cart->basicShippingProducts()) > 0) {
 
-		if (!$status) {
-			return $method_data;
-		}
-
-		$quote_data = array();
-
-		//Process all products shipped together with not special shipping settings on a product level
-		if ( count($this->cart->basicShippingProducts()) > 0 ) {
-            $quote_data['default_flat_rate_shipping'] = array(
+            $quote_data['default_flat_rate_shipping'] = [
                 'id'           => 'default_flat_rate_shipping.default_flat_rate_shipping',
-                'title'        => $this->language->get('text_description'),
-                'cost'         => $this->config->get('default_flat_rate_shipping_cost'),
-                'tax_class_id' => (int)$this->config->get('default_flat_rate_shipping_tax_class_id'),
-				'text'         => $this->currency->format($this->tax->calculate($this->config->get('default_flat_rate_shipping_cost'),
-				                                                                $this->config->get('default_flat_rate_shipping_tax_class_id'),
-																				(bool)$this->config->get('config_tax')))
-            );
-		}
+                'title'        => $language->get('text_description'),
+                'cost'         => $this->tax->calculate(
+                                    $cost,
+                                    $tax_class_id,
+                                    true
+                                ),
+                'text'         => $this->currency->format(
+                                        $this->tax->calculate(
+                                            $cost,
+                                            $tax_class_id,
+                                            true
+                                        )
+                                  )
+            ];
+        }
 
-		$special_ship_products = $this->cart->specialShippingProducts();
-		foreach ($special_ship_products as $product) {
-			//check if free or fixed shipping
+        $special_ship_products = $this->cart->specialShippingProducts();
+        foreach ($special_ship_products as $product) {
+            //check if free or fixed shipping
+            if ($product['free_shipping']) {
+                $fixed_cost = 0;
+            } else {
+                if ($product['shipping_price'] > 0) {
+                    $fixed_cost = $product['shipping_price'];
+                    //If ship individually count every quantity
+                    if ($product['ship_individually']) {
+                        $fixed_cost = $fixed_cost * $product['quantity'];
+                    }
+                } else {
+                    $fixed_cost = $cost;
+                }
+            }
+            //merge data and accumulate shipping cost
+            if (isset($quote_data['default_flat_rate_shipping'])) {
+                $quote_data['default_flat_rate_shipping']['cost'] = $quote_data['default_flat_rate_shipping']['cost'] + $fixed_cost;
+                if ($quote_data['default_flat_rate_shipping']['cost'] > 0) {
+                    $quote_data['default_flat_rate_shipping']['text'] = $this->currency->format(
+                        $this->tax->calculate(
+                            $quote_data['default_flat_rate_shipping']['cost'],
+                            $tax_class_id,
+                            true
+                        )
+                    );
+                } else {
+                    $quote_data['default_flat_rate_shipping']['text'] = $language->get('text_free');
+                }
+            } else {
+                $quote_data['default_flat_rate_shipping'] = [
+                    'id'           => 'default_flat_rate_shipping.default_flat_rate_shipping',
+                    'title'        => $language->get('text_description'),
+                    'cost'         => $fixed_cost,
+                    'text'         => '',
+                ];
+                if ($fixed_cost > 0) {
+                    $quote_data['default_flat_rate_shipping']['text'] = $this->currency->format(
+                        $this->tax->calculate($fixed_cost,
+                            $tax_class_id,
+                            true
+                        )
+                    );
+                } else {
+                    $quote_data['default_flat_rate_shipping']['text'] = $language->get('text_free');
+                }
+            }
+        }
 
-			if ($product['free_shipping']) {
-			    $fixed_cost = 0;
-			} else if($product['shipping_price'] > 0) {
-			    $fixed_cost = $product['shipping_price'];
-			    //If ship individually count every quintaty
-			    if ($product['ship_individually']) {
-			        $fixed_cost = $fixed_cost * $product['quantity'];
-			    }
+        if ($quote_data) {
+            $method_data = [
+                'id'         => 'default_flat_rate_shipping',
+                'title'      => $language->get('text_title'),
+                'quote'      => $quote_data,
+                'sort_order' => $this->config->get('default_flat_rate_shipping_sort_order'),
+                'error'      => false,
+            ];
+        }
 
-			} else {
-			    $fixed_cost = $this->config->get('default_flat_rate_shipping_cost');
-			}
-			//merge data and accumulate shipping cost
-			if ( isset( $quote_data['default_flat_rate_shipping'] ) ) {
-		            $quote_data['default_flat_rate_shipping']['cost'] = $quote_data['default_flat_rate_shipping']['cost'] + $fixed_cost;
-		            if ($quote_data['default_flat_rate_shipping']['cost'] > 0) {
-			            $quote_data['default_flat_rate_shipping']['text'] = $this->currency->format(
-		                        	$this->tax->calculate(
-		                        		$quote_data['default_flat_rate_shipping']['cost'],
-					                    $this->config->get('default_flat_rate_shipping_tax_class_id'),
-					                    (bool)$this->config->get('config_tax')
-					                )
-					                );
-		            } else {
-			            $quote_data['default_flat_rate_shipping']['text'] = $this->language->get('text_free');	            
-		            }
-		    } else {		    
-	            $quote_data['default_flat_rate_shipping'] = array(
-	                'id'           => 'default_flat_rate_shipping.default_flat_rate_shipping',
-	                'title'        => $this->language->get('text_description'),
-	                'cost'         => $fixed_cost,
-	                'tax_class_id' => $this->config->get('default_flat_rate_shipping_tax_class_id'),
-					'text'         => '',
-	            );
-		    	if ($fixed_cost > 0) {
-		    			$quote_data['default_flat_rate_shipping']['text'] = $this->currency->format(
-		    																	$this->tax->calculate($fixed_cost,
-		    																	$this->config->get('default_flat_rate_shipping_tax_class_id'),
-		    																	(bool)$this->config->get('config_tax')
-		    																	)
-		    																);
-		    	} else {
-		    		$quote_data['default_flat_rate_shipping']['text'] = $this->language->get('text_free');
-		    	}	            
-		    }
-		}
-
-		if ($quote_data){
-			$method_data = array(
-					'id'         => 'default_flat_rate_shipping',
-					'title'      => $this->language->get('text_title'),
-					'quote'      => $quote_data,
-					'sort_order' => $this->config->get('default_flat_rate_shipping_sort_order'),
-					'error'      => false
-			);
-		}
-	
-		return $method_data;
-	}
+        return $method_data;
+    }
 }

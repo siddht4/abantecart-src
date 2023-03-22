@@ -7,7 +7,7 @@ CREATE TABLE `ac_addresses_enc` (
   `lastname` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '',
   `address_1` text COLLATE utf8_bin NOT NULL,
   `address_2` text COLLATE utf8_bin NOT NULL,
-  `postcode`  text COLLATE utf8_bin NOT NULL DEFAULT '',
+  `postcode` text COLLATE utf8_bin NOT NULL,
   `city` text COLLATE utf8_bin NOT NULL,
   `country_id` int(11) NOT NULL DEFAULT '0',
   `zone_id` int(11) NOT NULL DEFAULT '0',
@@ -15,6 +15,7 @@ CREATE TABLE `ac_addresses_enc` (
   PRIMARY KEY (`address_id`),
   KEY `customer_id` (`customer_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
+CREATE INDEX `ac_addresses_enc_idx` ON `ac_addresses_enc` ( `customer_id`, `country_id`, `zone_id`  );
 
 DROP TABLE IF EXISTS `ac_orders_enc`;
 CREATE TABLE `ac_orders_enc` (
@@ -67,10 +68,10 @@ CREATE TABLE `ac_orders_enc` (
   `currency` varchar(3) COLLATE utf8_bin NOT NULL,
   `value` decimal(15,8) NOT NULL,
   `coupon_id` int(11) NOT NULL,
-  `date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `date_added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `ip` varchar(15) COLLATE utf8_bin NOT NULL DEFAULT '',
-  `payment_method_data` text COLLATE utf8_general_ci NOT NULL,
+  `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `ip` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `payment_method_data` text COLLATE utf8_bin NOT NULL,
   `key_id` int(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`order_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
@@ -81,22 +82,29 @@ CREATE TABLE `ac_customers_enc` (
   `store_id` int(11) NOT NULL DEFAULT '0',
   `firstname` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '',
   `lastname` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '',
-  `loginname` varchar(96) COLLATE utf8_bin NOT NULL DEFAULT '',  
+  `loginname` varchar(96) COLLATE utf8_bin NOT NULL DEFAULT '',
   `email` text COLLATE utf8_bin NOT NULL DEFAULT '',
   `telephone` text COLLATE utf8_bin NOT NULL DEFAULT '',
-  `sms` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT 'mobile phone number',
   `fax` text COLLATE utf8_bin NOT NULL DEFAULT '',
+  `sms` varchar(32) COLLATE utf8_bin NOT NULL DEFAULT '' COMMENT 'mobile phone number',
+  `salt` varchar(8) COLLATE utf8_bin NOT NULL DEFAULT '',
   `password` varchar(40) COLLATE utf8_bin NOT NULL DEFAULT '',
-  `cart` text COLLATE utf8_bin,
-  `wishlist` text COLLATE utf8_general_ci,
+  `cart` LONGTEXT COLLATE utf8_bin,
+  `wishlist` LONGTEXT COLLATE utf8_bin,
   `newsletter` int(1) NOT NULL DEFAULT '0',
   `address_id` int(11) NOT NULL DEFAULT '0',
   `status` int(1) NOT NULL,
   `approved` int(1) NOT NULL DEFAULT '0',
   `customer_group_id` int(11) NOT NULL,
-  `ip` varchar(15) COLLATE utf8_bin NOT NULL DEFAULT '0',
+  `ip` varchar(50) COLLATE utf8_bin NOT NULL DEFAULT '0',
+  `data` text DEFAULT null,
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_login` timestamp DEFAULT '0000-00-00 00:00:00',
   `key_id` int(3) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`customer_id`)
+  PRIMARY KEY (`customer_id`),
+  UNIQUE KEY `customers_loginname` (`loginname`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=1;
+
+CREATE INDEX `ac_customers_enc_idx` ON `ac_customers_enc` ( `store_id`, `address_id`, `customer_group_id` );
+CREATE FULLTEXT INDEX `ac_customers_name_enc_idx` ON `ac_customers_enc` (`firstname`, `lastname`);

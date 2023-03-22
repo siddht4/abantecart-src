@@ -732,4 +732,44 @@
 		<key>text_texteditor_extended_mode</key>
 		<value><![CDATA[<a class="texteditor_ext_mode" href="%s" ><i class="fa fa-external-link"></i> Редактирование в расширенном режиме</a>]]></value>
 	</definition>
+	<definition>
+		<key>text_quick_view</key>
+		<value><![CDATA[Быстрый просмотр]]></value>
+	</definition>
+	<definition>
+		<key>text_more_current</key>
+		<value><![CDATA[Полная страница]]></value>
+	</definition>
+	<definition>
+		<key>text_more_new</key>
+		<value><![CDATA[Новая вкладка]]></value>
+	</definition>
+	<definition>
+		<key>text_back_to_list</key>
+		<value><![CDATA[Назад к списку]]></value>
+	</definition>
+	<definition>
+		<key>text_help_link</key>
+		<value><![CDATA[<a href="http://www.abantecart.com/contact-us" target="_abantecart">Нужна помощь?</a>]]></value>
+	</definition>
+	<definition>
+		<key>text_all_stores</key>
+		<value><![CDATA[Все магазины]]></value>
+	</definition>
+	<definition>
+		<key>text_subtract_order</key>
+		<value><![CDATA[Вычесть заказ]]></value>
+	</definition>
+	<definition>
+		<key>text_copy_embed_url</key>
+		<value><![CDATA[Скопируйте и вставьте этот URL на другой сайт, на котором вы хотите продавать]]></value>
+	</definition>
+	<definition>
+		<key>button_preview</key>
+		<value><![CDATA[Предварительный просмотр]]></value>
+	</definition>
+	<definition>
+		<key>warning_extensions_with_layouts</key>
+		<value><![CDATA[Следующие расширения <br/> %s <br/> включают страницы или макеты, которых нет в выбранном шаблоне. Чтобы включить функции этих расширений, вам нужно будет переустановить расширения после включения нового шаблона. Если переустановка не помогает, обратитесь за помощью к оригинальным разработчикам вышеуказанных расширений.]]></value>
+	</definition>
 </definitions>

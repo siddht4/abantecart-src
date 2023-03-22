@@ -122,7 +122,7 @@
 	</definition>
 	<definition>
 		<key>text_manufacturer</key>
-		<value><![CDATA[Manufacturers]]></value>
+		<value><![CDATA[Brands]]></value>
 	</definition>
 	<definition>
 		<key>text_order</key>
@@ -167,6 +167,10 @@
 	<definition>
 		<key>text_report_sale</key>
 		<value><![CDATA[Sales]]></value>
+	</definition>
+	<definition>
+		<key>text_analytics</key>
+		<value><![CDATA[Analytics & Insights]]></value>
 	</definition>
 	<definition>
 		<key>text_report_viewed</key>
@@ -457,5 +461,21 @@
 	<definition>
 		<key>text_rl_manager</key>
 		<value><![CDATA[Media Manager]]></value>
+	</definition>
+	<definition>
+		<key>text_server_time</key>
+		<value><![CDATA[Server Time]]></value>
+	</definition>
+	<definition>
+		<key>text_taxes</key>
+		<value><![CDATA[Taxes]]></value>
+	</definition>
+	<definition>
+		<key>email_templates</key>
+		<value><![CDATA[Email Templates]]></value>
+	</definition>
+	<definition>
+		<key>text_collection</key>
+		<value><![CDATA[Collections]]></value>
 	</definition>
 </definitions>

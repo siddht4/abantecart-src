@@ -5,10 +5,10 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2016 Belavier Commerce LLC
+  Copyright © 2011-2020 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
-  Lincence details is bundled with this package in the file LICENSE.txt.
+  License details is bundled with this package in the file LICENSE.txt.
   It is also available at this URL:
   <http://www.opensource.org/licenses/OSL-3.0>
 
@@ -17,30 +17,32 @@
    versions in the future. If you wish to customize AbanteCart for your
    needs please refer to http://www.AbanteCart.com for more information.
 ------------------------------------------------------------------------------*/
-if(!defined('DIR_CORE')){
-	header('Location: static_pages/');
+if (!defined('DIR_CORE')) {
+    header('Location: static_pages/');
 }
 
 /** @noinspection PhpUndefinedClassInspection */
-class ControllerResponsesProductSearch extends AController{
+class ControllerResponsesProductSearch extends AController
+{
 
-	public $data = array();
+    public $data = array();
 
-	public function main(){
-		//init controller data
-		$this->extensions->hk_InitData($this, __FUNCTION__);
+    public function main()
+    {
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
 
-		try{
-			$this->config->set('embed_mode', true);
-			$cntr = $this->dispatch('pages/product/search');
-			$html_out = $cntr->dispatchGetOutput();
-		} catch(AException $e){
-		}
+        try {
+            $this->config->set('embed_mode', true);
+            $cntr = $this->dispatch('pages/product/search');
+            $html_out = $cntr->dispatchGetOutput();
+        } catch (AException $e) {
+        }
 
-		$this->extensions->hk_UpdateData($this, __FUNCTION__);
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
 
-		$this->response->setOutput($html_out);
+        $this->response->setOutput($html_out);
 
-	}
+    }
 
 }

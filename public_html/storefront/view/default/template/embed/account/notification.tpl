@@ -20,7 +20,7 @@
 
 <?php echo $form['form_open']; ?>
 <div class="contentpanel">
-	<table class="table table-striped transaction-table">
+	<table class="table table-striped notification-table">
 		<thead>
 			<tr>
 
@@ -42,7 +42,7 @@
 		<?php } ?>
 		</tbody>
 
-		<?php if( count($transactions) ) { foreach ($transactions as $trn) { ?>
+		<?php if( sizeof((array)$transactions) ) { foreach ($transactions as $trn) { ?>
 		<tr>
 			<td><?php echo $trn['customer_transaction_id']; ?></td>
 			<td><?php echo $trn['date_added']; ?></td>

@@ -10,7 +10,7 @@
 	</definition>
 	<definition>
 		<key>date_format_short</key>
-		<value><![CDATA[d/m/Y]]></value>
+		<value><![CDATA[m/d/Y]]></value>
 	</definition>
 	<definition>
 		<key>date_format_long</key>
@@ -179,7 +179,7 @@
 	<definition>
 		<key>notice_out_of_stock_body</key>
 		<value>
-			<![CDATA[Product "%s" has reached zero or negative stock count for main product or all options. <br> As a result of autodisable setting, product (%s) was auto disabled!]]></value>
+			<![CDATA[Product "%s" has reached zero or negative stock count for main product or all options. <br> As a result of autodisable setting, product (%s) was auto disabled!<br> For more details visit %s]]></value>
 	</definition>
 	<definition>
 		<key>no_payment_required</key>
@@ -187,7 +187,7 @@
 	</definition>
 	<definition>
 		<key>gen_data_entry_error</key>
-		<value><![CDATA[Oops, there is an error with infomation provided!]]></value>
+		<value><![CDATA[Oops, there is an error with information provided!]]></value>
 	</definition>
 	<definition>
 		<key>text_sorting_name_asc</key>
@@ -262,6 +262,10 @@
 		<value><![CDATA[Notice: Maintenance mode is on.]]></value>
 	</definition>
 	<definition>
+		<key>text_act_on_behalf</key>
+		<value><![CDATA[Notice: Impersonate mode for customer "%s" by "%s"]]></value>
+	</definition>
+	<definition>
 		<key>text_browse</key>
 		<value><![CDATA[Select File]]></value>
 	</definition>
@@ -287,7 +291,7 @@
 	</definition>
 	<definition>
 		<key>error_captcha</key>
-		<value><![CDATA[Human verification has failed! Please try agan.]]></value>
+		<value><![CDATA[Human verification has failed! Please try again.]]></value>
     </definition>
 	<definition>
 		<key>entry_attached</key>
@@ -314,11 +318,27 @@
 		<value><![CDATA[Free Shipping]]></value>
 	</definition>
 	<definition>
+		<key>price_with_tax</key>
+		<value><![CDATA[Inc Tax]]></value>
+	</definition>
+	<definition>
 		<key>text_unavailable</key>
 		<value><![CDATA[Unavailable]]></value>
-	</definition>	
+	</definition>
 	<definition>
 		<key>error_unknown</key>
 		<value><![CDATA[Unknown error encountered. Please try again!]]></value>
-    </definition>    
+    </definition>
+	<definition>
+		<key>text_click_browse_file</key>
+		<value><![CDATA[Click to browse file]]></value>
+	</definition>
+	<definition>
+		<key>text_back_on_top</key>
+		<value><![CDATA[Back to top]]></value>
+	</definition>
+	<definition>
+		<key>text_out_of_stock</key>
+		<value><![CDATA[Out of Stock]]></value>
+	</definition>
 </definitions>

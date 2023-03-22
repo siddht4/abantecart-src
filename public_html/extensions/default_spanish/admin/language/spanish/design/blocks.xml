@@ -256,4 +256,16 @@
 		<key>text_enable</key>
 		<value><![CDATA[Habilitar/Desactivar]]></value>
 	</definition>
+	<definition>
+		<key>text_collection</key>
+		<value><![CDATA[Colección]]></value>
+	</definition>
+	<definition>
+		<key>entry_collection_resource_type</key>
+		<value><![CDATA[Colección seleccionada:]]></value>
+	</definition>
+	<definition>
+		<key>text_products_related</key>
+		<value><![CDATA[Productos relacionados]]></value>
+	</definition>
 </definitions>

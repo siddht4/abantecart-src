@@ -14,7 +14,7 @@
   </definition>
   <definition>
     <key>default_free_shipping_total</key>
-    <value><![CDATA[Total:<br /><span class="help">Sub-Total amount needed before the free shipping module becomes available.</span>]]></value>
+    <value><![CDATA[Total:<br /><span class="help">Sub-Total amount needed before the free shipping module becomes available. Without currency symbol.</span>]]></value>
   </definition>
   <definition>
     <key>default_free_shipping_location_id</key>
@@ -23,14 +23,6 @@
   <definition>
     <key>default_free_shipping_location_id_0</key>
     <value><![CDATA[All Locations]]></value>
-  </definition>
-  <definition>
-    <key>default_free_shipping_autoselect</key>
-    <value><![CDATA[Auto Select:<br /><span class="help">You can set to skip shipping selection page if there is only one shipping option. This shipping method will be selected automatically</span>]]></value>
-  </definition>
-  <definition>
-    <key>default_free_shipping_accept_payments</key>
-    <value><![CDATA[Accept these payments:<br /><span class="help">If only specific payment methods are needed for this shipping method, select them here. If nothing selected, all available payment methods will be shown</span>]]></value>
   </definition>
   <definition>
     <key>error_permission</key>

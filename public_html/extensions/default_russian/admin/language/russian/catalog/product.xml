@@ -190,7 +190,7 @@
 	</definition>
 	<definition>
 		<key>entry_stock_status</key>
-		<value><![CDATA[Статус Нет на складе: <br/> <span class="help">Статус отображается, когда товар не в наличии</span>]]></value>
+		<value><![CDATA[Статус на складе: <br/><span class="help">Текст отображения наличия товара на складе</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_status</key>
@@ -202,7 +202,7 @@
 	</definition>
 	<definition>
 		<key>entry_cost</key>
-		<value><![CDATA[Стоимость: <br/> <span class="help">Оптовая стоимость, используемая для отчетности по прибыли</span>]]></value>
+		<value><![CDATA[Стоимость:<br/><span class="help">Оптовая стоимость, используемая для отчетности по прибыли</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_price</key>
@@ -583,5 +583,49 @@
 	<definition>
 		<key>text_success_relation_set</key>
 		<value><![CDATA[Связи выбранных видов продукции были установлены успешно!]]></value>
+	</definition>
+	<definition>
+		<key>text_success_copy_layout</key>
+		<value><![CDATA[Примечание. Пользовательский макет продукта также клонирован.]]></value>
+	</definition>
+	<definition>
+		<key>entry_stock_checkout</key>
+		<value><![CDATA[Разрешать покупку если нет в наличии: <br/><span class="help">Позвольте клиентам покупать товар, когда его нет на складе.</span>]]></value>
+	</definition>
+	<definition>
+		<key>entry_stock_locations</key>
+		<value><![CDATA[Расположение на складе:]]></value>
+	</definition>
+	<definition>
+		<key>entry_locations</key>
+		<value><![CDATA[Место проживания:]]></value>
+	</definition>
+	<definition>
+		<key>text_create_collection</key>
+		<value><![CDATA[Создать коллекцию]]></value>
+	</definition>
+	<definition>
+		<key>text_enable_selected</key>
+		<value><![CDATA[Включить выбранное]]></value>
+	</definition>
+	<definition>
+		<key>text_disable_selected</key>
+		<value><![CDATA[Отключить выбранное]]></value>
+	</definition>
+	<definition>
+		<key>entry_product_option_cost</key>
+		<value><![CDATA[Фактическая стоимость (общая): <span class="help">введите фактическую стоимость (общую) для этого варианта продукта.</span>]]></value>
+	</definition>
+	<definition>
+		<key>entry_weight_change</key>
+		<value><![CDATA[Вес: <span class="help">Важно! Если значение указано в процентах (%), то вес будет изменен на указанный процент в зависимости от веса основного продукта. Если значение веса в единицах измерения, оно будет использоваться как абсолютное значение для опции, основной вес будет проигнорирован.</span>]]></value>
+	</definition>
+	<definition>
+		<key>error_dimension_value</key>
+		<value><![CDATA[Этот товар требует доставки. Пожалуйста, заполните все значения размеров.]]></value>
+	</definition>
+	<definition>
+		<key>error_length_class</key>
+		<value><![CDATA[Пожалуйста, установите класс длины.]]></value>
 	</definition>
 </definitions>

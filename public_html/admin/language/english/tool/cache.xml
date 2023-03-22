@@ -34,7 +34,7 @@
 	</definition>
 	<definition>
 		<key>text_manufacturers</key>
-		<value><![CDATA[Manufacturers]]></value>
+		<value><![CDATA[Brands]]></value>
 	</definition>
 	<definition>
 		<key>text_localisations</key>
@@ -78,7 +78,7 @@
 	</definition>
 	<definition>
 		<key>desc_manufacturers</key>
-		<value><![CDATA[Manufacturer data]]></value>
+		<value><![CDATA[Brand data]]></value>
 	</definition>
 	<definition>
 		<key>desc_localisations</key>
@@ -103,5 +103,13 @@
 	<definition>
 		<key>desc_html_cache</key>
 		<value><![CDATA[Cached HTML pages and blocks]]></value>
+	</definition>
+	<definition>
+		<key>text_install_upgrade_history</key>
+		<value><![CDATA[Install/Upgrade History]]></value>
+	</definition>
+	<definition>
+		<key>desc_install_upgrade_history</key>
+		<value><![CDATA[Clear All Install/Upgrade History]]></value>
 	</definition>
 </definitions>

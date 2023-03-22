@@ -6,19 +6,21 @@
 		</a>
 	</li>
 </ul>
-
 <?php
-$txt_link_resource = sprintf($text_map_to, $object_title);
-$txt_unlink_resource = sprintf($text_unmap_from, $object_title);
+	$txt_link_resource = sprintf($text_map_to, $object_title);
+	$txt_unlink_resource = sprintf($text_unmap_from, $object_title);
 ?>
-
 <div class="tab-content rl-content">
 <ul class="reslibrary-options edit-resource">
 	<li>
 		<a class="btn btn-default rl_download tooltips" data-rl-id="<?php echo $resource['resource_id']; ?>" href="#"
 		   onclick="return false;" data-original-title="<?php echo $text_preview; ?>"><i class="fa fa-download"></i></a>
 	</li>
-	<?php if ($resource['mapped_to_current'] && $mode != 'list_all') { ?>
+	<?php
+    if (isset($resource['mapped_to_current'])
+        && $resource['mapped_to_current']
+        && $mode != 'list_all'
+    ){ ?>
 		<li>
 			<a class="btn btn-default rl_unlink tooltips" data-rl-id="<?php echo $resource['resource_id']; ?>"
 			   onclick="return false;" href="#" data-original-title="<?php echo $txt_unlink_resource; ?>">
@@ -40,7 +42,7 @@ $txt_unlink_resource = sprintf($text_unmap_from, $object_title);
 		//disable delete button for multi-linked resource
 		if ($resource['can_delete']) {
 			$cssclass = $onclick = "";
-			if ($resource['mapped_to_current']) {
+			if (isset($resource['mapped_to_current']) && $resource['mapped_to_current']) {
 				$onclick = "delete_resource(" . $resource['resource_id'] . ", '" . $object_name . "', '" . $object_id . "');";
 			}else{
 				$onclick = "delete_resource(" . $resource['resource_id'] . ", '" . $object_name . "', '" . $object_id . "');";
@@ -54,17 +56,17 @@ $txt_unlink_resource = sprintf($text_unmap_from, $object_title);
 			   data-confirmation-text="<?php echo $text_confirm_delete; ?>"
 			   data-original-title="<?php echo $button_delete; ?>">
 			   	<i class="fa fa-trash-o"></i>
-			</a>		
+			</a>
 		<?php
 		} else {
 		?>
 			<a class="btn btn-default disabled rl_delete tooltips" href="#" data-original-title="<?php echo $error_delete; ?>">
-				<span class="fa-stack fa-lg">		   
+				<span class="fa-stack fa-lg">
 			   		<i class="fa fa-trash-o fa-stack-1x"></i>
 			   		<i class="fa fa-ban fa-stack-2x text-danger"></i>
 			   </span>
-			</a>				
-		<?php	
+			</a>
+		<?php
 		}
 		?>
 	</li>
@@ -92,7 +94,7 @@ $txt_unlink_resource = sprintf($text_unmap_from, $object_title);
 					   title="<?php echo $text_preview; ?>">
 						<?php // NOTE: USE time as parameter for image to prevent caching of thumbnail (in case of replacement of resource file)?>
 						<img src="<?php echo $resource['thumbnail_url']; ?>?t=<?php echo time(); ?>"
-						     title="<?php echo $resource['title']; ?>"/>
+						     title="<?php echo $resource['title']; ?>" onerror="imgError(this);"/>
 					</a>
 				</div>
 				<form name="RlRplc" action="<?php echo $rl_replace; ?>" method="POST" enctype="multipart/form-data"
@@ -114,14 +116,14 @@ $txt_unlink_resource = sprintf($text_unmap_from, $object_title);
 				<div class="col-sm-7">
 					<?php echo $details['width']; ?> x <?php echo $details['height']; ?> 
 				</div>
-			</div>	
+			</div>
 			<?php } ?>
 			<div class="row">
 				<label class="col-sm-5 ellipsis control-label"><?php echo $text_file_mime; ?></label>
 				<div class="col-sm-7">
 					<?php echo $details['mime']; ?>
 				</div>
-			</div>	
+			</div>
 			<div class="row">
 				<label class="col-sm-5 ellipsis control-label"><?php echo $text_file_size; ?></label>
 				<div class="col-sm-7">
@@ -140,11 +142,11 @@ $txt_unlink_resource = sprintf($text_unmap_from, $object_title);
 					<input type="text" value="<?php echo $details['res_url']; ?>" class="rl_details form-control input-sm" readonly>
 				</div>
 			</div>
-			
+
 			<div class="row">
 				<?php if($resource['resource_objects'] || $mode!='single'){ ?>
 				<label class="col-sm-5 ellipsis control-label"><?php echo $text_mapped_to; ?></label>
-	
+
 				<div class="col-sm-4">
 					<div class="btn-group maped_resources">
 						<?php
@@ -166,7 +168,6 @@ $txt_unlink_resource = sprintf($text_unmap_from, $object_title);
 													<?php echo $item['name']; ?>
 												</a>
 											</li>
-	
 										<?php } ?>
 									</ul>
 								<?php } ?>
@@ -206,17 +207,11 @@ $txt_unlink_resource = sprintf($text_unmap_from, $object_title);
 						</a>
 					</div>
 				<?php } ?>
-	
 			</div>
-						
-			</div>
-
+		</div>
 		<?php } ?>
-		
-
 	</div>
 	<!-- col-sm-6 -->
-
 	<div class="col-xs-12">
 		<?php if ($mode == 'new') { ?>
 			<div class="form-group">
@@ -225,8 +220,8 @@ $txt_unlink_resource = sprintf($text_unmap_from, $object_title);
 				</div>
 			</div>
 		<?php } else { ?>
-			<?php echo $form['field_resource_id']; ?>
-			<?php echo $form['field_type']; ?>
+			<?php echo $form['field_resource_id'] ?? ''; ?>
+			<?php echo $form['field_type'] ?? ''; ?>
 		<?php } ?>
 
 		<div class="form-group <?php echo(!empty($error['name']) ? "has-error" : ""); ?>">
@@ -275,7 +270,7 @@ $txt_unlink_resource = sprintf($text_unmap_from, $object_title);
 			<?php } elseif ($mode == 'list_all') { ?>
 				<a class="btn btn-primary rl_save rl_close tooltips" data-rl-id="<?php echo $resource_id; ?>" data-type="<?php echo $type; ?>"  title="<?php echo $button_save_n_apply; ?>">
 					<i class="fa fa-save fa-fw"></i> <i class="fa fa-close fa-fw"></i> 
-				</a>&nbsp;				
+				</a>&nbsp;
 			<?php } else { ?>
 				<a class="btn btn-primary rl_link rl_save rl_close tooltips" href="#" title="<?php echo $button_save_n_apply; ?>">
 					<i class="fa fa-save fa-fw"></i> <i class="fa fa-check fa-fw"></i> <i class="fa fa-close fa-fw"></i> 

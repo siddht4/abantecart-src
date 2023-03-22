@@ -4,7 +4,7 @@
 </h1>
 <?php echo $form['form_open']; ?>
 <div class="contentpanel">
-	<table class="table table-striped transaction-table">
+	<table class="table table-striped notification-table">
 		<thead>
 			<tr>
 
@@ -32,7 +32,7 @@
 		<?php } ?>
 		</tbody>
 
-		<?php if( count($transactions) ) { foreach ($transactions as $trn) { ?>
+		<?php if( sizeof((array)$transactions) ) { foreach ($transactions as $trn) { ?>
 		<tr>
 			<td><?php echo $trn['customer_transaction_id']; ?></td>
 			<td><?php echo $trn['date_added']; ?></td>
@@ -48,7 +48,7 @@
 	
 	<div class="form-group">
 	    <div class="col-md-12">
-	    	<button class="btn btn-orange pull-right" title="<?php echo $form['continue']->name ?>" type="submit">
+	    	<button class="btn btn-orange pull-right lock-on-click" title="<?php echo $form['continue']->name ?>" type="submit">
 	    	    <i class="<?php echo $form['continue']->{'icon'}; ?> fa"></i>
 	    	    <?php echo $form['continue']->name ?>
 	    	</button>

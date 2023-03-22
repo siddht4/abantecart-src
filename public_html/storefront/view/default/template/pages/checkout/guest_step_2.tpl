@@ -19,18 +19,11 @@
 
 <div class="contentpanel">
 
-	<?php if ($coupon_status){ ?>
-		<h4 class="heading4"><?php echo $text_coupon; ?></h4>
-		<div class="registerbox">
-			<?php echo $form0['form_open']; ?>
-			<div class="form-inline">
-				<label class="checkbox"><?php echo $entry_coupon; ?></label>
-				<?php echo $form0['coupon']; ?>
-				<?php echo $form0['submit']; ?>
-			</div>
-			</form>
-		</div>
-	<?php } ?>
+	<?php
+	if ($coupon_status){
+		echo $coupon_form;
+	}
+	?>
 
 	<?php echo $form['form_open']; ?>
 
@@ -45,35 +38,40 @@
 					<?php
 					foreach ($shipping_methods as $shipping_method){ ?>
 						<tr>
-							<td colspan="3"><b><?php echo $shipping_method['title']; ?></b></td>
+							<td colspan="3">
+                                <b><?php echo $shipping_method['title']; ?></b>
+                            </td>
 						</tr>
 						<?php if (!$shipping_method['error']){ ?>
 							<?php foreach ($shipping_method['quote'] as $quote){ ?>
 								<tr>
-									<td width="5%"><label
-												for="shipping_shipping_method<?php echo $quote['id']; ?>"><?php echo $quote['radio']; ?></label>
+									<td style="width:5%;"><?php echo $quote['radio']; ?>
 									</td>
-									<td><label for="shipping_shipping_method<?php echo $quote['id']; ?>"
+									<td><label id="<?php echo $quote['id'];?>_title" for="<?php echo $quote['radio']->element_id.$quote['radio']->id; ?>"
 									           title="<?php echo has_value($quote['description']) ? $quote['description'] : ''; ?>"
 									           style="cursor: pointer;">
-											<?php $icon = $shipping_method['icon'];
-											if (count($icon)){ ?>
+											<?php $icon = (array)$shipping_method['icon'];
+											if (sizeof($icon)){ ?>
 												<?php if (is_file(DIR_RESOURCE . $icon['image'])){ ?>
-													<span class="shipping_icon mr10"><img
-																src="resources/<?php echo $icon['image']; ?>"
-																title="<?php echo $icon['title']; ?>"/></span>
+													<span class="shipping_icon mr10">
+                                                        <img
+                                                            src="resources/<?php echo $icon['image']; ?>"
+                                                            title="<?php echo $icon['title']; ?>"/>
+                                                    </span>
 												<?php } else if (!empty($icon['resource_code'])){ ?>
 													<span class="shipping_icon mr10"><?php echo $icon['resource_code']; ?></span>
 												<?php }
 											} ?>
 											<?php echo $quote['title']; ?>
 										</label></td>
-									<td class="align_right"><label for="<?php echo $quote['id']; ?>"
-									                               style="cursor: pointer;"><?php echo $quote['text']; ?></label>
+									<td class="align_right">
+                                        <label id="<?php echo $quote['id'];?>_text" for="<?php echo $quote['radio']->element_id.$quote['radio']->id; ?>"
+									           style="cursor: pointer;"><?php echo $quote['text']; ?></label>
 									</td>
 								</tr>
-							<?php } ?>
-						<?php } else{ ?>
+					<?php } ?>
+					<?php echo $this->getHookVar('shipping_'.$shipping_method['title'].'_additional_info'); ?>
+					<?php } else{ ?>
 							<tr>
 								<td colspan="3">
 									<div class="alert alert-danger"><i
@@ -108,8 +106,8 @@
 									<td width="1"><?php echo $payment_method['radio']; ?></td>
 									<td><label for="guest_payment_method<?php echo $payment_method['id']; ?>"
 									           style="cursor: pointer;">
-											<?php $icon = $payment_method['icon'];
-											if (count($icon)){ ?>
+											<?php $icon = (array)$payment_method['icon'];
+											if (sizeof($icon)){ ?>
 												<?php if (is_file(DIR_RESOURCE . $icon['image'])){ ?>
 													<span class="payment_icon mr10"><img
 																src="resources/<?php echo $icon['image']; ?>"

@@ -145,6 +145,10 @@
 		<value><![CDATA[Special Offers]]></value>
 	</definition>
 	<definition>
+		<key>text_products_related</key>
+		<value><![CDATA[Related Products]]></value>
+	</definition>
+	<definition>
 		<key>text_products_popular</key>
 		<value><![CDATA[Popular Products]]></value>
 	</definition>
@@ -154,7 +158,7 @@
 	</definition>
 	<definition>
 		<key>text_manufacturers</key>
-		<value><![CDATA[Manufacturers]]></value>
+		<value><![CDATA[Brands]]></value>
 	</definition>
 	<definition>
 		<key>text_featured</key>
@@ -186,7 +190,7 @@
 	</definition>
 	<definition>
 		<key>text_custom_manufacturers</key>
-		<value><![CDATA[Custom Manufacturers]]></value>
+		<value><![CDATA[Custom Brands]]></value>
 	</definition>
 	<definition>
 		<key>text_html_block</key>
@@ -251,5 +255,13 @@
 	<definition>
 		<key>error_block_not_available</key>
 		<value><![CDATA[This block will not be displayed in selected position on a storefront!]]></value>
+	</definition>
+	<definition>
+		<key>text_collection</key>
+		<value><![CDATA[Collection]]></value>
+	</definition>
+	<definition>
+		<key>entry_collection_resource_type</key>
+		<value><![CDATA[Selected Collection:]]></value>
 	</definition>
 </definitions>

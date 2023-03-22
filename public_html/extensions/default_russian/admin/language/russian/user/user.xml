@@ -86,7 +86,7 @@
 	</definition>
 	<definition>
 		<key>error_username</key>
-		<value><![CDATA[Имя пользователя должно быть от 2 до 20 символов!]]></value>
+		<value><![CDATA[Имя пользователя должно быть уникальным и длиной от 2 до 20 символов!]]></value>
 	</definition>
 	<definition>
 		<key>error_password</key>
@@ -139,5 +139,9 @@
 	<definition>
 		<key>text_change_im_addresses</key>
 		<value><![CDATA[Редактировать Адрес Уведомления для этой точки]]></value>
+	</definition>
+	<definition>
+		<key>error_user_group</key>
+		<value><![CDATA[У вас нет разрешения на изменение группы пользователей.]]></value>
 	</definition>
 </definitions>

@@ -1,14 +1,12 @@
 <?php include($tpl_common_dir . 'action_confirm.tpl'); ?>
 
 <?php echo $summary_form; ?>
-
 <?php echo $product_tabs ?>
 
 <div id="content" class="panel panel-default">
-
 	<div class="panel-heading col-xs-12">
 		<div class="primary_content_actions pull-left form-inline">
-		<?php if(sizeof($options->options)){?>
+		<?php if(sizeof((array)$options->options)){?>
 			<div class="form-group">
 				<div class="input-group input-group-sm">
 					<label><?php echo $tab_option; ?></label>
@@ -107,16 +105,16 @@ echo $this->html->buildElement(
 
 var setRLparams = function (attr_val_id) {
 	urls = {
-				resource_library: '<?php echo $rl_resource_library; ?>&object_id=' + attr_val_id,
-				resources: '<?php echo $rl_resources; ?>&object_id=' + attr_val_id,
-				resource_single: '<?php echo $rl_resource_single; ?>&object_id=' + attr_val_id,
-				map: '<?php echo $rl_map; ?>&object_id=' + attr_val_id,
-				unmap: '<?php echo $rl_unmap; ?>&object_id=' + attr_val_id,
-				del: '<?php echo $rl_delete; ?>&object_id=' + attr_val_id,
-				download: '<?php echo $rl_download; ?>&object_id=' + attr_val_id,
-				upload: '<?php echo $rl_upload; ?>&object_id=' + attr_val_id,
-				resource: '<?php echo HTTPS_DIR_RESOURCE; ?>'
-			};
+		resource_library: '<?php echo $rl_resource_library; ?>&object_id=' + attr_val_id,
+		resources: '<?php echo $rl_resources; ?>&object_id=' + attr_val_id,
+		resource_single: '<?php echo $rl_resource_single; ?>&object_id=' + attr_val_id,
+		map: '<?php echo $rl_map; ?>&object_id=' + attr_val_id,
+		unmap: '<?php echo $rl_unmap; ?>&object_id=' + attr_val_id,
+		del: '<?php echo $rl_delete; ?>&object_id=' + attr_val_id,
+		download: '<?php echo $rl_download; ?>&object_id=' + attr_val_id,
+		upload: '<?php echo $rl_upload; ?>&object_id=' + attr_val_id,
+		resource: '<?php echo HTTPS_DIR_RESOURCE; ?>'
+	};
 
 	urls.attr_val_id = attr_val_id;
 }
@@ -138,33 +136,35 @@ jQuery(function ($) {
 
 	$(document).on('change', '#new_option_form_attribute_id', function () {
 		var current_opt_attr_id = $(this).val();
-		if ( current_opt_attr_id != 'new' ) {
+		if ( current_opt_attr_id !== 'new' ) {
 			$("#option_name_block").hide();
 		} else {
 			$("#option_name_block").show();
-			$("#option_name_reset").show();		
+			$("#option_name_reset").show();
 		}
 
 	});
 
 	$("#product_form").submit(function () {
-	
-		if ($("#new_option_form_attribute_id").val() == 'new' && ( $("#new_option_form_option_name").val() == '' || $("#new_option_form_element_type").val() == ''  )) {
-			if ($("#new_option_form_option_name").val() == '') {
+
+		if ($("#new_option_form_attribute_id").val() === 'new'
+			&& ( $("#new_option_form_option_name").val() === '' || $("#new_option_form_element_type").val() === ''  )
+		){
+			if ($("#new_option_form_option_name").val() === '') {
 				$("#new_option_form_option_name").focus();
 				$("#new_option_form_option_name").closest("span").next().next().show();
 			} else {
 				$("#new_option_form_option_name").closest("span").next().next().hide();
 			}
 
-			if ($("#new_option_form_element_type").val() == '') {
+			if ($("#new_option_form_element_type").val() === '') {
 				$("#new_option_form_element_type").focus();
 				$("#new_option_form_element_type").closest("span").next().next().show();
 			} else {
 				$("#new_option_form_element_type").closest("span").next().next().hide();
 			}
 			return false;
-		} else if( $("#new_option_form_attribute_id").val() != 'new' ) {
+		} else if( $("#new_option_form_attribute_id").val() !== 'new' ) {
 			$("#new_option_form_option_name").val('');
 			$("#new_option_form_element_type").val('');
 		}
@@ -197,7 +197,15 @@ jQuery(function ($) {
 	//save option form details. 
 	var editOption = function (id) {
 		$('#notify_error').remove();
-		var senddata = $('#option_edit_form').find('input,select,textarea').serialize()+'&option_id='+current_option_id;
+		var senddata = $('#option_edit_form').find('input,select,textarea').not(preEncodedFields.notIn).serialize()+'&option_id='+current_option_id;
+        //encode some field values
+        for(var k in preEncodedFields.names) {
+            var vvv = $('#option_edit_form').find('[name="' + preEncodedFields.names[k] + '"]');
+            if(vvv.val()) {
+                senddata += '&'+preEncodedFields.names[k] + '=' + btoa(vvv.val());
+            }
+        }
+
 		$.ajax({
 			url: opt_urls.update_option,
 			data: senddata,
@@ -228,19 +236,41 @@ jQuery(function ($) {
 		}
 		return false;
 	});
-
+	var lock_a = false;
 	$(document).on('click',"#option_values_tbl a.expandRow",function () {
-
 		var row_id = $(this).parents('tr').attr('id');
 		var additional_row = $('#add_'+row_id +'div.additionalRow');
 		var icon = $(this).find('i');
+
+		<?php //do recursive call and close all expanded additional rows ?>
+		if(lock_a == false) {
+			lock_a = true;
+			$.each($('#option_values_tbl tr').find('a.expandRow'),
+					function (k, v) {
+						v = $(v);
+						if (row_id != v.parents('tr').attr('id') && v.find('i').hasClass('fa-compress')) {
+							v.click();
+						}
+					}
+			);
+			lock_a = false;
+		}
+
 		if (icon.hasClass("fa-expand")) {
 			$(this).attr('title', text.text_hide);
 			icon.removeClass('fa-expand').addClass('fa-compress');
-			setRLparams($(this).attr('id'));
-			$('#panel_image>div.panel-heading>div.panel-btns').remove();
-			loadMedia('image','#add_'+row_id+' div.type_blocks');
-			$('#add_'+row_id).find('#type_image').show();
+			//if row is not new
+			if(row_id.search("new") < 0) {
+				setRLparams($(this).attr('id'));
+				$('#panel_image>div.panel-heading>div.panel-btns').remove();
+				loadMedia('image','#add_'+row_id+' div.type_blocks');
+
+				$('#add_' + row_id).find('#type_image').show();
+				$('#add_' + row_id).find('#panel_image').show();
+			//do not show images for new rows
+			}else{
+				$('#add_' + row_id).find('#panel_image').hide();
+			}
 		} else {
 			$(this).attr('title', text.text_expand);
 			icon.removeClass('fa-compress').addClass('fa-expand');
@@ -267,24 +297,27 @@ jQuery(function ($) {
 		$(new_row).attr('id', 'new' + row_id);
 
 		//find next sort order number
-		var so = $('#option_values_tbl').find("input[name^='sort_order']");
+		var so = $('#option_values_tbl>tbody>tr').find("input[name^='sort_order']");
 		if (so.length > 0) {
 			var highest = 0;
 			so.each(function () {
 				highest = Math.max(highest, Number(this.value));
 			});
-			$(new_row).find("input[name^='sort_order']").val(highest + 1);
+			new_row.find("input[name^='sort_order']").val(highest + 1);
 		} else {
-			$(new_row).find("input[name^='sort_order']").val(0);
+			new_row.find("input[name^='sort_order']").val(0);
 		}
 
-		if($('#option_values_tbl tbody').length){
+		//console.log(new_row.html); return false;
+		if($('#option_values_tbl>tbody').length){
 			//add one more row
-			$('#option_values_tbl tbody tr:last-child').after(new_row);
+			$('#option_values_tbl>tbody>tr:last-child').after(new_row);
 		} else {
 			//we insert first row
-			$('#option_values_tbl tr:last-child').after(new_row);			
+			$('#option_values_tbl>thead').after('<tbody/>');
+			$('#option_values_tbl>tbody').append(new_row);
 		}
+
 		bindAform($("input, textarea, select", new_row));
 		//Mark rows to be new
 		$('#new' + row_id + ' input[name=default_value]').last()
@@ -312,7 +345,13 @@ jQuery(function ($) {
 			type: 'GET',
 			data: { option_id: current_option_id },
 			success: function (html) {
-				$('#option_values').html(html);
+				if(html.length>0) {
+					$('#option_values').html(html);
+				}else{
+					$('#option_values').html('');
+					$('select#option').parents('.primary_content_actions').find('label').remove();
+					$('select#option').remove();
+				}
 			},
 			global: false,
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -344,7 +383,7 @@ jQuery(function ($) {
 		return false;
 	});
 	
-	//save option values	
+	//save option values
 	$(document).on('click','#option_values button[type="submit"]', function () {
 		//Mark rows to be deleted
 		$('#option_values_tbl .toDelete input[name^=product_option_value_id]').val('delete');

@@ -350,7 +350,7 @@
 	</definition>
 	<definition>
 		<key>entry_currency_auto</key>
-		<value><![CDATA[Actualizacion automatica de divisas:<br /><span class="help">Actualiza automaticamente el cambio entre divisas. Servidor de Yahoo se utiliza.</span>]]></value>
+		<value><![CDATA[Actualizacion automatica de divisas:<br /><span class="help">Actualiza automaticamente el cambio entre divisas.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_weight_class</key>
@@ -470,11 +470,11 @@
 	</definition>
 	<definition>
 		<key>entry_stock_subtract</key>
-		<value><![CDATA[Restar stock:<br /><span class="help">Restar la cantidad del stock cuando un pedido es procesado.</span>]]></value>
+		<value><![CDATA[Predeterminado Stock Checkout:<br /><span class="help">Establecer configuración predeterminada Stock Checkout para nuevos productos.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_stock_status</key>
-		<value><![CDATA[Estado del stock:<br /><span class="help">Ajuste por defecto de mensaje que indica que la situación del stock de producto. Se utiliza en la página del producto de edición.</span>]]></value>
+		<value><![CDATA[Estado de stock Pre-Order:<br /><span class="help">Ajuste predeterminado para el mensaje de estado de Pre-pedido para el producto. Se utiliza en la página de edición del producto.</span>]]></value>
 	</definition>
 	<definition>
 		<key>entry_logo</key>
@@ -922,5 +922,128 @@ imagen</span>]]></value>
 	<definition>
 		<key>entry_html_cache</key>
 		<value><![CDATA[Caché HTML: <br/><span class="help">Páginas HTML y bloques de almacenamiento en caché permitió obtener una mejor velocidad para sus páginas. Este es el almacenamiento en caché adicional para el almacenamiento en caché de datos regular habilitada en el system/config.php</span>]]></value>
+	</definition>
+	<definition>
+		<key>entry_task_api_key</key>
+		<value><![CDATA[Tareas clave de la API:<br/><span class="help">Esta es una clave secreta para permitir que AbanteCart ejecute los procesos programados desde el navegador con el archivo /task.php. Si no se establece, las tareas no se ejecutarán a través del navegador.<br/>NOTA: Esta clave de API no es necesaria para ejecutar la línea de comandos de tareas.</span>]]></value>
+	</definition>
+	<definition>
+		<key>entry_duplicate_contact_us</key>
+		<value><![CDATA[Duplicar contacto Las consultas a los mensajes]]></value>
+	</definition>
+	<definition>
+		<key>entry_mail_logo</key>
+		<value><![CDATA[Logotipo de correo electrónico:]]></value>
+	</definition>
+	<definition>
+		<key>entry_google_tag_manager</key>
+		<value><![CDATA[ID de Google Tag Manager: <br/>]]></value>
+	</definition>
+	<definition>
+		<key>entry_tax_class</key>
+		<value><![CDATA[Clase impositiva predeterminada: <br/><span class="help">El valor predeterminado se tomará como valor predeterminado para la clase impositiva del nuevo producto que se crea.</span>]]></value>
+	</definition>
+	<definition>
+		<key>entry_account_recaptcha_v3</key>
+		<value><![CDATA[Habilitar reCaptcha v3]]></value>
+	</definition>
+	<definition>
+		<key>text_review_disable</key>
+		<value><![CDATA[No permitir]]></value>
+	</definition>
+	<definition>
+		<key>text_review_allow_all</key>
+		<value><![CDATA[Cualquier cliente o visitante]]></value>
+	</definition>
+	<definition>
+		<key>text_review_allow_only_registered</key>
+		<value><![CDATA[Cliente registrado]]></value>
+	</definition>
+	<definition>
+		<key>text_review_allow_who_purchase</key>
+		<value><![CDATA[Cliente con pedido verificado]]></value>
+	</definition>
+	<definition>
+		<key>entry_display_reviews</key>
+		<value><![CDATA[Mostrar comentarios:]]></value>
+	</definition>
+	<definition>
+		<key>entry_city</key>
+		<value><![CDATA[Ciudad:]]></value>
+	</definition>
+	<definition>
+		<key>entry_postcode</key>
+		<value><![CDATA[Código postal:]]></value>
+	</definition>
+	<definition>
+		<key>entry_latitude</key>
+		<value><![CDATA[Latitud:]]></value>
+	</definition>
+	<definition>
+		<key>entry_longitude</key>
+		<value><![CDATA[Longitud:]]></value>
+	</definition>
+	<definition>
+		<key>entry_opening_hours</key>
+		<value><![CDATA[Horario de apertura:]]></value>
+	</definition>
+	<definition>
+		<key>error_postcode</key>
+		<value><![CDATA[Se requiere código postal]]></value>
+	</definition>
+	<definition>
+		<key>error_city</key>
+		<value><![CDATA[Se requiere el nombre de la ciudad]]></value>
+	</definition>
+	<definition>
+		<key>entry_image_resize_fill_color</key>
+		<value><![CDATA[Color de relleno para cambiar el tamaño de la imagen <br/><span class="help">Color que se rellenará en áreas vacías durante el cambio de tamaño de la imagen de rectángulo a cuadrado</span>]]></value>
+	</definition>
+	<definition>
+		<key>entry_google_api_key</key>
+		<value><![CDATA[
+ Clave API de Google (para habilitar mapas de Google): <br/><span class="help">Puede ver la dirección en el mapa. Para habilitar los mapas de Google, agregue su clave de API de mapas de <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Página de credenciales de Google</a> .</span>]]></value>
+	</definition>
+	<definition>
+		<key>warning_https_store_url</key>
+		<value><![CDATA[Para mantener la funcionalidad correcta de la plataforma en todos los navegadores y mantener la seguridad de los datos, se requiere el protocolo HTTPS. Todas las solicitudes deben enviarse a HTTPS]]></value>
+	</definition>
+	<definition>
+		<key>entry_default_logo</key>
+		<value><![CDATA[Logotipo predeterminado de la tienda:]]></value>
+	</definition>
+	<definition>
+		<key>entry_default_mail_logo</key>
+		<value><![CDATA[Logotipo de correo electrónico predeterminado:]]></value>
+	</definition>
+	<definition>
+		<key>entry_phone_validation_pattern</key>
+		<value><![CDATA[Patrón de expresiones regulares de validación de teléfono:]]></value>
+	</definition>
+	<definition>
+		<key>entry_cron_command</key>
+		<value><![CDATA[Crontab en el comando de Linux <span class="help">Ejecute el comando crontab -e con el mismo usuario de Linux que ejecuta un servidor web para AbanteCart. En el editor agregue el comando</span>]]></value>
+	</definition>
+	<definition>
+		<key>text_native</key>
+		<value><![CDATA[Nativo (binario de sendmail y configuración de opciones &quot;sendmail_path&quot; de php.ini)]]></value>
+	</definition>
+	<definition>
+		<key>text_dsn</key>
+		<value><![CDATA[Tomar de system/config.php]]></value>
+	</definition>
+	<definition>
+		<key>text_dsn_description</key>
+		<value><![CDATA[Mailer combina un <a target="_blank" href="https://en.wikipedia.org/wiki/Data_source_name">DSN</a> del archivo config.php. Por favor lea <a target="_blank" href="https://abantecart.atlassian.net/wiki/spaces/AD/pages/7372837/Mail+Settings">nuestra documentación</a> para más detalles]]></value>
+	</definition>
+	<definition>
+		<key>entry_mail_transporting</key>
+		<value><![CDATA[
+ Transporte de correo:]]></value>
+	</definition>
+	<definition>
+		<key>text_native_mail_description</key>
+		<value><![CDATA[
+ Mailer usa el binario sendmail y las opciones configuradas en la configuración sendmail_path de php.ini.]]></value>
 	</definition>
 </definitions>

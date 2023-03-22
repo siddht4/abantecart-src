@@ -186,7 +186,7 @@
 	</definition>
 	<definition>
 		<key>notice_out_of_stock_body</key>
-		<value><![CDATA[Продукт &quot; %s &quot; достиг нулевой или отрицательной инвентаризации для основного продукта или его вариантов. <br> В результате настройки автоотключения, продукт ( %s ) был автоматически отключен!]]></value>
+		<value><![CDATA[Продукт &quot; %s &quot; достиг нулевой или отрицательной инвентаризации для основного продукта или его вариантов. <br> В результате настройки автоотключения, продукт ( %s ) был автоматически отключен!<br>Больше информации здесь %s]]></value>
 	</definition>
 	<definition>
 		<key>no_payment_required</key>
@@ -265,6 +265,10 @@
 		<value><![CDATA[Уведомление: Включен режим обслуживания.]]></value>
 	</definition>
 	<definition>
+		<key>text_act_on_behalf</key>
+		<value><![CDATA[Уведомление: Режим от имени покупателя "%s" из-под "%s"]]></value>
+	</definition>
+	<definition>
 		<key>text_browse</key>
 		<value><![CDATA[Выберите Файл]]></value>
 	</definition>
@@ -323,5 +327,21 @@
 	<definition>
 		<key>button_pay_with_balance</key>
 		<value><![CDATA[Оплатить с баланса]]></value>
+	</definition>
+	<definition>
+		<key>text_click_browse_file</key>
+		<value><![CDATA[Нажмите чтобы выбрать файл]]></value>
+	</definition>
+	<definition>
+		<key>price_with_tax</key>
+		<value><![CDATA[вкл. налоги]]></value>
+	</definition>
+	<definition>
+		<key>text_back_on_top</key>
+		<value><![CDATA[Вернуться к началу]]></value>
+	</definition>
+	<definition>
+		<key>text_out_of_stock</key>
+		<value><![CDATA[Нет в наличии]]></value>
 	</definition>
 </definitions>

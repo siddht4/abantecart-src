@@ -1,5 +1,6 @@
 <h5 class="sidebartitle"><?php echo $text_short_stats; ?></h5>    
 <ul>
+    <?php if ($viewcustomer) { ?>
     <li>
         <div class="icon"><i class="fa fa-users fa-2x fa-fw"></i></div>   
         <div class="stats_info">
@@ -11,6 +12,9 @@
             </h4>
         </div>
     </li>
+    <?php } ?>
+
+    <?php if ($vieworder) { ?>
     <li>
 		<div class="icon"><i class="fa fa-credit-card fa-2x fa-fw"></i></div>   
         <div class="stats_info">
@@ -26,6 +30,9 @@
             <h4><?php echo $today_sales_amount; ?></h4>
         </div>
     </li>
+    <?php } ?>
+
+    <?php if ($viewcustomer) { ?>
     <li>
     	<div class="icon"><i class="fa fa-user fa-2x fa-fw"></i></div> 
         <div class="stats_info">
@@ -33,11 +40,24 @@
             <h4><?php echo $today_customer_count; ?></h4>
         </div>
     </li>
+    <?php } ?>
+
+    <?php if ($viewreview) { ?>
     <li>
     	<div class="icon"><i class="fa fa-comment fa-2x fa-fw"></i></div> 
         <div class="stats_info">
             <span class="text-muted"><?php echo $text_today_reviews; ?></span>
             <h4><?php echo $today_review_count; ?></h4>
+        </div>
+    </li>
+    <?php } ?>
+
+    <li>
+    	<div class="icon"><i class="fa fa-clock-o fa-2x fa-fw"></i></div>
+        <div class="stats_info">
+            <span class="text-muted"><?php echo $text_server_time; ?></span>
+            <h4><?php echo $server_date .'<br>'.$server_time; ?></h4>
+            <span class="text-muted"><?php echo ini_get('date.timezone'); ?></span>
         </div>
     </li>
     <?php echo $this->getHookVar('side_summary_li'); ?>

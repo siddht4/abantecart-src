@@ -50,7 +50,7 @@
 	if ($coupon_status){
 		echo $coupon_form;
 	}
-	if ($balance_value){ ?>
+	if ($balance_value && $apply_balance_button){ ?>
 		<h4 class="heading4"><?php echo $text_balance; ?></h4>
 		<div class="registerbox">
 			<table class="table table-striped table-bordered">
@@ -87,8 +87,8 @@
 							<td style="width:1px;"><?php echo $payment_method['radio']; ?></td>
 							<td><label for="payment_payment_method<?php echo $payment_method['id']; ?>"
 							           style="cursor: pointer;">
-									<?php $icon = $payment_method['icon'];
-									if (count($icon)){ ?>
+									<?php $icon = (array)$payment_method['icon'];
+									if (sizeof($icon)){ ?>
 										<?php if (is_file(DIR_RESOURCE . $icon['image'])){ ?>
 											<span class="payment_icon mr10"><img
 														src="resources/<?php echo $icon['image']; ?>"

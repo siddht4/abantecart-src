@@ -86,7 +86,7 @@
 	</definition>
 	<definition>
 		<key>error_username</key>
-		<value><![CDATA[Il nome utente deve avere da 2 a 20 caratteri!]]></value>
+		<value><![CDATA[Il nome utente deve contenere da 2 a 20 caratteri e deve essere unico!]]></value>
 	</definition>
 	<definition>
 		<key>error_password</key>
@@ -139,5 +139,9 @@
 	<definition>
 		<key>text_change_im_addresses</key>
 		<value><![CDATA[Modifica di notifica Indirizzi per questo SendPoint]]></value>
+	</definition>
+	<definition>
+		<key>error_user_group</key>
+		<value><![CDATA[Non hai i permessi per cambiare gruppo di utenti.]]></value>
 	</definition>
 </definitions>

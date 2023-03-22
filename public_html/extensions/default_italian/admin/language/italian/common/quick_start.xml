@@ -73,12 +73,12 @@
 	        <img src="extensions/default_stripe/image/icon.png"><br>Installa Stripe</a>
 	    </div>
 	    <div class="col-sm-3 h5 center">
-	        <a href="#admin#rt=extension/extensions/install&extension=default_pp_standart" target="_extension">
-	        <img src="extensions/default_pp_standart/image/icon.png"><br>Installa Paypal</a>
+	        <a href="#admin#rt=extension/extensions/install&extension=paypal_commerce" target="_extension">
+	        <img src="extensions/paypal_commerce/image/icon.png"><br>Installa Paypal</a>
 	    </div>
 	    <div class="col-sm-3 h5 center">
-	        <a href="#admin#rt=extension/extensions/install&extension=default_payza" target="_extension">
-	        <img src="extensions/default_payza/image/icon.png"><br>Installa Payza</a>
+	        <a href="#admin#rt=extension/extensions/install&extension=default_authorizenet" target="_extension">
+	        <img src="extensions/default_authorizenet/image/icon.png"><br>Installa Authorize.Net</a>
 	    </div>
 	    <div class="col-sm-3 h5 center">
 	        <a href="#admin#rt=extension/extensions/payment" target="_extension">
@@ -136,7 +136,7 @@
     ]]></value>
 	</definition>
 	<definition>
-		<key>more_extentions</key>
+		<key>more_extensions</key>
 		<value><![CDATA[
     <div class="info alert alert-info">
     <i class="fa fa-puzzle-piece fa-fw"></i> Altre estensioni su AbanteCart marketplace.

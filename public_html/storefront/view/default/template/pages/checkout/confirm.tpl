@@ -34,8 +34,7 @@
 </div>
 
 <div class="contentpanel">
-	<?php echo $form['form_open']; ?>
-	<p><?php echo $text_accept_agree ?><a onclick="openModalRemote('#returnPolicyModal', '<?php echo $text_accept_agree_href; ?>'); return false;"
+	<p><?php echo $text_accept_agree ?>&nbsp;<a onclick="openModalRemote('#returnPolicyModal', '<?php echo $text_accept_agree_href; ?>'); return false;"
 				href="<?php echo $text_accept_agree_href; ?>"><b><?php echo $text_accept_agree_href_link; ?></b></a></p>
 
 
@@ -45,14 +44,21 @@
 			<tr>
 				<td class="align_left"><?php echo $shipping_firstname . ' ' . $shipping_lastname; ?>
 					<br/><?php echo $telephone; ?></td>
+					<?php echo $this->getHookVar('checkout_confirm_shipping_info_1'); ?>
 				<td class="align_left">
 					<address>
+				    <?php echo $this->getHookVar('checkout_confirm_shipping_info_pre_2'); ?>
 					<?php echo $shipping_address_1 . ' ' . $shipping_address_2; ?><br/>
 					<?php echo $shipping_city . ' ' . $shipping_zone . ' ' . $shipping_postcode; ?><br/>
 					<?php echo $shipping_country ?>
+						<?php echo $this->getHookVar('checkout_confirm_shipping_info_post_2'); ?>
 					</address>
 				</td>
-				<td class="align_left"><?php echo $shipping_method; ?></td>
+				<td class="align_left">
+					<?php echo $this->getHookVar('checkout_confirm_shipping_info_pre_3'); ?>
+					<?php echo $shipping_method; ?>
+					<?php echo $this->getHookVar('checkout_confirm_shipping_info_post_3'); ?>
+				</td>
 				<td class="align_right">
 					<a class="btn btn-default btn-xs" href="<?php echo $checkout_shipping_edit; ?>">
 						<i class="fa fa-edit"></i>
@@ -74,24 +80,34 @@
 				<tr>
 					<td class="align_left"><?php echo $payment_firstname . ' ' . $payment_lastname; ?>
 						<br/><?php echo $telephone; ?></td>
+						<?php echo $this->getHookVar('checkout_confirm_payment_info_1'); ?>
 					<td class="align_left">
 						<address>
+							<?php echo $this->getHookVar('checkout_confirm_payment_info_pre_2'); ?>
 						<?php echo $payment_address_1 . ' ' . $payment_address_2; ?><br/>
 						<?php echo $payment_city . ' ' . $payment_zone . ' ' . $payment_postcode; ?><br/>
 						<?php echo $payment_country ?>
+							<?php echo $this->getHookVar('checkout_confirm_payment_info_post_2'); ?>
 						</address>
 					</td>
-					<td class="align_left"><?php echo $payment_method; ?></td>
+					<td class="align_left">
+						<?php echo $this->getHookVar('checkout_confirm_payment_info_pre_3'); ?>
+						<?php echo $payment_method; ?>
+						<?php echo $this->getHookVar('checkout_confirm_payment_info_post_3'); ?>
+					</td>
 					<td class="align_right">
 						<a class="btn btn-default btn-xs" href="<?php echo $checkout_payment_edit; ?>">
 							<i class="fa fa-edit"></i>
 							<?php echo $text_edit_payment; ?>
 						</a>
-						<br /><br />
+						<br />
+					<?php if($coupon_status){ ?>
+						<br />
 						<a class="btn btn-default btn-xs" href="<?php echo $checkout_payment_edit; ?>">
 							<i class="fa fa-check-square-o"></i>
 							<?php echo $text_add_coupon; ?>
 						</a>
+					<?php } ?>
 					</td>
 				</tr>
 			<?php }
@@ -125,7 +141,7 @@
 
 	<h4 class="heading4"><?php echo $text_cart_items; ?>
 		<a class="pull-right mr10 btn btn-default btn-xs" href="<?php echo $cart; ?>">
-			<i class="fa fa-shopping-cart"></i>
+			<i class="fa fa-shopping-cart fa-fw"></i>
 			<?php echo $text_edit_basket; ?>
 		</a>
 	</h4>
@@ -139,11 +155,14 @@
 						<br/>
 						&nbsp;
 						<small title="<?php echo $option['title']?>"> - <?php echo $option['name']; ?> <?php echo $option['value']; ?></small>
-					<?php } ?></td>
+					<?php } ?>
+					<?php echo $this->getHookVar('checkout_confirm_product_'.$product['product_id'].'_additional_info_1'); ?>
+				</td>
 				<td><?php echo $product['price']; ?></td>
 				<td><?php echo $product['quantity']; ?></td>
 				<td class="checkout_heading"><?php echo $product['total']; ?></td>
 			</tr>
+		<?php echo $this->getHookVar('checkout_confirm_product_'.$product['product_id'].'_additional_info_2'); ?>
 		<?php } ?>
 		<?php echo $this->getHookVar('list_more_product_last'); ?>
 	</table>
@@ -173,10 +192,10 @@
 			</table>
 		</div>
 		
-		<div class="col-md-6 col-md-offset-1 payment_confirmation">
+		<div class="col-md-7 payment_confirmation">
 			<?php echo $this->getHookVar('payment_pre'); ?>
 			<div id="payment"><?php echo $payment; ?></div>
-			<?php echo $this->getHookVar('payment_post'); ?>	
+			<?php echo $this->getHookVar('payment_post'); ?>
 		</div>
 		
 	</div>

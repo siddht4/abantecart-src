@@ -11,7 +11,7 @@
 
 <div class="contentpanel">
 
-	<div class="container-fluid table-responsive">
+	<div class="table-responsive">
 		<table class="table table-striped table-bordered">
 			<tr>
 				<td><?php if ($invoice_id) { ?>
@@ -22,6 +22,7 @@
 					<b><?php echo $text_order_id; ?></b><br/>
 					#<?php echo $order_id; ?><br/>
 					<br/>
+					<?php echo $this->getHookVar('more_order_info'); ?>
 					<b><?php echo $column_status; ?></b><br/>
 					<?php echo $status; ?><br/>
 					<br/>
@@ -31,6 +32,11 @@
 					<?php if ($telephone) { ?>
 						<b><?php echo $text_telephone; ?></b><br/>
 						<?php echo $telephone; ?><br/>
+						<br/>
+					<?php } ?>
+					<?php if ($mobile_phone) { ?>
+						<b><?php echo $text_mobile_phone; ?></b><br/>
+						<?php echo $mobile_phone; ?><br/>
 						<br/>
 					<?php } ?>
 					<?php if ($fax) { ?>
@@ -45,19 +51,25 @@
 					<?php } ?>
 					<b><?php echo $text_payment_method; ?></b><br/>
 					<?php echo $payment_method; ?></td>
-				<td><?php if ($shipping_address) { ?>
+				<td>
+					<?php echo $this->getHookVar('pre_shipping_address'); ?>
+					<?php if ($shipping_address) { ?>
 						<b><?php echo $text_shipping_address; ?></b><br/>
 						<address><?php echo $shipping_address; ?></address>
 					<?php } ?>
+					<?php echo $this->getHookVar('post_shipping_address'); ?>
 				</td>
 				<td><b><?php echo $text_payment_address; ?></b><br/>
+					<?php echo $this->getHookVar('pre_payment_address'); ?>
 					<address><?php echo $payment_address; ?></address>
+					<?php echo $this->getHookVar('post_payment_address'); ?>
 				</td>
 			</tr>
 		</table>
 	</div>
-	<div class="container-fluid invoice_products table-responsive">
-		<table class="table table-striped table-bordered">
+	<div class="table-responsive">
+		<div class="col-md-12 col-xs-12">
+		<table class="invoice_products table table-striped table-bordered">
 			<tr>
 				<th class="align_left"><?php echo $text_image; ?></th>
 				<th class="align_left"><?php echo $text_product; ?></th>
@@ -65,27 +77,38 @@
 				<th class="align_right"><?php echo $text_quantity; ?></th>
 				<th class="align_right"><?php echo $text_price; ?></th>
 				<th class="align_right"><?php echo $text_total; ?></th>
+				<?php echo $this->getHookVar('product_additional_table_header'); ?>
 			</tr>
 			<?php foreach ($products as $product) { ?>
 				<tr>
 					<td align="left" valign="top"><?php echo $product['thumbnail']['thumb_html']; ?></td>
-					<td class="align_left  valign_top"><a
-								href="<?php echo str_replace('%ID%', $product['id'], $product_link) ?>"><?php echo $product['name']; ?></a>
-						<?php foreach ($product['option'] as $option) { ?>
+					<td class="align_left  valign_top">
+                        <?php if($product['url']){ ?>
+                            <a href="<?php echo $product['url']; ?>"><?php echo $product['name']; ?></a>
+                        <?php }else{
+                            echo $product['name'];
+                        }
+                        foreach ($product['option'] as $option) { ?>
 							<br/>
 							&nbsp;
 							<small title="<?php echo $option['title']?>"> - <?php echo $option['name']; ?> <?php echo $option['value']; ?></small>
-						<?php } ?></td>
+						<?php echo $this->getHookVar('option_'.$option['name'].'_additional_info'); ?>
+						<?php } ?>
+						<?php echo $this->getHookVar('product_'.$product['order_product_id'].'_additional_info'); ?>
+					</td>
 					<td class="align_left valign_top"><?php echo $product['model']; ?></td>
 					<td class="align_right valign_top"><?php echo $product['quantity']; ?></td>
 					<td class="align_right valign_top"><?php echo $product['price']; ?></td>
 					<td class="align_right valign_top"><?php echo $product['total']; ?></td>
+					<?php echo $this->getHookVar('product_'.$product['order_product_id'].'_additional_info_1'); ?>
 				</tr>
+			<?php echo $this->getHookVar('product_'.$product['order_product_id'].'_additional_info_2'); ?>
 			<?php } ?>
 			<?php echo $this->getHookVar('list_more_product_last'); ?>
 		</table>
+		</div>
 
-		<div class="col-md-4 col-xs-6 pull-right">
+		<div class="col-md-4 col-sm-6 col-xs-8 pull-right">
 			<table class="table table-striped table-bordered">
 				<?php foreach ($totals as $total) { ?>
 					<tr>
@@ -128,15 +151,15 @@
 	<?php } ?>
 
 	<div class="form-group">
-		<div class="mt20 mb40">
-		    <a href="<?php echo $continue; ?>" class="btn btn-default mr10" title="<?php echo $button_continue->text ?>">
+		<div class="mb40">
+		    <a href="<?php echo $continue; ?>" class="btn btn-default mr10 mb20" title="<?php echo $button_continue->text ?>">
 		    	<i class="<?php echo $button_continue->{'icon'}; ?>"></i>
 		    	<?php echo $button_continue->text ?>
 		    </a>
 		    <?php echo $this->getHookVar('hk_additional_buttons'); ?>
 
 			<?php if ($button_order_cancel) { ?>
-		    <a href="" class="btn btn-default mr10 pull-right" data-toggle="modal" data-target="#cancelationModal"
+		    <a href="" class="btn btn-default mr10 mb10 pull-right" data-toggle="modal" data-target="#cancelationModal"
 		       title="<?php echo $button_order_cancel->text ?>">
 		    	<i class="<?php echo $button_order_cancel->{'icon'}; ?>"></i>
 		    	<?php echo $button_order_cancel->text ?>
@@ -158,11 +181,19 @@
 				</div>
 
 			<?php } ?>
-		    <a href="javascript:window.print();" class="btn btn-orange mr10 pull-right"
+
+		    <a href="javascript:window.print();" class="btn btn-orange mr10 mb10 pull-right"
 		       title="<?php echo $button_print->text ?>">
 		    	<i class="<?php echo $button_print->{'icon'}; ?>"></i>
 		    	<?php echo $button_print->text ?>
 		    </a>
+			<?php if ($button_download) { ?>
+		    <a href="<?php echo $button_download->href ?>" class="btn btn-default mr10 pull-right"
+		       title="<?php echo $button_download->text ?>">
+		        <i class="<?php echo $button_download->{'icon'}; ?>"></i>
+		        <?php echo $button_download->text ?>
+		    </a>
+			<?php } ?>
 		</div>
 	</div>
 

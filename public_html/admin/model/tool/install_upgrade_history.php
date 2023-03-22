@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2016 Belavier Commerce LLC
+  Copyright © 2011-2020 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -18,43 +18,60 @@
    needs please refer to http://www.AbanteCart.com for more information.
 ------------------------------------------------------------------------------*/
 if (!defined('DIR_CORE') || !IS_ADMIN) {
-	header('Location: static_pages/');
-}
-class ModelToolInstallUpgradeHistory extends Model {
-
-
-	public function getLog($data = array()) {
-
-		if (!isset($data[ 'sort' ])) {
-			$data[ 'sort' ] = 'date_added';
-		}
-
-		if ($data[ 'offset' ] < 0) {
-			$data[ 'offset' ] = 0;
-		}
-
-		if ($data[ 'limit' ] < 1) {
-			$data[ 'limit' ] = 10;
-		}
-		$dataset = new ADataset('install_upgrade_history', 'admin');
-		$rows = $dataset->getRows(array(), $data[ 'sort' ], $data[ 'limit' ], $data[ 'offset' ]);
-
-
-		return $rows;
-	}
-
-	public function getTotalRows($filter = array()) {
-
-		if ($filter) {
-			$filter[ 'column_name' ] = 'name';
-			$filter[ 'operator' ] = 'like';
-
-		}
-
-		$dataset = new ADataset('install_upgrade_history', 'admin');
-		$rows = $dataset->getTotalRows($filter);
-		return $rows;
-	}
+    header('Location: static_pages/');
 }
 
-?>
+class ModelToolInstallUpgradeHistory extends Model
+{
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function getLog($data = array())
+    {
+
+        if (!isset($data['sort'])) {
+            $data['sort'] = 'date_added';
+        }
+
+        if ($data['offset'] < 0) {
+            $data['offset'] = 0;
+        }
+
+        if ($data['limit'] < 1) {
+            $data['limit'] = 10;
+        }
+        $dataset = new ADataset('install_upgrade_history', 'admin');
+        $rows = $dataset->getRows(array(), $data['sort'], $data['limit'], $data['offset']);
+
+        return $rows;
+    }
+
+    /**
+     * @param array $filter
+     *
+     * @return int
+     */
+    public function getTotalRows($filter = array())
+    {
+
+        if ($filter) {
+            $filter['column_name'] = 'name';
+            $filter['operator'] = 'like';
+        }
+
+        $dataset = new ADataset('install_upgrade_history', 'admin');
+        $rows = $dataset->getTotalRows($filter);
+        return $rows;
+    }
+
+    /**
+     * @return bool
+     */
+    public function deleteData()
+    {
+        $dataset = new ADataset('install_upgrade_history', 'admin');
+        return $dataset->deleteData();
+    }
+}

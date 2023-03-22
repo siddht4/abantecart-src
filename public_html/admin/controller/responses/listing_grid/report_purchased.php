@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2016 Belavier Commerce LLC
+  Copyright © 2011-2020 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -17,57 +17,65 @@
    versions in the future. If you wish to customize AbanteCart for your
    needs please refer to http://www.AbanteCart.com for more information.
 ------------------------------------------------------------------------------*/
-if (! defined ( 'DIR_CORE' ) || !IS_ADMIN) {
-	header ( 'Location: static_pages/' );
+if (!defined('DIR_CORE') || !IS_ADMIN) {
+    header('Location: static_pages/');
 }
-class ControllerResponsesListingGridReportPurchased extends AController {
 
-    public function main() {
+class ControllerResponsesListingGridReportPurchased extends AController
+{
+    public $data = array();
 
-	    //init controller data
-        $this->extensions->hk_InitData($this,__FUNCTION__);
+    public function main()
+    {
 
-		$this->loadLanguage('report/purchased');
-		$this->loadModel('report/purchased');
+        //init controller data
+        $this->extensions->hk_InitData($this, __FUNCTION__);
 
-	    //Prepare filter config
-        $filter_params =  array('date_start', 'date_end');
+        $this->loadLanguage('report/purchased');
+        $this->loadModel('report/purchased');
 
-	    if(!$this->request->get['date_start']){
-		    $this->request->get['date_start'] = dateInt2Display(strtotime('-30 day'));
-	    }
-	    if(!$this->request->get['date_end']){
-		    $this->request->get['date_end'] = dateInt2Display(time());
-	    }
+        //Prepare filter config
+        $filter_params = array_merge(array('date_start', 'date_end'), (array)$this->data['grid_filter_params']);
+        $grid_filter_params = array('name', 'model');
 
-        $filter_form = new AFilter(array( 'method' => 'get', 'filter_params' => $filter_params ));
-        $filter_grid = new AFilter(array( 'method' => 'post' ));
+        if (!$this->request->get['date_start']) {
+            $this->request->get['date_start'] = dateInt2Display(strtotime('-30 day'));
+        }
+        if (!$this->request->get['date_end']) {
+            $this->request->get['date_end'] = dateInt2Display(time());
+        }
+
+        $filter_form = new AFilter(array('method' => 'get', 'filter_params' => $filter_params));
+        $filter_grid = new AFilter(array('method' => 'post', 'grid_filter_params' => $grid_filter_params));
         $data = array_merge($filter_form->getFilterData(), $filter_grid->getFilterData());
 
-		$total = $this->model_report_purchased->getTotalOrderedProducts($data);
+        $total = $this->model_report_purchased->getTotalOrderedProducts($data);
 
-	    $response = new stdClass();
-		$response->page = $filter_grid->getParam('page');;
-		$response->total = $filter_grid->calcTotalPages($total);;
-		$response->records = $total;
+        $response = new stdClass();
+        $response->userdata = new stdClass();
+        $response->userdata->classes = array();
+        $response->page = $filter_grid->getParam('page');
+        $response->total = $filter_grid->calcTotalPages($total);
+        $response->records = $total;
 
-	    $results = $this->model_report_purchased->getProductPurchasedReport($data );
-	    $i = 0;
-		foreach ($results as $result) {
+        $results = $this->model_report_purchased->getProductPurchasedReport($data);
+        $i = 0;
+        foreach ($results as $result) {
             $response->rows[$i]['id'] = $i;
-			$response->rows[$i]['cell'] = array(
-				$result['name'],
-				$result['model'],
-				$result['quantity'],
-				$this->currency->format($result['total'], $this->config->get('config_currency'))
-			);
-			$i++;
-		}
+            $response->rows[$i]['cell'] = array(
+                $result['name'],
+                $result['model'],
+                $result['quantity'],
+                $this->currency->format($result['total'], $this->config->get('config_currency')),
+            );
+            $i++;
+        }
 
-		//update controller data
-        $this->extensions->hk_UpdateData($this,__FUNCTION__);
+        $this->data['response'] = $response;
 
-		$this->load->library('json');
-		$this->response->setOutput(AJson::encode($response));
-	}
+        //update controller data
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
+        $this->load->library('json');
+        $this->response->setOutput(AJson::encode($this->data['response']));
+    }
 }

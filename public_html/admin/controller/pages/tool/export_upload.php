@@ -5,7 +5,7 @@
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2016 Belavier Commerce LLC
+  Copyright © 2011-2020 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -17,116 +17,119 @@
    versions in the future. If you wish to customize AbanteCart for your
    needs please refer to http://www.AbanteCart.com for more information.
 ------------------------------------------------------------------------------*/
-if (! defined ( 'DIR_CORE' ) || !IS_ADMIN) {
-	header ( 'Location: static_pages/' );
+if (!defined('DIR_CORE') || !IS_ADMIN) {
+    header('Location: static_pages/');
 }
-class ControllerPagesToolExportUpload extends AController {
 
-	public function main()
-	{
-		$this->extensions->hk_InitData($this,__FUNCTION__);
+class ControllerPagesToolExportUpload extends AController
+{
 
-		if ( $this->request->is_POST() && $this->user->canModify('tool/import_export') )
-		{
-			if ( empty($this->request->post['data']) )
-			{
-				$this->session->data['error'] = 'Data for export is empty!';
-				$this->redirect($this->html->getSecureURL('tool/import_export', '&active=export'));
-			}
+    public function main()
+    {
+        $this->extensions->hk_InitData($this, __FUNCTION__);
+        $redirect = $this->html->getSecureURL('tool/import_export', '&active=export');
 
-			$request = $this->validateRequest($this->request->post['data']);
+        if (!$this->request->is_POST() || !$this->user->canModify('tool/import_export')) {
+            $this->redirect($redirect);
+            return $this->dispatch('error/permission');
+        }
 
-			$this->data = new AData();	
-			$array_new = $this->data->exportData($request);
+        if (empty($this->request->post['data'])) {
+            $this->session->data['error'] = 'Data for export is empty!';
+            $this->redirect($redirect);
+        }
 
-			if ( !empty($request) ) {
-				if ( empty($this->request->post['options']['file_name']) ) {
-					$fileName = 'data_export_' . date('mdY_His');
-				} else {
-					$fileName = $this->request->post['options']['file_name'];
-				}
+        $request = $this->validateRequest($this->request->post['data']);
 
-				$result = false;
+        $this->data = new AData();
+        $array_new = $this->data->exportData($request);
 
-				switch ($this->request->post['options']['file_format']) {
-					case 'csv':
-						
-						$fileName .= '.tar.gz';
-						$result = $this->data->array2CSV($array_new, $fileName, $this->request->post['options']['delimiter']);
-						break;
+        if (!empty($request)) {
+            if (empty($this->request->post['options']['file_name'])) {
+                $fileName = 'data_export_'.date('mdY_His');
+            } else {
+                $fileName = $this->request->post['options']['file_name'];
+            }
 
-					case 'txt':
-						$fileName .= '.tar.gz';
-						$result = $this->data->array2CSV($array_new, $fileName, $this->request->post['options']['delimiter'], '.txt');
-						break;
+            $result = false;
 
-					case 'xml':
+            switch ($this->request->post['options']['file_format']) {
+                case 'csv':
 
-						$fileName .= '.xml';
-						$result = $this->data->array2XML( $array_new );
+                    $fileName .= '.tar.gz';
+                    $result = $this->data->array2CSV($array_new, $fileName, $this->request->post['options']['delimiter']);
+                    break;
 
-						break;
-						
-					default:
-						return null;
-				}
+                case 'txt':
+                    $fileName .= '.tar.gz';
+                    $result = $this->data->array2CSV($array_new, $fileName, $this->request->post['options']['delimiter'], '.txt');
+                    break;
 
-				if (!headers_sent()) {
-					if ( $result ) {
-						header('Pragma: public');
-						header('Expires: 0');
-						header('Content-Description: File Transfer');
-						header('Content-Type: application/octet-stream');
-						header('Content-Disposition: attachment; filename="' . $fileName . '"');
-						header('Content-Transfer-Encoding: binary');
+                case 'xml':
 
-						print($result);exit; // popup window with file upload dialog
+                    $fileName .= '.xml';
+                    $result = $this->data->array2XML($array_new);
 
-					} else {
-						$this->session->data['error'] = 'Error during export! Please check errors report.';
-					}
+                    break;
 
-					//update controller data
-					$this->extensions->hk_UpdateData($this,__FUNCTION__);
-					$this->redirect($this->html->getSecureURL('tool/import_export', '&active=export'));
-					return null;
-				} else {
-					exit('Error: Headers already sent out!');
-				}
-			} else {
-				$this->session->data['error'] = 'Request for export is empty!';
-				$this->redirect($this->html->getSecureURL('tool/import_export', '&active=export'));
-				return null;
-			}
+                default:
+                    return null;
+            }
 
-		} else {
-			$this->redirect($this->html->getSecureURL('tool/import_export', '&active=export'));
-			return $this->dispatch('error/permission');
-		}
-	}
+            if (!headers_sent()) {
+                if ($result) {
+                    header('Pragma: public');
+                    header('Expires: 0');
+                    header('Content-Description: File Transfer');
+                    header('Content-Type: application/octet-stream');
+                    header('Content-Disposition: attachment; filename="'.$fileName.'"');
+                    header('Content-Transfer-Encoding: binary');
 
-	private function validateRequest($post) {
+                    print($result);
+                    exit; // popup window with file upload dialog
 
-		$results = array();
+                } else {
+                    $this->session->data['error'] = 'Error during export! Please check errors report.';
+                }
 
-		foreach ( $post as $key => $val ) {
-			if ( (bool) $val['is_checked'] || (isset($val['tables']) && !empty($val['tables'])) ) {
+                //update controller data
+                $this->extensions->hk_UpdateData($this, __FUNCTION__);
+                $this->redirect($redirect);
+                return null;
+            } else {
+                exit('Error: Headers already sent out!');
+            }
+        } else {
+            $this->session->data['error'] = 'Request for export is empty!';
+            $this->redirect($redirect);
+            return null;
+        }
 
-				if ( $val['start_id'] != '' ) {
-					$val['start_id'] = (int) $val['start_id'];
-				} else {
-					$val['start_id'] = 0;
-				}
+    }
 
-				if ( $val['end_id'] != '' ) {
-					$val['end_id'] = (int) $val['end_id'];
-				}
-				$results[$key] = $val;
-			}
-			unset($val);
-		}
+    private function validateRequest($post)
+    {
 
-		return $results;
-	}
-	
+        $results = array();
+
+        foreach ($post as $key => $val) {
+            if ((bool)$val['is_checked'] || (isset($val['tables']) && !empty($val['tables']))) {
+
+                if ($val['start_id'] != '') {
+                    $val['start_id'] = (int)$val['start_id'];
+                } else {
+                    $val['start_id'] = 0;
+                }
+
+                if ($val['end_id'] != '') {
+                    $val['end_id'] = (int)$val['end_id'];
+                }
+                $results[$key] = $val;
+            }
+            unset($val);
+        }
+
+        return $results;
+    }
+
 }

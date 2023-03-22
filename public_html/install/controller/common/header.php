@@ -1,11 +1,12 @@
 <?php
+
 /*------------------------------------------------------------------------------
   $Id$
 
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2016 Belavier Commerce LLC
+  Copyright © 2011-2020 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -18,22 +19,26 @@
    needs please refer to http://www.AbanteCart.com for more information.  
 ------------------------------------------------------------------------------*/
 
-class ControllerCommonHeader extends AController {
-	public function main() {
-		$template_data = array();
-        $template_data['title'] = $this->document->getTitle();
-		$template_data['description'] = $this->document->getDescription();
-		$template_data['base'] = $this->document->getBase();
-		$template_data['charset'] = $this->document->getCharset();
-		$template_data['language'] = $this->document->getLanguage();
-		$template_data['direction'] = $this->document->getDirection();
-		$template_data['links'] = $this->document->getLinks();	
-		$template_data['styles'] = $this->document->getStyles();
-		$template_data['scripts'] = $this->document->getScripts();		
-		$template_data['breadcrumbs'] = $this->document->getBreadcrumbs();
+class ControllerCommonHeader extends AController
+{
+    public $data = array();
 
-		$this->view->batchAssign( $template_data );
-        $this->processTemplate('common/header.tpl' );
-	}
+    public function main()
+    {
+        $this->data = array();
+        $this->data['title'] = $this->document->getTitle();
+        $this->data['description'] = $this->document->getDescription();
+        $this->data['base'] = $this->document->getBase();
+        $this->data['charset'] = $this->document->getCharset();
+        $this->data['language'] = $this->document->getLanguage();
+        $this->data['direction'] = $this->document->getDirection();
+        $this->data['links'] = $this->document->getLinks();
+        $this->data['styles'] = $this->document->getStyles();
+        $this->data['scripts'] = $this->document->getScripts();
+        $this->data['breadcrumbs'] = $this->document->getBreadcrumbs();
+        $this->data['ssl'] = HTTPS;
+
+        $this->view->batchAssign($this->data);
+        $this->processTemplate('common/header.tpl');
+    }
 }
-?>

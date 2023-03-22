@@ -73,7 +73,7 @@ CREATE TABLE `ac_countries` (
   `iso_code_3` varchar(3) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `address_format` text COLLATE utf8_general_ci NOT NULL,
   `status` int(1) NOT NULL DEFAULT '1',
-  `sort_order` int(3) NOT NULL DEFAULT '0',  
+  `sort_order` int(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`country_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 CREATE INDEX `ac_countries_idx` ON `ac_countries` ( `iso_code_2`, `iso_code_3`, `status`  );
@@ -81,7 +81,7 @@ CREATE INDEX `ac_countries_idx` ON `ac_countries` ( `iso_code_2`, `iso_code_3`, 
 --
 -- Dumping data for table `countries`
 --
-INSERT INTO `ac_countries` (`country_id`, `iso_code_2`, `iso_code_3`, `address_format`, `status`, `sort_order`) 
+INSERT INTO `ac_countries` (`country_id`, `iso_code_2`, `iso_code_3`, `address_format`, `status`, `sort_order`)
 VALUES
 (1,'AF','AFG','',1,0),
 (2,'AL','ALB','',1,0),
@@ -143,7 +143,7 @@ VALUES
 (58,'DJ','DJI','',1,0),
 (59,'DM','DMA','',1,0),
 (60,'DO','DOM','',1,0),
-(61,'TP','TMP','',1,0),
+(61,'TL','TLS','',1,0),
 (62,'EC','ECU','',1,0),
 (63,'EG','EGY','',1,0),
 (64,'SV','SLV','',1,0),
@@ -318,11 +318,14 @@ VALUES
 (233,'WF','WLF','',1,0),
 (234,'EH','ESH','',1,0),
 (235,'YE','YEM','',1,0),
-(236,'YU','YUG','',1,0),
-(237,'ZR','ZAR','',1,0),
+(236,'ME','MNE','',1,0),
+(237,'CW','CUW','',1,0),
 (238,'ZM','ZMB','',1,0),
 (239,'ZW','ZWE','',1,0),
-(240,'GB','NIR','',1,0);
+(240,'GB','NIR','',1,0),
+(241,'RS','SRB','',1,0),
+(242,'XK','XXK','',1,0);
+
 --
 -- DDL for table `ac_country_descriptions`
 --
@@ -334,8 +337,8 @@ CREATE TABLE `ac_country_descriptions` (
   PRIMARY KEY (`country_id`,`language_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
-INSERT INTO `ac_country_descriptions` (`country_id`, `language_id`, `name`) 
-VALUES 
+INSERT INTO `ac_country_descriptions` (`country_id`, `language_id`, `name`)
+VALUES
 (1,1,'Afghanistan'),
 (2,1,'Albania'),
 (3,1,'Algeria'),
@@ -374,7 +377,7 @@ VALUES
 (36,1,'Cambodia'),
 (37,1,'Cameroon'),
 (38,1,'Canada'),
-(39,1,'Cape Verde'),
+(39,1,'Cabo Verde'),
 (40,1,'Cayman Islands'),
 (41,1,'Central African Republic'),
 (42,1,'Chad'),
@@ -387,7 +390,7 @@ VALUES
 (49,1,'Congo'),
 (50,1,'Cook Islands'),
 (51,1,'Costa Rica'),
-(52,1,'Cote D\'Ivoire'),
+(52,1,'Côte d\'Ivoire'),
 (53,1,'Croatia'),
 (54,1,'Cuba'),
 (55,1,'Cyprus'),
@@ -396,7 +399,7 @@ VALUES
 (58,1,'Djibouti'),
 (59,1,'Dominica'),
 (60,1,'Dominican Republic'),
-(61,1,'East Timor'),
+(61,1,'Timor-Leste'),
 (62,1,'Ecuador'),
 (63,1,'Egypt'),
 (64,1,'El Salvador'),
@@ -461,7 +464,7 @@ VALUES
 (123,1,'Lithuania'),
 (124,1,'Luxembourg'),
 (125,1,'Macau'),
-(126,1,'Macedonia'),
+(126,1,'North Macedonia'),
 (127,1,'Madagascar'),
 (128,1,'Malawi'),
 (129,1,'Malaysia'),
@@ -537,7 +540,7 @@ VALUES
 (199,1,'Sudan'),
 (200,1,'Suriname'),
 (201,1,'Svalbard and Jan Mayen Islands'),
-(202,1,'Swaziland'),
+(202,1,'Eswatini'),
 (203,1,'Sweden'),
 (204,1,'Switzerland'),
 (205,1,'Syrian Arab Republic'),
@@ -571,11 +574,13 @@ VALUES
 (233,1,'Wallis and Futuna Islands'),
 (234,1,'Western Sahara'),
 (235,1,'Yemen'),
-(236,1,'Yugoslavia'),
-(237,1,'Zaire'),
+(236,1,'Montenegro'),
+(237,1,'Curaçao'),
 (238,1,'Zambia'),
 (239,1,'Zimbabwe'),
-(240,1,'Northern Ireland');
+(240,1,'Northern Ireland'),
+(241,1,'Serbia'),
+(242,1,'Kosovo');
 
 
 --
@@ -595,6 +600,7 @@ CREATE TABLE `ac_coupons` (
   `uses_total` int(11) NOT NULL,
   `uses_customer` varchar(11) COLLATE utf8_general_ci NOT NULL,
   `status` int(1) NOT NULL,
+  `condition_rule` ENUM('OR', 'AND') NOT NULL DEFAULT 'OR',
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`coupon_id`)
@@ -626,6 +632,18 @@ CREATE TABLE `ac_coupons_products` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
 CREATE INDEX `ac_coupons_products_idx` ON `ac_coupons_products` ( `coupon_id`, `product_id`  );
+--
+-- DDL for table `coupon_categories`
+--
+DROP TABLE IF EXISTS `ac_coupons_categories`;
+CREATE TABLE `ac_coupons_categories` (
+  `coupon_category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `coupon_id` int(11) NOT NULL,
+  `category_id` int(11) NOT NULL,
+  PRIMARY KEY (`coupon_category_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1;
+
+CREATE INDEX `ac_coupons_categories_idx` ON `ac_coupons_categories` ( `coupon_id`, `category_id`  );
 
 
 --
@@ -636,7 +654,7 @@ CREATE TABLE `ac_currencies` (
   `currency_id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `code` varchar(3) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `symbol_left` varchar(12) COLLATE utf8_general_ci NOT NULL,	
+  `symbol_left` varchar(12) COLLATE utf8_general_ci NOT NULL,
   `symbol_right` varchar(12) COLLATE utf8_general_ci NOT NULL,
   `decimal_place` char(1) COLLATE utf8_general_ci NOT NULL,
   `value` decimal(15,8) NOT NULL,
@@ -651,8 +669,8 @@ CREATE TABLE `ac_currencies` (
 
 INSERT INTO `ac_currencies` (`currency_id`, `title`, `code`, `symbol_left`, `symbol_right`, `decimal_place`, `value`, `status`, `date_modified`) VALUES
 (1, 'US Dollar', 'USD', '$', '', '2', 1.00, 1, '2011-06-20 21:00:00'),
-(2, 'Euro', 'EUR', '', '€', '2', 0.76775432 , 1, '2011-06-20 21:00:00'),
-(3, 'Pound Sterling', 'GBP', '£', '', '2', 0.64524455, 1, '2011-06-20 21:00:00');
+(2, 'Euro', 'EUR', '', '€', '2', 0.93850000 , 1, '2011-06-20 21:00:00'),
+(3, 'Pound Sterling', 'GBP', '£', '', '2', 0.79330000, 1, '2011-06-20 21:00:00');
 
 --
 -- DDL for table `customers`
@@ -671,23 +689,26 @@ CREATE TABLE `ac_customers` (
   `telephone` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `fax` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `sms` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'mobile phone number',
+  `salt` varchar(8) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `password` varchar(40) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `cart` text COLLATE utf8_general_ci,
-  `wishlist` text COLLATE utf8_general_ci,
+  `cart` LONGTEXT COLLATE utf8_general_ci,
+  `wishlist` LONGTEXT COLLATE utf8_general_ci,
   `newsletter` int(1) NOT NULL DEFAULT '0',
   `address_id` int(11) NOT NULL DEFAULT '0',
   `status` int(1) NOT NULL,
   `approved` int(1) NOT NULL DEFAULT '0',
   `customer_group_id` int(11) NOT NULL,
-  `ip` varchar(15) COLLATE utf8_general_ci NOT NULL DEFAULT '0',
+  `ip` varchar(50) COLLATE utf8_general_ci NOT NULL DEFAULT '0',
+  `data` text DEFAULT null,
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_login` timestamp DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`customer_id`),
   UNIQUE KEY `customers_loginname` (`loginname`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
 CREATE INDEX `ac_customers_idx` ON `ac_customers` ( `store_id`, `address_id`, `customer_group_id` );
-
+CREATE FULLTEXT INDEX `ac_customers_name_idx` ON `ac_customers` (`firstname`, `lastname`);
 --
 -- DDL for table `customer_groups`
 --
@@ -718,8 +739,8 @@ CREATE TABLE `ac_customer_transactions` (
   `order_id` int(11) NOT NULL DEFAULT '0',
   `created_by` int(11) NOT NULL  COMMENT 'user_id for admin, customer_id for storefront section',
   `section` smallint(1) NOT NULL DEFAULT '0' COMMENT '1 - admin, 0 - customer',
-  `credit` float DEFAULT '0',
-  `debit` float DEFAULT '0',
+  `credit` DECIMAL(15,4) DEFAULT '0',
+  `debit` DECIMAL(15,4) DEFAULT '0',
   `transaction_type` varchar(255) NOT NULL DEFAULT '' COMMENT 'text type of transaction',
   `comment` text COMMENT 'comment for internal use',
   `description` text COMMENT 'text for customer',
@@ -752,9 +773,9 @@ CREATE TABLE `ac_downloads` (
   `download_id` int(11) NOT NULL AUTO_INCREMENT,
   `filename` varchar(128) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `mask` varchar(128) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `max_downloads` int(11) DEFAULT NULL, -- remaining, NULL -> No limit 
+  `max_downloads` int(11) DEFAULT NULL, -- remaining, NULL -> No limit
   `expire_days` int(11) DEFAULT NULL,  -- default to NULL -> No expiration
-  `sort_order` int(11) NOT NULL,  
+  `sort_order` int(11) NOT NULL,
   `activate` varchar(64) NOT NULL,
   `activate_order_status_id` int(11) NOT NULL DEFAULT '0',
   `shared` int(1) NOT NULL DEFAULT '0', -- if used by other products set to 1
@@ -782,7 +803,7 @@ CREATE TABLE `ac_download_attribute_values` (
   `download_attribute_id` int(11) NOT NULL AUTO_INCREMENT,
   `attribute_id` int(11) NOT NULL,
   `download_id` int(11) NOT NULL,
-  `attribute_value_ids` text COLLATE utf8_general_ci  DEFAULT NULL,  -- serialized aray with value IDs
+  `attribute_value_ids` text COLLATE utf8_general_ci  DEFAULT NULL,  -- serialized array with value IDs
   PRIMARY KEY (`download_attribute_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
@@ -802,6 +823,8 @@ CREATE TABLE `ac_extensions` (
   `version` varchar(32),
   `license_key` varchar(32),
   `date_installed` timestamp NOT NULL default '0000-00-00 00:00:00',
+  `support_expiration` DATETIME NULL,
+  `mp_product_url` VARCHAR(255) NULL DEFAULT '',
   `date_added` timestamp NOT NULL default '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`extension_id`),
@@ -831,10 +854,10 @@ INSERT INTO `ac_extensions` (`type`, `key`, `category`, `status`, `priority`, `v
 ('block', 'latest', '', 1, 1, '', null, now(), now(), now() ),
 ('block', 'featured', '', 1, 1, '', null, now(), now(), now() ),
 
-('extensions', 'banner_manager', 'extensions', 1, 1, '1.0.1', null, now(), now(), now() ),
-('extensions', 'forms_manager', 'extensions', 1, 1, '1.0.2', null, now(), now(), now() ),
-('payment', 'default_pp_standart', 'payment', 0, 1, '1.0.2', null, now(), now() + INTERVAL 1 HOUR , now() ),
-('payment', 'default_pp_pro', 'payment', 0, 1, '1.0.2', null, now(), now() + INTERVAL 1 HOUR , now() )
+('extensions', 'banner_manager', 'extensions', 1, 1, '1.1.0', null, now(), now(), now() ),
+('extensions', 'forms_manager', 'extensions', 1, 1, '1.1.0', null, now(), now(), now() ),
+('extensions', 'fast_checkout', 'Checkout', 1, 10, '1.3.3', null, now(), now() + INTERVAL 2 MINUTE , now() ),
+('template', 'bootstrap5', 'template', 1, 1, '1.0.0', null, now(), now() + INTERVAL 3 MINUTE , now() )
 ;
 
 --
@@ -861,7 +884,7 @@ CREATE TABLE `ac_banner_descriptions` (
   `banner_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL COMMENT 'translatable',
-  `description` text COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
+  `description` LONGTEXT COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
   `meta` text(1500) DEFAULT '' COMMENT 'translatable',
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -898,7 +921,8 @@ CREATE TABLE `ac_locations` (
 --
 
 INSERT INTO `ac_locations` (`location_id`, `name`, `description`, `date_added`) VALUES
-(1, 'USA', 'All States', now());
+(1, 'USA', 'All States', NOW()),
+(2, 'Canada','All provinces', NOW());
 
 --
 -- DDL for table `languages`
@@ -939,10 +963,9 @@ CREATE TABLE `ac_language_definitions` (
   `language_value` text NOT NULL COMMENT 'translatable',
   `date_added` timestamp NOT NULL default '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY  (`language_definition_id`)
+  PRIMARY KEY  (`language_definition_id`, `language_id`, `section`, `block`, `language_key`),
+	INDEX `ac_lang_definition_idx` (`language_value`(500) ASC)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
-CREATE UNIQUE INDEX `ac_lang_definition_idx`
-ON `ac_language_definitions` ( `section`,`block`,`language_id`,`language_key` );
 
 --
 -- DDL for table `length_class`
@@ -951,17 +974,19 @@ DROP TABLE IF EXISTS `ac_length_classes`;
 CREATE TABLE `ac_length_classes` (
   `length_class_id` int(11) NOT NULL AUTO_INCREMENT,
   `value` decimal(15,8) NOT NULL,
-  PRIMARY KEY (`length_class_id`)
+  `iso_code` VARCHAR(5) NOT NULL,
+  `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`length_class_id`,`iso_code`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `length_class`
 --
-
-INSERT INTO `ac_length_classes` (`length_class_id`, `value`) VALUES
-(1, '1.00000000'),
-(2, '10.00000000'),
-(3, '0.39370000');
+INSERT INTO `ac_length_classes` (`length_class_id`, `value`, `iso_code`) VALUES
+(1, '1.00000000', 'CMET'),
+(2, '10.00000000', 'MMET'),
+(3, '0.39370000', 'INCH');
 
 --
 -- DDL for table `length_class_descriptions`
@@ -1016,57 +1041,57 @@ DROP TABLE IF EXISTS `ac_orders`;
 CREATE TABLE `ac_orders` (
   `order_id` int(11) NOT NULL AUTO_INCREMENT,
   `invoice_id` int(11) NOT NULL DEFAULT '0',
-  `invoice_prefix` varchar(10) COLLATE utf8_general_ci NOT NULL,
+  `invoice_prefix` varchar(10) NOT NULL DEFAULT '',
   `store_id` int(11) NOT NULL DEFAULT '0',
-  `store_name` varchar(64) COLLATE utf8_general_ci NOT NULL,
-  `store_url` varchar(255) COLLATE utf8_general_ci NOT NULL,
+  `store_name` varchar(64) NOT NULL,
+  `store_url` varchar(255) NOT NULL,
   `customer_id` int(11) NOT NULL DEFAULT '0',
   `customer_group_id` int(11) NOT NULL DEFAULT '0',
-  `firstname` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `lastname` varchar(32) COLLATE utf8_general_ci NOT NULL,
-  `telephone` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `fax` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `email` varchar(96) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `shipping_firstname` varchar(32) COLLATE utf8_general_ci NOT NULL,
-  `shipping_lastname` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `shipping_company` varchar(32) COLLATE utf8_general_ci NOT NULL,
-  `shipping_address_1` varchar(128) COLLATE utf8_general_ci NOT NULL,
-  `shipping_address_2` varchar(128) COLLATE utf8_general_ci NOT NULL,
-  `shipping_city` varchar(128) COLLATE utf8_general_ci NOT NULL,
-  `shipping_postcode` varchar(10) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `shipping_zone` varchar(128) COLLATE utf8_general_ci NOT NULL,
+  `firstname` varchar(32) NOT NULL DEFAULT '',
+  `lastname` varchar(32) NOT NULL,
+  `telephone` varchar(32) NOT NULL DEFAULT '',
+  `fax` varchar(32) NOT NULL DEFAULT '',
+  `email` varchar(96) NOT NULL DEFAULT '',
+  `shipping_firstname` varchar(32) NOT NULL,
+  `shipping_lastname` varchar(32) NOT NULL DEFAULT '',
+  `shipping_company` varchar(32) NOT NULL,
+  `shipping_address_1` varchar(128) NOT NULL,
+  `shipping_address_2` varchar(128) NOT NULL,
+  `shipping_city` varchar(128) NOT NULL,
+  `shipping_postcode` varchar(10) NOT NULL DEFAULT '',
+  `shipping_zone` varchar(128) NOT NULL,
   `shipping_zone_id` int(11) NOT NULL,
-  `shipping_country` varchar(128) COLLATE utf8_general_ci NOT NULL,
+  `shipping_country` varchar(128) NOT NULL,
   `shipping_country_id` int(11) NOT NULL,
-  `shipping_address_format` text COLLATE utf8_general_ci NOT NULL,
-  `shipping_method` varchar(128) COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `shipping_address_format` text NOT NULL,
+  `shipping_method` varchar(128) NOT NULL DEFAULT '',
   `shipping_method_key` varchar(128) NOT NULL DEFAULT '',
-  `payment_firstname` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `payment_lastname` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `payment_company` varchar(32) COLLATE utf8_general_ci NOT NULL,
-  `payment_address_1` varchar(128) COLLATE utf8_general_ci NOT NULL,
-  `payment_address_2` varchar(128) COLLATE utf8_general_ci NOT NULL,
-  `payment_city` varchar(128) COLLATE utf8_general_ci NOT NULL,
-  `payment_postcode` varchar(10) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `payment_zone` varchar(128) COLLATE utf8_general_ci NOT NULL,
+  `payment_firstname` varchar(32) NOT NULL DEFAULT '',
+  `payment_lastname` varchar(32) NOT NULL DEFAULT '',
+  `payment_company` varchar(32) NOT NULL,
+  `payment_address_1` varchar(128) NOT NULL,
+  `payment_address_2` varchar(128) NOT NULL,
+  `payment_city` varchar(128) NOT NULL,
+  `payment_postcode` varchar(10) NOT NULL DEFAULT '',
+  `payment_zone` varchar(128) NOT NULL,
   `payment_zone_id` int(11) NOT NULL,
-  `payment_country` varchar(128) COLLATE utf8_general_ci NOT NULL,
+  `payment_country` varchar(128) NOT NULL,
   `payment_country_id` int(11) NOT NULL,
-  `payment_address_format` text COLLATE utf8_general_ci NOT NULL,
-  `payment_method` varchar(128) COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `payment_address_format` text NOT NULL,
+  `payment_method` varchar(128) NOT NULL DEFAULT '',
   `payment_method_key` varchar(128) NOT NULL DEFAULT '',
-  `comment` text COLLATE utf8_general_ci NOT NULL,
+  `comment` text NOT NULL,
   `total` decimal(15,4) NOT NULL DEFAULT '0.0000',
   `order_status_id` int(11) NOT NULL DEFAULT '0',
   `language_id` int(11) NOT NULL,
   `currency_id` int(11) NOT NULL,
-  `currency` varchar(3) COLLATE utf8_general_ci NOT NULL,
+  `currency` varchar(3) NOT NULL,
   `value` decimal(15,8) NOT NULL,
   `coupon_id` int(11) NOT NULL,
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `ip` varchar(15) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `payment_method_data` text COLLATE utf8_general_ci NOT NULL,
+  `ip` varchar(50) NOT NULL DEFAULT '',
+  `payment_method_data` text NOT NULL DEFAULT '',
   PRIMARY KEY (`order_id`, `customer_id`, `order_status_id`)
 
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
@@ -1093,17 +1118,17 @@ CREATE TABLE `ac_order_downloads` (
   `name` varchar(64) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `filename` varchar(128) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `mask` varchar(128) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `download_id` int(11) NOT NULL, 
+  `download_id` int(11) NOT NULL,
   `status` int(1) NOT NULL DEFAULT '0',
   `remaining_count` int(11) DEFAULT NULL,
   `percentage` int(11) DEFAULT '0',
   `expire_date` datetime NULL,
   `sort_order` int(11) NOT NULL,
   `activate` VARCHAR(64) NOT NULL,
-  `activate_order_status_id` int(11) NOT NULL DEFAULT '0', 
-  `attributes_data` text COLLATE utf8_general_ci  DEFAULT NULL,  -- serialized values 
+  `activate_order_status_id` int(11) NOT NULL DEFAULT '0',
+  `attributes_data` longtext COLLATE utf8_general_ci  DEFAULT NULL,  -- serialized values
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `date_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+  `date_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY (`order_download_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
@@ -1139,7 +1164,7 @@ CREATE TABLE `ac_order_data` (
   `type_id` int(11) NOT NULL,
   `data` text COLLATE utf8_general_ci DEFAULT NULL,  -- serialized values
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `date_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+  `date_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY (`order_id`, `type_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -1149,14 +1174,16 @@ CREATE TABLE `ac_order_data_types` (
   `language_id` int(11) NOT NULL,
   `name` varchar(64) COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'translatable',
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `date_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+  `date_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY (`type_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
--- write preinstalled IM protocols for guest checkout orders
+-- write pre-installed IM protocols for guest checkout orders
 INSERT INTO `ac_order_data_types` (`language_id`, `name`, `date_added`) VALUES
 (1, 'email', NOW()),
-(1, 'sms', NOW());
+(1, 'sms', NOW()),
+-- fastCheckout data
+(1, 'guest_token', NOW());
 
 
 --
@@ -1186,11 +1213,13 @@ CREATE TABLE `ac_order_options` (
   `order_id` int(11) NOT NULL,
   `order_product_id` int(11) NOT NULL,
   `product_option_value_id` int(11) NOT NULL DEFAULT '0',
-  `name` varchar(255) COLLATE utf8_general_ci NOT NULL,
-  `value` text COLLATE utf8_general_ci NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `sku` varchar(64) NOT NULL DEFAULT '',
+  `value` text NOT NULL,
   `price` decimal(15,4) NOT NULL DEFAULT '0.0000',
-  `prefix` char(1) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `settings` text COLLATE utf8_general_ci,
+  `cost` decimal(15,4) NOT NULL DEFAULT '0.0000',
+  `prefix` char(1) NOT NULL DEFAULT '',
+  `settings` longtext,
   PRIMARY KEY (`order_option_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
@@ -1206,9 +1235,17 @@ CREATE TABLE `ac_order_products` (
   `order_product_id` int(11) NOT NULL AUTO_INCREMENT,
   `order_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
-  `name` varchar(255) COLLATE utf8_general_ci NOT NULL,
-  `model` varchar(24) COLLATE utf8_general_ci NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `model` varchar(24) NOT NULL DEFAULT '',
+  `sku` varchar(64) NOT NULL DEFAULT '',
   `price` decimal(15,4) NOT NULL DEFAULT '0.0000',
+  `cost` decimal(15,4) NOT NULL DEFAULT '0.0000',
+  `weight` DECIMAL(15,4) NOT NULL DEFAULT 0.0,
+  `weight_iso_code` VARCHAR(5) NOT NULL DEFAULT '',
+  `width` DECIMAL(15,4) NOT NULL DEFAULT 0,
+  `length` DECIMAL(15,4) NOT NULL DEFAULT 0,
+  `height` DECIMAL(15,4) NOT NULL DEFAULT 0,
+  `length_iso_code` VARCHAR(5) NOT NULL DEFAULT '',
   `total` decimal(15,4) NOT NULL DEFAULT '0.0000',
   `tax` decimal(15,4) NOT NULL DEFAULT '0.0000',
   `quantity` int(4) NOT NULL DEFAULT '0',
@@ -1303,6 +1340,7 @@ CREATE TABLE `ac_products` (
   `sku` varchar(64) COLLATE utf8_general_ci NOT NULL,
   `location` varchar(128) COLLATE utf8_general_ci NOT NULL,
   `quantity` int(4) NOT NULL DEFAULT '0',
+  `stock_checkout` CHAR(1) NULL DEFAULT '',
   `stock_status_id` int(11) NOT NULL,
   `manufacturer_id` int(11) NOT NULL,
   `shipping` int(1) NOT NULL DEFAULT '1',
@@ -1326,12 +1364,14 @@ CREATE TABLE `ac_products` (
   `maximum` int(11) NOT NULL DEFAULT '0',
   `cost` DECIMAL(15,4) NOT NULL DEFAULT '0.0000',
   `call_to_order` smallint NOT NULL default '0',
+  `settings` LONGTEXT COLLATE utf8_general_ci,
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`product_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
 CREATE INDEX `ac_products_idx` ON `ac_products` (`stock_status_id`,  `manufacturer_id`, `weight_class_id`, `length_class_id`);
+CREATE INDEX `ac_products_status_idx` ON `ac_products` (`product_id`, `status`, `date_available`);
 
 
 --
@@ -1344,12 +1384,13 @@ CREATE TABLE `ac_product_descriptions` (
   `name` varchar(255) COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
   `meta_keywords` varchar(255) COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
   `meta_description` varchar(255) COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
-  `description` text COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
+  `description` longtext COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
   `blurb` text COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
   PRIMARY KEY (`product_id`,`language_id`),
   KEY `name` (`name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+CREATE INDEX `ac_product_descriptions_name_idx` ON `ac_product_descriptions` (`product_id`, `name`);
 
 --
 -- DDL for table `product_discounts`
@@ -1361,6 +1402,7 @@ CREATE TABLE `ac_product_discounts` (
   `customer_group_id` int(11) NOT NULL,
   `quantity` int(4) NOT NULL DEFAULT '0',
   `priority` int(5) NOT NULL DEFAULT '1',
+  `price_prefix` CHAR(1) NOT NULL DEFAULT '',
   `price` decimal(15,4) NOT NULL DEFAULT '0.0000',
   `date_start` date NOT NULL DEFAULT '0000-00-00',
   `date_end` date NOT NULL DEFAULT '0000-00-00',
@@ -1429,10 +1471,11 @@ CREATE TABLE `ac_product_option_values` (
   `quantity` int(4) NOT NULL DEFAULT '0',
   `subtract` int(1) NOT NULL DEFAULT '0',
   `price` decimal(15,4) NOT NULL,
-  `prefix` char(1) COLLATE utf8_general_ci NOT NULL, -- % or $ 
+  `cost` decimal(15,4) NOT NULL,
+  `prefix` char(1) COLLATE utf8_general_ci NOT NULL, -- % or $
   `weight` decimal(15,8) NOT NULL,
   `weight_type` varchar(3) COLLATE utf8_general_ci NOT NULL, -- lbs or %
-  `attribute_value_id` int(11),  
+  `attribute_value_id` int(11),
   `grouped_attribute_data` text DEFAULT NULL,
   `sort_order` int(3) NOT NULL,
   `default` smallint DEFAULT 0,
@@ -1451,7 +1494,7 @@ CREATE TABLE `ac_product_option_value_descriptions` (
   `language_id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
   `name` text COLLATE utf8_general_ci DEFAULT NULL COMMENT 'translatable',
-  `grouped_attribute_names` text COLLATE utf8_general_ci DEFAULT NULL,  
+  `grouped_attribute_names` text COLLATE utf8_general_ci DEFAULT NULL,
   PRIMARY KEY (`product_option_value_id`,`language_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 CREATE INDEX `ac_product_option_value_descriptions_idx` ON `ac_product_option_value_descriptions` ( `product_id` );
@@ -1476,6 +1519,7 @@ CREATE TABLE `ac_product_specials` (
   `product_id` int(11) NOT NULL,
   `customer_group_id` int(11) NOT NULL,
   `priority` int(5) NOT NULL DEFAULT '1',
+  `price_prefix` CHAR(1) NOT NULL DEFAULT '',
   `price` decimal(15,4) NOT NULL DEFAULT '0.0000',
   `date_start` date NOT NULL DEFAULT '0000-00-00',
   `date_end` date NOT NULL DEFAULT '0000-00-00',
@@ -1540,8 +1584,9 @@ CREATE TABLE `ac_reviews` (
   `product_id` int(11) NOT NULL,
   `customer_id` int(11) NOT NULL,
   `author` varchar(64) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `text` text COLLATE utf8_general_ci NOT NULL,
+  `text` longtext COLLATE utf8_general_ci NOT NULL,
   `rating` int(1) NOT NULL,
+  `verified_purchase` TINYINT NOT NULL DEFAULT 0,
   `status` int(1) NOT NULL DEFAULT '0',
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -1563,8 +1608,8 @@ CREATE TABLE `ac_settings` (
   `value` text COLLATE utf8_general_ci NOT NULL,
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
- PRIMARY KEY (`setting_id`,`store_id`),
- KEY `ac_settings_idx` (`group`,`key`) USING BTREE
+ PRIMARY KEY (`setting_id`, `store_id`, `group`, `key`),
+ INDEX `ac_settings_idx` (`value`(500))
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
 --
@@ -1583,9 +1628,9 @@ INSERT INTO `ac_settings` (`group`, `key`, `value`) VALUES
 ('details','store_main_email','admin@abantecart.com'),
 ('details','config_telephone',123456789),
 ('details','config_fax',''),
-('details','config_title','Your Store'),
-('details','config_meta_description','Web Store Meta Description'),
-('details','config_meta_keywords','keyword1,keyword2,keyword3'),
+('details','config_title_1','Your Store'),
+('details','config_meta_description_1','Web Store Meta Description'),
+('details','config_meta_keywords_1','keyword1,keyword2,keyword3'),
 ('details','config_description_1','Welcome to web store!'),
 ('details','config_country_id',223),
 ('details','config_zone_id',3655),
@@ -1599,7 +1644,30 @@ INSERT INTO `ac_settings` (`group`, `key`, `value`) VALUES
 ('details','translate_src_lang_code','en'),
 ('details','translate_override_existing',0),
 ('details','warn_lang_text_missing',0),
-('details','config_description_9','Welcome to web store!'),
+('details','config_duplicate_contact_us_to_message',1),
+('details','config_opening_sunday_opens',''),
+('details','config_opening_sunday_closes',''),
+('details','config_opening_monday_opens','9:00'),
+('details','config_opening_monday_closes','18:00'),
+('details','config_opening_tuesday_opens','9:00'),
+('details','config_opening_tuesday_closes','18:00'),
+('details','config_opening_wednesday_opens','9:00'),
+('details','config_opening_wednesday_closes','18:00'),
+('details','config_opening_thursday_opens','9:00'),
+('details','config_opening_thursday_closes','21:00'),
+('details','config_opening_friday_opens','9:00'),
+('details','config_opening_friday_closes','16:00'),
+('details','config_opening_saturday_opens',''),
+('details','config_opening_saturday_closes',''),
+('details','config_postcode','07601'),
+('details','protocol_url','https'),
+('details','protocol_ssl_url','https'),
+('details','config_city','New Jersey'),
+('details','config_latitude','40.887187'),
+('details','config_longitude','-74.037592'),
+('details','translate_method','copy_source_text'),
+('details','config_tax_class_id','1'),
+
 -- general
 ('general','config_admin_limit',20),
 ('general','config_catalog_limit',20),
@@ -1609,18 +1677,20 @@ INSERT INTO `ac_settings` (`group`, `key`, `value`) VALUES
 ('general','config_special_limit',4),
 ('general','config_stock_display',1),
 ('general','config_nostock_autodisable',0),
-('general','config_stock_status_id',5),
+('general','config_stock_status_id',0),
 ('general','enable_reviews',1),
+('general','display_reviews',1),
 ('general','config_download',1),
 ('general','config_help_links',1),
 ('general','config_show_tree_data',1),
 ('general','config_embed_status',1),
 ('general','config_embed_click_action', 'modal'),
-('general','config_product_default_sort_order','date_modified-ASC'),
+('general','config_product_default_sort_order','date_modified-DESC'),
 ('general','config_account_create_captcha','0'),
 ('general','config_recaptcha_site_key',''),
 ('general','config_recaptcha_secret_key',''),
 ('general','config_google_analytics_code',''),
+('general','config_google_tag_manager_id',''),
 
 
 -- Checkout
@@ -1650,12 +1720,15 @@ INSERT INTO `ac_settings` (`group`, `key`, `value`) VALUES
 ('checkout','config_expire_order_days',30),
 ('checkout','config_customer_cancelation_order_status_id',''),
 ('checkout','config_zero_customer_balance','0'),
+('checkout','config_phone_validation_pattern','/^[0-9+\\(\\)#\\.\\s\\/ext-]+$/'),
+('checkout','config_start_order_id',''),
 
 -- Appearance
 
 ('appearance','storefront_width','100%'),
-('appearance','config_logo','image/18/73/3.png'),
-('appearance','config_icon','image/18/73/4.png'),
+('appearance','config_logo','7'),
+('appearance','config_mail_logo','7'),
+('appearance','config_icon','8'),
 ('appearance','config_image_thumb_width',380),
 ('appearance','config_image_thumb_height',380),
 ('appearance','config_image_popup_width',500),
@@ -1673,10 +1746,11 @@ INSERT INTO `ac_settings` (`group`, `key`, `value`) VALUES
 ('appearance','config_image_category_height',120),
 ('appearance','config_image_category_width',120),
 ('appearance','config_image_manufacturer_height',56),
-('appearance','config_image_manufacturer_width',56),
+('appearance','config_image_manufacturer_width',130),
 ('appearance','admin_template','default'),
 ('appearance','admin_width','100%'),
 ('appearance','config_storefront_template','default'),
+('appearance','config_image_resize_fill_color', '#ffffff'),
 
 
 -- mail
@@ -1686,7 +1760,7 @@ INSERT INTO `ac_settings` (`group`, `key`, `value`) VALUES
 ('mail', 'config_smtp_username', ''),
 ('mail', 'config_smtp_password', ''),
 ('mail', 'config_smtp_port', '25'),
-('mail', 'config_smtp_timeout', '5'),
+('mail', 'config_smtp_timeout', '10'),
 ('mail', 'config_alert_mail', '0'),
 
 
@@ -1723,6 +1797,7 @@ INSERT INTO `ac_settings` (`group`, `key`, `value`) VALUES
 ('api','config_admin_api_status',0),
 ('api','config_admin_api_key',''),
 ('api','config_admin_access_ip_list',''),
+('api','task_api_key',''),
 
 -- EXTENSIONS
 ('sub_total', 'sub_total_sort_order', '1'),
@@ -1743,16 +1818,16 @@ INSERT INTO `ac_settings` (`group`, `key`, `value`) VALUES
 
 ('tax', 'tax_status', '1'),
 ('tax', 'tax_sort_order', '5'),
-('tax', 'tax_calculation_order', '5'),
+('tax', 'tax_calculation_order', '2'),
 ('tax', 'tax_total_type', 'tax'),
 
 ('balance', 'balance_status', '1'),
-('balance', 'balance_sort_order', '6'),
-('balance', 'balance_calculation_order', '6'),
+('balance', 'balance_sort_order', '999'),
+('balance', 'balance_calculation_order', '999'),
 ('balance', 'balance_total_type', 'balance'),
 
-('total', 'total_sort_order', '7'),
-('total', 'total_calculation_order', '7'),
+('total', 'total_sort_order', '1000'),
+('total', 'total_calculation_order', '1000'),
 ('total', 'total_status', '1'),
 ('total', 'total_total_type', 'total'),
 
@@ -1768,9 +1843,26 @@ INSERT INTO `ac_settings` (`group`, `key`, `value`) VALUES
 ('forms_manager','forms_manager_status',1),
 ('forms_manager','forms_manager_default_sender_name', ''),
 ('forms_manager','forms_manager_default_sender_email', ''),
-('forms_manager','forms_manager_sort_order', '')
-;
+('forms_manager','forms_manager_sort_order', ''),
 
+('fast_checkout','fast_checkout_store_id',0),
+('fast_checkout','fast_checkout_status',1),
+('fast_checkout','fast_checkout_layout',''),
+('fast_checkout','fast_checkout_priority',10),
+('fast_checkout','fast_checkout_payment_address_equal_shipping',0),
+('fast_checkout','fast_checkout_allow_coupon',1),
+('fast_checkout','fast_checkout_require_phone_number',1),
+('fast_checkout','fast_checkout_show_order_comment_field',1),
+('fast_checkout','fast_checkout_create_account',1),
+('fast_checkout','fast_checkout_sort_order',10),
+('fast_checkout','fast_checkout_buy_now_status',1),
+
+('bootstrap5', 'bootstrap5_priority',0),
+('bootstrap5', 'bootstrap5_date_installed',NOW()),
+('bootstrap5', 'bootstrap5_sort_order', 1),
+('bootstrap5', 'config_logo',281),
+('bootstrap5', 'bootstrap5_status', 1),
+('bootstrap5', 'store_id', 0);
 
 --
 -- DDL for table `stock_statuses`
@@ -1788,9 +1880,7 @@ CREATE TABLE `ac_stock_statuses` (
 --
 
 INSERT INTO `ac_stock_statuses` (`stock_status_id`, `language_id`, `name`) VALUES
-(1, 1, 'In Stock'),
-(2, 1, 'Out Of Stock'),
-(3, 1, 'Pre-Order');
+(1, 1, 'Pre-Order');
 
 --
 -- DDL for table `stores`
@@ -1813,7 +1903,10 @@ DROP TABLE IF EXISTS `ac_store_descriptions`;
 CREATE TABLE `ac_store_descriptions` (
   `store_id` int(11) NOT NULL,
   `language_id` int(11) NOT NULL,
-  `description` text COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
+  `description` longtext NULL DEFAULT '' COMMENT 'translatable',
+  `title` longtext NULL DEFAULT '' COMMENT 'translatable',
+  `meta_description` longtext NULL DEFAULT '' COMMENT 'translatable',
+  `meta_keywords` longtext NULL DEFAULT '' COMMENT 'translatable',
   PRIMARY KEY (`store_id`,`language_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
@@ -1860,10 +1953,10 @@ CREATE TABLE `ac_tax_rates` (
   `tax_class_id` int(11) NOT NULL,
   `priority` int(5) NOT NULL DEFAULT '1',
   `rate` decimal(15,4) NOT NULL DEFAULT '0.0000',
-  `rate_prefix` char(1) COLLATE utf8_general_ci NOT NULL DEFAULT '%', -- % or $ 
+  `rate_prefix` char(1) COLLATE utf8_general_ci NOT NULL DEFAULT '%', -- % or $
   `threshold_condition` char(2) COLLATE utf8_general_ci NOT NULL, -- '<=', '>=', '==' or '<'
   `threshold` decimal(15,4) NOT NULL DEFAULT '0.0000',
-  `tax_exempt_groups` text DEFAULT NULL, 
+  `tax_exempt_groups` text DEFAULT NULL,
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`tax_rate_id`)
@@ -1873,7 +1966,7 @@ CREATE INDEX `ac_tax_rates_idx` ON `ac_tax_rates` ( `location_id`, `zone_id`, `t
 --
 -- Dumping data for table `tax_rate`
 --
-INSERT INTO `ac_tax_rates` (`tax_rate_id`, `location_id`, `tax_class_id`, `priority`, `rate`) VALUES (1, 1, 1, 1, '8.5000');
+INSERT INTO `ac_tax_rates` VALUES (1,1,0,1,1,8.5000,'%','',0.0000,'a:1:{i:0;s:1:\"0\";}','0000-00-00 00:00:00','2022-06-28 08:53:21');
 
 --
 -- DDL for table `tax_rate_descriptions`
@@ -1918,12 +2011,13 @@ CREATE TABLE `ac_users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_group_id` int(11) NOT NULL,
   `username` varchar(20) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `password` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `salt` varchar(8) COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `password` varchar(40) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `firstname` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `lastname` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `email` varchar(96) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `status` int(1) NOT NULL,
-  `ip` varchar(15) COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `ip` varchar(50) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `last_login` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -1939,7 +2033,7 @@ DROP TABLE IF EXISTS `ac_user_groups`;
 CREATE TABLE `ac_user_groups` (
   `user_group_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) COLLATE utf8_general_ci NOT NULL,
-  `permission` text COLLATE utf8_general_ci NOT NULL,
+  `permission` longtext COLLATE utf8_general_ci NOT NULL,
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_group_id`)
@@ -1985,18 +2079,21 @@ DROP TABLE IF EXISTS `ac_weight_classes`;
 CREATE TABLE `ac_weight_classes` (
   `weight_class_id` int(11) NOT NULL AUTO_INCREMENT,
   `value` decimal(15,8) NOT NULL DEFAULT '0.00000000',
-  PRIMARY KEY (`weight_class_id`)
+  `iso_code` VARCHAR(5) NOT NULL,
+  `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`weight_class_id`,`iso_code`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `weight_class`
 --
 
-INSERT INTO `ac_weight_classes` (`weight_class_id`, `value`) VALUES
-(1, '1.00000000'),
-(2, '1000.00000000'),
-(5, '2.20460000'),
-(6, '35.27400000');
+INSERT INTO `ac_weight_classes` (`weight_class_id`, `value`, `iso_code`) VALUES
+(1, '1.00000000', 'KILO'),
+(2, '1000.00000000', 'GRAM'),
+(5, '2.20460000', 'PUND'),
+(6, '35.27400000', 'USOU');
 
 
 --
@@ -2018,7 +2115,7 @@ CREATE TABLE `ac_weight_class_descriptions` (
 INSERT INTO `ac_weight_class_descriptions` (`weight_class_id`, `language_id`, `title`, `unit`) VALUES
 (1, 1, 'Kilogram', 'kg'),
 (2, 1, 'Gram', 'g'),
-(5, 1, 'Pound ', 'lb'),
+(5, 1, 'Pound', 'lb'),
 (6, 1, 'Ounce', 'oz');
 
 --
@@ -2030,7 +2127,7 @@ CREATE TABLE `ac_zones` (
   `country_id` int(11) NOT NULL,
   `code` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `status` int(1) NOT NULL DEFAULT '1',
-  `sort_order` int(3) NOT NULL DEFAULT '0',  
+  `sort_order` int(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`zone_id`, `country_id` )
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
@@ -2038,7 +2135,8 @@ CREATE TABLE `ac_zones` (
 -- Dumping data for table `zone`
 --
 
-INSERT INTO `ac_zones` (`zone_id`, `country_id`, `code`, `status`, `sort_order`) VALUES
+INSERT INTO `ac_zones`
+VALUES
 (1,1,'BDS',1,0),
 (2,1,'BDG',1,0),
 (3,1,'BGL',1,0),
@@ -5845,21 +5943,21 @@ INSERT INTO `ac_zones` (`zone_id`, `country_id`, `code`, `status`, `sort_order`)
 (3805,235,'SN',1,0),
 (3806,235,'SH',1,0),
 (3807,235,'TA',1,0),
-(3808,236,'KOS',1,0),
-(3809,236,'MON',1,0),
-(3810,236,'SER',1,0),
-(3811,236,'VOJ',1,0),
-(3812,237,'BC',1,0),
-(3813,237,'BN',1,0),
-(3814,237,'EQ',1,0),
-(3815,237,'KA',1,0),
-(3816,237,'KE',1,0),
-(3817,237,'KN',1,0),
-(3818,237,'KW',1,0),
-(3819,237,'MA',1,0),
-(3820,237,'NK',1,0),
-(3821,237,'OR',1,0),
-(3822,237,'SK',1,0),
+(3808,236,'AND',1,0),
+(3809,236,'BAR',1,0),
+(3810,236,'BER',1,0),
+(3811,236,'BIP',1,0),
+(3812,49,'BC',1,0),
+(3813,49,'BN',1,0),
+(3814,49,'EQ',1,0),
+(3815,49,'KA',1,0),
+(3816,49,'KE',1,0),
+(3817,49,'KN',1,0),
+(3818,49,'KW',1,0),
+(3819,49,'MA',1,0),
+(3820,49,'NK',1,0),
+(3821,49,'OR',1,0),
+(3822,49,'SK',1,0),
 (3823,238,'CE',1,0),
 (3824,238,'CB',1,0),
 (3825,238,'EA',1,0),
@@ -5972,7 +6070,61 @@ INSERT INTO `ac_zones` (`zone_id`, `country_id`, `code`, `status`, `sort_order`)
 (3951,240,'',1,0),
 (3952,240,'',1,0),
 (3953,240,'',1,0),
-(3954,240,'',1,0);
+(3954,240,'',1,0),
+(3955,190,'MR',1,0),
+(3956,190,'DR',1,0),
+(3957,190,'CR',1,0),
+(3958,190,'SV',1,0),
+(3959,190,'CV',1,0),
+(3960,190,'LS',1,0),
+(3961,190,'SS',1,0),
+(3962,190,'LC',1,0),
+(3963,190,'CS',1,0),
+(3964,190,'UC',1,0),
+(3965,190,'GZ',1,0),
+(3966,190,'CK',1,0),
+(3967,188,'SG',1,0),
+(3968,168,'MTM',1,0),
+(3969,236,'BDV',1,0),
+(3970,236,'CET',1,0),
+(3971,236,'DNG',1,0),
+(3972,236,'GSN',1,0),
+(3973,236,'HGN',1,0),
+(3974,236,'KLN',1,0),
+(3975,236,'KOR',1,0),
+(3976,236,'MKC',1,0),
+(3977,236,'NKS',1,0),
+(3978,236,'PTN',1,0),
+(3979,236,'PLV',1,0),
+(3980,236,'PVL',1,0),
+(3981,236,'PZN',1,0),
+(3982,236,'PGC',1,0),
+(3983,236,'ROZ',1,0),
+(3984,236,'SNK',1,0),
+(3985,236,'TVT',1,0),
+(3986,236,'TZI',1,0),
+(3987,236,'ULN',1,0),
+(3988,236,'ZBK',1,0),
+(3989,241,'VDN',1,0),
+(3990,241,'BGD',1,0),
+(3991,241,'SWS',1,0),
+(3992,241,'SES',1,0),
+(3993,241,'KMT',1,0),
+(3994,242,'FRZ',1,0),
+(3995,242,'GKV',1,0),
+(3996,242,'GLN',1,0),
+(3997,242,'MTR',1,0),
+(3998,242,'PJA',1,0),
+(3999,242,'PRN',1,0),
+(4000,242,'PRZ',1,0),
+(4001,126,'ESN',1,0),
+(4002,126,'NTN',1,0),
+(4003,126,'PLG',1,0),
+(4004,126,'POL',1,0),
+(4005,126,'SKP',1,0),
+(4006,126,'SEN',1,0),
+(4007,126,'SWN',1,0),
+(4008,126,'VDR',1,0);
 
 
 DROP TABLE IF EXISTS `ac_zone_descriptions`;
@@ -5984,8 +6136,8 @@ CREATE TABLE `ac_zone_descriptions` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
-INSERT INTO `ac_zone_descriptions` (`zone_id`, `language_id`,`name`) VALUES 
-(1,1,'Badakhshan'),
+INSERT INTO `ac_zone_descriptions`
+VALUES (1,1,'Badakhshan'),
 (2,1,'Badghis'),
 (3,1,'Baghlan'),
 (4,1,'Balkh'),
@@ -9467,7 +9619,7 @@ INSERT INTO `ac_zone_descriptions` (`zone_id`, `language_id`,`name`) VALUES
 (3481,1,'Chernihiv'),
 (3482,1,'Chernivtsi'),
 (3483,1,'Crimea'),
-(3484,1,'Dnipropetrovs\'k'),
+(3484,1,'Dnipro'),
 (3485,1,'Donets\'k'),
 (3486,1,'Ivano-Frankivs\'k'),
 (3487,1,'Kharkiv'),
@@ -9791,10 +9943,10 @@ INSERT INTO `ac_zone_descriptions` (`zone_id`, `language_id`,`name`) VALUES
 (3805,1,'San\'a'),
 (3806,1,'Shabwah'),
 (3807,1,'Ta\'izz'),
-(3808,1,'Kosovo'),
-(3809,1,'Montenegro'),
-(3810,1,'Serbia'),
-(3811,1,'Vojvodina'),
+(3808,1,'Andrijevica'),
+(3809,1,'Bar'),
+(3810,1,'Berane'),
+(3811,1,'Bijelo Polje'),
 (3812,1,'Bas-Congo'),
 (3813,1,'Bandundu'),
 (3814,1,'Equateur'),
@@ -9918,8 +10070,61 @@ INSERT INTO `ac_zone_descriptions` (`zone_id`, `language_id`,`name`) VALUES
 (3951,1,'Down'),
 (3952,1,'Fermanagh'),
 (3953,1,'Derry'),
-(3954,1,'Tyrone');
-
+(3954,1,'Tyrone'),
+(3955,1,'Mura'),
+(3956,1,'Drava'),
+(3957,1,'Carinthia'),
+(3958,1,'Savinja'),
+(3959,1,'Central Sava'),
+(3960,1,'Lower Sava'),
+(3961,1,'Southeast Slovenia'),
+(3962,1,'Littoral–Inner Carniola'),
+(3963,1,'Central Slovenia'),
+(3964,1,'Upper Carniola'),
+(3965,1,'Gorizia'),
+(3966,1,'Coastal–Karst'),
+(3967,1,'Singapore'),
+(3968,1,'Metro Manila'),
+(3969,1,'Budva'),
+(3970,1,'Cetinje'),
+(3971,1,'Danilovgrad'),
+(3972,1,'Gusinje'),
+(3973,1,'Herceg Novi'),
+(3974,1,'Kolašin'),
+(3975,1,'Kotor'),
+(3976,1,'Mojkovac'),
+(3977,1,'Nikšić'),
+(3978,1,'Petnjica'),
+(3979,1,'Plav'),
+(3980,1,'Pljevlja'),
+(3981,1,'Plužine'),
+(3982,1,'Podgorica'),
+(3983,1,'Rožaje'),
+(3984,1,'Šavnik'),
+(3985,1,'Tivat'),
+(3986,1,'Tuzi'),
+(3987,1,'Ulcinj'),
+(3988,1,'Žabljak'),
+(3989,1,'Vojvodina'),
+(3990,1,'Belgrade'),
+(3991,1,'Šumadija and Western Serbia'),
+(3992,1,'Southern and Eastern Serbia'),
+(3993,1,'Kosovo and Metohija'),
+(3994,1,'Ferizaj'),
+(3995,1,'Gjakova'),
+(3996,1,'Gjilan'),
+(3997,1,'Mitrovica'),
+(3998,1,'Peja'),
+(3999,1,'Pristina'),
+(4000,1,'Prizren'),
+(4001,1,'Eastern'),
+(4002,1,'Northeastern'),
+(4003,1,'Pelagonia'),
+(4004,1,'Polog'),
+(4005,1,'Skopje'),
+(4006,1,'Southeastern'),
+(4007,1,'Southwestern'),
+(4008,1,'Vardar');
 
 --
 -- DDL for table `zone_to_locations`
@@ -9941,74 +10146,87 @@ CREATE INDEX `ac_zones_to_locations_idx` ON `ac_zones_to_locations` ( `country_i
 -- Dumping data for table `ac_zones_to_locations`
 --
 
-INSERT INTO `ac_zones_to_locations` (`zone_to_location_id`, `country_id`, `zone_id`, `location_id`, `date_added`)
+INSERT INTO `ac_zones_to_locations`
 VALUES
-	(66,223,3677,1,now()),
-	(65,223,3676,1,now()),
-	(64,223,3675,1,now()),
-	(63,223,3674,1,now()),
-	(62,223,3673,1,now()),
-	(61,223,3672,1,now()),
-	(60,223,3671,1,now()),
-	(59,223,3670,1,now()),
-	(58,223,3669,1,now()),
-	(57,223,3668,1,now()),
-	(56,223,3667,1,now()),
-	(55,223,3666,1,now()),
-	(54,223,3665,1,now()),
-	(53,223,3664,1,now()),
-	(52,223,3663,1,now()),
-	(51,223,3662,1,now()),
-	(50,223,3661,1,now()),
-	(49,223,3660,1,now()),
-	(48,223,3659,1,now()),
-	(47,223,3658,1,now()),
-	(46,223,3657,1,now()),
-	(45,223,3656,1,now()),
-	(44,223,3655,1,now()),
-	(43,223,3654,1,now()),
-	(42,223,3653,1,now()),
-	(41,223,3652,1,now()),
-	(40,223,3651,1,now()),
-	(39,223,3650,1,now()),
-	(38,223,3649,1,now()),
-	(37,223,3648,1,now()),
-	(36,223,3647,1,now()),
-	(35,223,3646,1,now()),
-	(34,223,3645,1,now()),
-	(33,223,3644,1,now()),
-	(32,223,3643,1,now()),
-	(31,223,3642,1,now()),
-	(30,223,3641,1,now()),
-	(29,223,3640,1,now()),
-	(28,223,3639,1,now()),
-	(27,223,3638,1,now()),
-	(26,223,3637,1,now()),
-	(25,223,3636,1,now()),
-	(24,223,3635,1,now()),
-	(23,223,3634,1,now()),
-	(22,223,3633,1,now()),
-	(21,223,3632,1,now()),
-	(20,223,3631,1,now()),
-	(19,223,3630,1,now()),
-	(18,223,3629,1,now()),
-	(17,223,3628,1,now()),
-	(16,223,3627,1,now()),
-	(15,223,3626,1,now()),
-	(14,223,3625,1,now()),
-	(13,223,3624,1,now()),
-	(12,223,3623,1,now()),
-	(11,223,3622,1,now()),
-	(10,223,3621,1,now()),
-	(9,223,3620,1,now()),
-	(8,223,3619,1,now()),
-	(7,223,3618,1,now()),
-	(6,223,3617,1,now()),
-	(5,223,3616,1,now()),
-	(4,223,3615,1,now()),
-	(3,223,3614,1,now()),
-	(2,223,3613,1,now())
-;
+(66,223,3677,1,NOW(),NOW()),
+(65,223,3676,1,NOW(),NOW()),
+(64,223,3675,1,NOW(),NOW()),
+(63,223,3674,1,NOW(),NOW()),
+(62,223,3673,1,NOW(),NOW()),
+(61,223,3672,1,NOW(),NOW()),
+(60,223,3671,1,NOW(),NOW()),
+(59,223,3670,1,NOW(),NOW()),
+(58,223,3669,1,NOW(),NOW()),
+(57,223,3668,1,NOW(),NOW()),
+(56,223,3667,1,NOW(),NOW()),
+(55,223,3666,1,NOW(),NOW()),
+(54,223,3665,1,NOW(),NOW()),
+(53,223,3664,1,NOW(),NOW()),
+(52,223,3663,1,NOW(),NOW()),
+(51,223,3662,1,NOW(),NOW()),
+(50,223,3661,1,NOW(),NOW()),
+(49,223,3660,1,NOW(),NOW()),
+(48,223,3659,1,NOW(),NOW()),
+(47,223,3658,1,NOW(),NOW()),
+(46,223,3657,1,NOW(),NOW()),
+(45,223,3656,1,NOW(),NOW()),
+(44,223,3655,1,NOW(),NOW()),
+(43,223,3654,1,NOW(),NOW()),
+(42,223,3653,1,NOW(),NOW()),
+(41,223,3652,1,NOW(),NOW()),
+(40,223,3651,1,NOW(),NOW()),
+(39,223,3650,1,NOW(),NOW()),
+(38,223,3649,1,NOW(),NOW()),
+(37,223,3648,1,NOW(),NOW()),
+(36,223,3647,1,NOW(),NOW()),
+(35,223,3646,1,NOW(),NOW()),
+(34,223,3645,1,NOW(),NOW()),
+(33,223,3644,1,NOW(),NOW()),
+(32,223,3643,1,NOW(),NOW()),
+(31,223,3642,1,NOW(),NOW()),
+(30,223,3641,1,NOW(),NOW()),
+(29,223,3640,1,NOW(),NOW()),
+(28,223,3639,1,NOW(),NOW()),
+(27,223,3638,1,NOW(),NOW()),
+(26,223,3637,1,NOW(),NOW()),
+(25,223,3636,1,NOW(),NOW()),
+(24,223,3635,1,NOW(),NOW()),
+(23,223,3634,1,NOW(),NOW()),
+(22,223,3633,1,NOW(),NOW()),
+(21,223,3632,1,NOW(),NOW()),
+(20,223,3631,1,NOW(),NOW()),
+(19,223,3630,1,NOW(),NOW()),
+(18,223,3629,1,NOW(),NOW()),
+(17,223,3628,1,NOW(),NOW()),
+(16,223,3627,1,NOW(),NOW()),
+(15,223,3626,1,NOW(),NOW()),
+(14,223,3625,1,NOW(),NOW()),
+(13,223,3624,1,NOW(),NOW()),
+(12,223,3623,1,NOW(),NOW()),
+(11,223,3622,1,NOW(),NOW()),
+(10,223,3621,1,NOW(),NOW()),
+(9,223,3620,1,NOW(),NOW()),
+(8,223,3619,1,NOW(),NOW()),
+(7,223,3618,1,NOW(),NOW()),
+(6,223,3617,1,NOW(),NOW()),
+(5,223,3616,1,NOW(),NOW()),
+(4,223,3615,1,NOW(),NOW()),
+(3,223,3614,1,NOW(),NOW()),
+(2,223,3613,1,NOW(),NOW()),
+(67,38,602,2,NOW(),NOW()),
+(68,38,603,2,NOW(),NOW()),
+(69,38,604,2,NOW(),NOW()),
+(70,38,605,2,NOW(),NOW()),
+(71,38,606,2,NOW(),NOW()),
+(72,38,607,2,NOW(),NOW()),
+(73,38,608,2,NOW(),NOW()),
+(74,38,609,2,NOW(),NOW()),
+(75,38,610,2,NOW(),NOW()),
+(76,38,611,2,NOW(),NOW()),
+(77,38,612,2,NOW(),NOW()),
+(78,38,613,2,NOW(),NOW()),
+(79,38,614,2,NOW(),NOW());
+
 
 --
 -- DDL for table `pages`
@@ -10016,9 +10234,9 @@ VALUES
 DROP TABLE IF EXISTS `ac_pages`;
 CREATE TABLE `ac_pages` (
   `page_id` int(10) NOT NULL auto_increment,
-  `parent_page_id` int(10) NOT NULL DEFAULT '0',  
+  `parent_page_id` int(10) NOT NULL DEFAULT '0',
   `controller` varchar(100) NOT NULL,
-  `key_param` varchar(40) NOT NULL default '', -- Example product_id=10 identifies uniqe product page  
+  `key_param` varchar(40) NOT NULL default '', -- Example product_id=10 identifies uniqe product page
   `key_value` varchar(40) NOT NULL default '', -- Example product_id=10 identifies uniqe product page
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -10031,7 +10249,8 @@ ON `ac_pages` ( `page_id`, `controller`, `key_param`, `key_value` );
 -- Dumping data for table `pages`
 --
 
-INSERT INTO `ac_pages` (`page_id`, `parent_page_id`, `controller`, `key_param`, `key_value`, `date_added`) VALUES
+INSERT INTO `ac_pages` (`page_id`, `parent_page_id`, `controller`, `key_param`, `key_value`, `date_added`)
+VALUES
 (1, 0, 'generic', '', '', now() ),
 (2, 0, 'pages/index/home', '', '', now() ),
 (3, 0, 'pages/checkout', '', '', now() ),
@@ -10039,8 +10258,11 @@ INSERT INTO `ac_pages` (`page_id`, `parent_page_id`, `controller`, `key_param`, 
 (5, 0, 'pages/product/product', '', '', now()),
 (10, 0, 'pages/index/maintenance', '', '', now() ),
 (11, 0, 'pages/account', '', '', now() ),
-(12, 0, 'pages/checkout/cart', '', '', now() );
-
+(12, 0, 'pages/checkout/cart', '', '', now() ),
+(13, 0, 'pages/product/category', '', '', now() ),
+(14, 0, 'pages/checkout/fast_checkout', '', '', NOW()),
+(15, 0, 'pages/checkout/fast_checkout_success', '', '', NOW())
+;
 
 --
 -- DDL for table `page_descriptions`
@@ -10068,7 +10290,11 @@ INSERT INTO `ac_page_descriptions` (`page_id`, `language_id`, `name`, `title`, `
 (4, 1, 'Login Page', '', '', '', '', '', now() ),
 (5, 1, 'Default Product Page', '', '', '', '', '', now() ),
 (10, 1, 'Maintenance Page', '', '', '', '', '', now() ),
-(11, 1, 'Customer Account Pages', '', '', '', '', '', now() );
+(11, 1, 'Customer Account Pages', '', '', '', '', '', now() ),
+(12, 1, 'Cart Page', '', '', '', '', '', now() ),
+(14, 1, 'Fast Checkout Page', '', '', '', '', '', NOW()),
+(15, 1, 'Fast Checkout Success Page', '', '', '', '', '', NOW())
+;
 
 --
 -- DDL for table `contents`
@@ -10103,7 +10329,9 @@ CREATE TABLE `ac_content_descriptions` (
   `name` varchar(255) NOT NULL COMMENT 'translatable',
   `title` varchar(255) NOT NULL COMMENT 'translatable',
   `description` varchar(255) NOT NULL DEFAULT '' COMMENT 'translatable',
-  `content` text NOT NULL COMMENT 'translatable', -- Contain the page details if custom content
+  `meta_keywords` varchar(255) NOT NULL COMMENT 'translatable',
+  `meta_description` varchar(255) NOT NULL COMMENT 'translatable',
+  `content` longtext NOT NULL COMMENT 'translatable', -- Contain the page details if custom content
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`content_id`,`language_id`)
@@ -10170,13 +10398,16 @@ INSERT INTO `ac_blocks` (`block_id`, `block_txt_id`, `controller`, `date_added`)
 (22, 'special', 'blocks/special', now() ),
 (23, 'banner_block', 'blocks/banner_block', now() ),
 (24, 'credit_cards', 'blocks/credit_cards', now() ),
-(25, 'newsletter_signup', 'blocks/newsletter_signup', now() ), 
+(25, 'newsletter_signup', 'blocks/newsletter_signup', now() ),
 (26, 'search', 'blocks/search', now() ),
 (27, 'menu', 'blocks/menu', now() ),
-(28, 'breadcrumbs', 'blocks/breadcrumbs', now() ), 
+(28, 'breadcrumbs', 'blocks/breadcrumbs', now() ),
 (29, 'account', 'blocks/account', now()),
 (30, 'custom_form_block', 'blocks/custom_form_block', now() ),
-(31, 'customer', 'blocks/customer', now() );
+(31, 'customer', 'blocks/customer', now() ),
+(32, 'fast_checkout_cart_btn', 'blocks/fast_checkout_cart_btn', NOW()),
+(33, 'fast_checkout_summary', 'blocks/fast_checkout_summary', NOW())
+;
 
 --
 -- DDL for table `ac_custom_blocks`
@@ -10201,11 +10432,12 @@ CREATE TABLE `ac_custom_lists` (
   `custom_block_id` int(10) NOT NULL,
   `data_type` varchar(70) NOT NULL,
   `id` int(10) NOT NULL,
+  `store_id` int(10),
   `sort_order` int(10) NOT NULL DEFAULT 0,
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (`rowid`),
-	INDEX `ac_custom_block_id_list_idx` (`custom_block_id` )
+	INDEX `ac_custom_block_id_list_idx` (`custom_block_id`, `store_id` )
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
@@ -10220,9 +10452,9 @@ CREATE TABLE `ac_block_descriptions` (
   `block_wrapper` varchar(255) NOT NULL default '0',
   `block_framed` tinyint(1) DEFAULT '1',
   `name` varchar(255) NOT NULL COMMENT 'translatable',
-  `title` varchar(255) NOT NULL COMMENT 'translatable',  
+  `title` varchar(255) NOT NULL COMMENT 'translatable',
   `description` varchar(255) NOT NULL DEFAULT '' COMMENT 'translatable',
-  `content` text NOT NULL DEFAULT '', -- Contain the block details if custom content
+  `content` longtext NOT NULL DEFAULT '', -- Contain the block details if custom content
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`block_description_id`, `custom_block_id`, `language_id`)
@@ -10231,7 +10463,7 @@ CREATE TABLE `ac_block_descriptions` (
 --
 -- DDL for table `block_templates`
 --
-	
+
 DROP TABLE IF EXISTS `ac_block_templates`;
 CREATE TABLE `ac_block_templates` (
   `block_id` int(10) NOT NULL auto_increment,
@@ -10312,6 +10544,7 @@ INSERT INTO `ac_block_templates` (`block_id`, `parent_block_id`, `template`, `da
 (26, 3, 'blocks/search.tpl', now() ),
 (26, 6, 'blocks/search.tpl', now() ),
 (27, 1, 'blocks/menu_top.tpl', now() ),
+(27, 2, 'blocks/menu.tpl', now()),
 (27, 8, 'blocks/menu_bottom.tpl', now() ),
 (27, 3, 'blocks/menu.tpl', now() ),
 (27, 6, 'blocks/menu.tpl', now() ),
@@ -10326,7 +10559,10 @@ INSERT INTO `ac_block_templates` (`block_id`, `parent_block_id`, `template`, `da
 (30, 6, 'blocks/custom_form_block.tpl', NOW() ),
 (30, 7, 'blocks/custom_form_block_content.tpl', NOW() ),
 (30, 8, 'blocks/custom_form_block_header.tpl', NOW() ),
-(31, 1, 'blocks/customer.tpl', now() );
+(31, 1, 'blocks/customer.tpl', now() ),
+(32, 1, 'blocks/fast_checkout_cart_btn.tpl', NOW()),
+(33, 6, 'blocks/fast_checkout_summary.tpl', NOW())
+;
 
 --
 -- DDL for table `layouts`
@@ -10343,16 +10579,30 @@ CREATE TABLE `ac_layouts` (
   PRIMARY KEY  (`layout_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
-INSERT INTO `ac_layouts` (`layout_id`, `template_id`, `layout_type`, `layout_name`, `date_added`) VALUES 
-(11, 'default', 0, 'Default Page Layout',  now()),
-(12, 'default', 1, 'Home Page',  now()),
-(13, 'default', 1, 'Login Page',  now()),
-(14, 'default', 1, 'Default Product Page',  now()),
-(15, 'default', 1, 'Checkout Pages', now()),
-(16, 'default', 1, 'Product Listing Page', now()),
-(17, 'default', 1, 'Maintanance Page', now()),
-(18, 'default', 1, 'Customer Account Pages', now()),
-(19, 'default', 1, 'Cart Page', now());
+INSERT INTO `ac_layouts` (`layout_id`, `template_id`, `layout_type`, `layout_name`, `date_added`) VALUES
+(11, 'default', 0, 'Default Page Layout',  NOW()),
+(12, 'default', 1, 'Home Page',  NOW()),
+(13, 'default', 1, 'Login Page',  NOW()),
+(14, 'default', 1, 'Default Product Page',  NOW()),
+(15, 'default', 1, 'Checkout Pages', NOW()),
+(16, 'default', 1, 'Product Listing Page', NOW()),
+(17, 'default', 1, 'Maintenance Page', NOW()),
+(18, 'default', 1, 'Customer Account Pages', NOW()),
+(19, 'default', 1, 'Cart Page', NOW()),
+(20, 'default', 1, 'Product Listing Page', NOW()),
+(21, 'default', 1, 'Fast Checkout Page', NOW()),
+(22, 'default', 1, 'Fast Checkout Success Page', NOW()),
+
+(23, 'bootstrap5',0, 'Default Page Layout',NOW()),
+(24, 'bootstrap5',1, 'Home Page',NOW()),
+(25, 'bootstrap5',1, 'Login Page',NOW()),
+(26, 'bootstrap5',1, 'Default Product Page',NOW()),
+(27, 'bootstrap5',1, 'Product Listing Page',NOW()),
+(28, 'bootstrap5',1, 'Maintenance Page',NOW()),
+(29, 'bootstrap5',1, 'Customer Account Pages',NOW()),
+(30, 'bootstrap5',1, 'Cart Page',NOW()),
+(31, 'bootstrap5',1, 'Fast Checkout Page',NOW()),
+(32, 'bootstrap5',1, 'Fast Checkout Success Page',NOW());
 
 --
 -- DDL for table `pages_layouts`
@@ -10372,7 +10622,21 @@ INSERT INTO `ac_pages_layouts` (`layout_id`, `page_id`) VALUES
 (15, 3),
 (17, 10),
 (18, 11),
-(19, 12);
+(19, 12),
+(20, 13),
+(21, 14),
+(22, 15),
+-- bs5
+( 23,1),
+( 24,2),
+( 25,4),
+( 26,5),
+( 27,13),
+( 28,10),
+( 29,11),
+( 30,12),
+( 31,14),
+( 32,15);
 
 --
 -- DDL for table `block_layouts`
@@ -10380,10 +10644,10 @@ INSERT INTO `ac_pages_layouts` (`layout_id`, `page_id`) VALUES
 DROP TABLE IF EXISTS `ac_block_layouts`;
 CREATE TABLE `ac_block_layouts` (
   `instance_id` int(10) NOT NULL auto_increment,
-  `layout_id` int(10) NOT NULL default '0',  
+  `layout_id` int(10) NOT NULL default '0',
   `block_id` int(10) NOT NULL default '0',
-  `custom_block_id` int(10) NOT NULL default '0',  
-  `parent_instance_id` int(10) NOT NULL default '0', -- 0 for main level block 
+  `custom_block_id` int(10) NOT NULL default '0',
+  `parent_instance_id` int(10) NOT NULL default '0', -- 0 for main level block
   `position` smallint(5) NOT NULL default '0',
   `status` smallint(1) NOT NULL default '0',
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -10397,22 +10661,22 @@ ON `ac_block_layouts` ( `instance_id`, `layout_id`, `block_id`, `parent_instance
 INSERT INTO `ac_block_layouts`
 (`instance_id`,`layout_id`,`block_id`,`custom_block_id`,`parent_instance_id`,`position`,`status`,`date_added`,`date_modified`)
 VALUES
-(330,	11,	1,	0,	0,		10,	1,	NOW(),	NOW()),	
+(330,	11,	1,	0,	0,		10,	1,	NOW(),	NOW()),
 (331,	11,	2,	0,	0,		20,	1,	NOW(),	NOW()),
-(332,	11,	3,	0,	0,		30,	1,	NOW(),	NOW()),	
-(333,	11,	4,	0,	0,		40,	1,	NOW(),	NOW()),	
-(334,	11,	5,	0,	0,		50,	1,	NOW(),	NOW()),	
-(335,	11,	6,	0,	0,		60,	1,	NOW(),	NOW()),	
-(336,	11,	7,	0,	0,		70,	1,	NOW(),	NOW()),	
-(337,	11,	8,	0,	0,		80,	1,	NOW(),	NOW()),	
-(1839,	11,	25,	0,	337,	40,	1,	NOW(),	NOW()),	
+(332,	11,	3,	0,	0,		30,	1,	NOW(),	NOW()),
+(333,	11,	4,	0,	0,		40,	1,	NOW(),	NOW()),
+(334,	11,	5,	0,	0,		50,	1,	NOW(),	NOW()),
+(335,	11,	6,	0,	0,		60,	1,	NOW(),	NOW()),
+(336,	11,	7,	0,	0,		70,	1,	NOW(),	NOW()),
+(337,	11,	8,	0,	0,		80,	1,	NOW(),	NOW()),
+(1839,	11,	25,	0,	337,	40,	1,	NOW(),	NOW()),
 (1840,	11,	11,	0,	337,	50,	1,	NOW(),	NOW()),
 (1835,	11,	9,	0,	331,	10,	1,	NOW(),	NOW()),
 (1842,	11,	24,	0,	337,	70,	1,	NOW(),	NOW()),
 (1843,	11,	21,	0,	337,	80,	1,	NOW(),	NOW()),
-(1844,	11,	31,	0,	330,	20,	1,	NOW(),	NOW()),	
-(1829,	11,	27,	0,	330,	30,	1,	NOW(),	NOW()),	
-(1830,	11,	26,	0,	330,	40,	1,	NOW(),	NOW()),	
+(1844,	11,	31,	0,	330,	20,	1,	NOW(),	NOW()),
+(1829,	11,	27,	0,	330,	30,	1,	NOW(),	NOW()),
+(1830,	11,	26,	0,	330,	40,	1,	NOW(),	NOW()),
 (1831,	11,	14,	0,	330,	60,	1,	NOW(),	NOW()),
 (1832,	11,	13,	0,	330,	50,	1,	NOW(),	NOW()),
 (1833,	11,	15,	0,	330,	70,	1,	NOW(),	NOW()),
@@ -10422,79 +10686,79 @@ VALUES
 INSERT INTO `ac_block_layouts`
 (`instance_id`,`layout_id`,`block_id`,`custom_block_id`,`parent_instance_id`,`position`,`status`,`date_added`,`date_modified`)
 VALUES
-(1782,	12,	21,	0,	356,	80,	1,	NOW(),	NOW()),	
-(354,	12,	6,	0,	0,		60,	0,	NOW(),	NOW()),	
-(352,	12,	4,	0,	0,		40,	1,	NOW(),	NOW()),	
-(351,	12,	3,	0,	0,		30,	0,	NOW(),	NOW()),	
-(350,	12,	2,	0,	0,		20,	1,	NOW(),	NOW()),	
+(1782,	12,	21,	0,	356,	80,	1,	NOW(),	NOW()),
+(354,	12,	6,	0,	0,		60,	0,	NOW(),	NOW()),
+(352,	12,	4,	0,	0,		40,	1,	NOW(),	NOW()),
+(351,	12,	3,	0,	0,		30,	0,	NOW(),	NOW()),
+(350,	12,	2,	0,	0,		20,	1,	NOW(),	NOW()),
 (353,	12,	5,	0,	0,		50,	1,	NOW(),	NOW()),
-(1781,	12,	24,	0,	356,	70,	1,	NOW(),	NOW()),	
-(355,	12,	7,	0,	0,		70,	1,	NOW(),	NOW()),	
-(356,	12,	8,	0,	0,		80,	1,	NOW(),	NOW()),	
+(1781,	12,	24,	0,	356,	70,	1,	NOW(),	NOW()),
+(355,	12,	7,	0,	0,		70,	1,	NOW(),	NOW()),
+(356,	12,	8,	0,	0,		80,	1,	NOW(),	NOW()),
 (349,	12,	1,	0,	0,		10,	1,	NOW(),	NOW()),
-(1763,	12,	14,	0,	349,	60,	1,	NOW(),	NOW()),	
+(1763,	12,	14,	0,	349,	60,	1,	NOW(),	NOW()),
 (1764,	12,	15,	0,	349,	70,	1,	NOW(),	NOW()),
 (1761,	12,	26,	0,	349,	40,	1,	NOW(),	NOW()),
-(1762,	12,	13,	0,	349,	50,	1,	NOW(),	NOW()),	
-(1770,	12,	12,	0,	353,	20,	1,	NOW(),	NOW()),	
-(1771,	12,	18,	0,	353,	30,	1,	NOW(),	NOW()),	
+(1762,	12,	13,	0,	349,	50,	1,	NOW(),	NOW()),
+(1770,	12,	12,	0,	353,	20,	1,	NOW(),	NOW()),
+(1771,	12,	18,	0,	353,	30,	1,	NOW(),	NOW()),
 (1772,	12,	22,	0,	353,	40,	1,	NOW(),	NOW()),
-(1766,	12,	9,	0,	350,	10,	1,	NOW(),	NOW()),	
+(1766,	12,	9,	0,	350,	10,	1,	NOW(),	NOW()),
 (1779,	12,	11,	0,	356,	50,	1,	NOW(),	NOW()),
-(1769,	12,	19,	0,	353,	10,	1,	NOW(),	NOW()),	
-(1778,	12,	25,	0,	356,	40,	1,	NOW(),	NOW()),	
-(1845,	12,	31,	0,	349,	20,	1,	NOW(),	NOW()),	
+(1769,	12,	19,	0,	353,	10,	1,	NOW(),	NOW()),
+(1778,	12,	25,	0,	356,	40,	1,	NOW(),	NOW()),
+(1845,	12,	31,	0,	349,	20,	1,	NOW(),	NOW()),
 (1760,	12,	27,	0,	349,	30,	1,	NOW(),	NOW());
 
 -- Login page
 INSERT INTO `ac_block_layouts`
 (`instance_id`,`layout_id`,`block_id`,`custom_block_id`,`parent_instance_id`,`position`,`status`,`date_added`,`date_modified`)
 VALUES
-(1846,	13,	31,	0,	378,	20,	1,	NOW(),	NOW()),	
-(1799,	13,	27,	0,	378,	30,	1,	NOW(),	NOW()),	
-(1810,	13,	11,	0,	379,	50,	1,	NOW(),	NOW()),	
-(1805,	13,	9,	0,	375,	10,	1,	NOW(),	NOW()),	
-(1951,	13,	28,	0,	375,	20,	1,	NOW(),	NOW()),	
-(1801,	13,	13,	0,	378,	50,	1,	NOW(),	NOW()),	
-(1813,	13,	21,	0,	379,	80,	1,	NOW(),	NOW()),	
+(1846,	13,	31,	0,	378,	20,	1,	NOW(),	NOW()),
+(1799,	13,	27,	0,	378,	30,	1,	NOW(),	NOW()),
+(1810,	13,	11,	0,	379,	50,	1,	NOW(),	NOW()),
+(1805,	13,	9,	0,	375,	10,	1,	NOW(),	NOW()),
+(1951,	13,	28,	0,	375,	20,	1,	NOW(),	NOW()),
+(1801,	13,	13,	0,	378,	50,	1,	NOW(),	NOW()),
+(1813,	13,	21,	0,	379,	80,	1,	NOW(),	NOW()),
 (1809,	13,	25,	0,	379,	40,	1,	NOW(),	NOW()),
-(1800,	13,	26,	0,	378,	40,	1,	NOW(),	NOW()),	
-(1812,	13,	24,	0,	379,	70,	1,	NOW(),	NOW()),	
-(1802,	13,	14,	0,	378,	60,	1,	NOW(),	NOW()),	
+(1800,	13,	26,	0,	378,	40,	1,	NOW(),	NOW()),
+(1812,	13,	24,	0,	379,	70,	1,	NOW(),	NOW()),
+(1802,	13,	14,	0,	378,	60,	1,	NOW(),	NOW()),
 (1803,	13,	15,	0,	378,	70,	1,	NOW(),	NOW()),
-(379,	13,	8,	0,	0,		80,	1,	NOW(),	NOW()),	
-(378,	13,	1,	0,	0,		10,	1,	NOW(),	NOW()),	
-(370,	13,	7,	0,	0,		70,	1,	NOW(),	NOW()),	
-(371,	13,	6,	0,	0,		60,	0,	NOW(),	NOW()),	
-(372,	13,	5,	0,	0,		50,	1,	NOW(),	NOW()),	
-(373,	13,	4,	0,	0,		40,	1,	NOW(),	NOW()),	
-(374,	13,	3,	0,	0,		30,	0,	NOW(),	NOW()),	
+(379,	13,	8,	0,	0,		80,	1,	NOW(),	NOW()),
+(378,	13,	1,	0,	0,		10,	1,	NOW(),	NOW()),
+(370,	13,	7,	0,	0,		70,	1,	NOW(),	NOW()),
+(371,	13,	6,	0,	0,		60,	0,	NOW(),	NOW()),
+(372,	13,	5,	0,	0,		50,	1,	NOW(),	NOW()),
+(373,	13,	4,	0,	0,		40,	1,	NOW(),	NOW()),
+(374,	13,	3,	0,	0,		30,	0,	NOW(),	NOW()),
 (375,	13,	2,	0,	0,		20,	1,	NOW(),	NOW());
 
 -- Default Product page
 INSERT INTO `ac_block_layouts`
 (`instance_id`,`layout_id`,`block_id`,`custom_block_id`,`parent_instance_id`,`position`,`status`,`date_added`,`date_modified`)
 VALUES
-(1795,	14,	11,	0,	392,	50,	1,	NOW(),	NOW()),	
+(1795,	14,	11,	0,	392,	50,	1,	NOW(),	NOW()),
 (1794,	14,	25,	0,	392,	40,	1,	NOW(),	NOW()),
 (1790,	14,	12,	0,	387,	10,	1,	NOW(),	NOW()),
-(1847,	14,	31,	0,	391,	20,	1,	NOW(),	NOW()),	
-(1783,	14,	27,	0,	391,	30,	1,	NOW(),	NOW()),	
+(1847,	14,	31,	0,	391,	20,	1,	NOW(),	NOW()),
+(1783,	14,	27,	0,	391,	30,	1,	NOW(),	NOW()),
 (1784,	14,	26,	0,	391,	40,	1,	NOW(),	NOW()),
-(1785,	14,	13,	0,	391,	50,	1,	NOW(),	NOW()),	
-(1786,	14,	14,	0,	391,	60,	1,	NOW(),	NOW()),	
+(1785,	14,	13,	0,	391,	50,	1,	NOW(),	NOW()),
+(1786,	14,	14,	0,	391,	60,	1,	NOW(),	NOW()),
 (1789,	14,	9,	0,	388,	10,	1,	NOW(),	NOW()),
-(1952,	14,	28,	0,	388,	20,	1,	NOW(),	NOW()),	
-(1787,	14,	15,	0,	391,	70,	1,	NOW(),	NOW()),	
-(1797,	14,	24,	0,	392,	70,	1,	NOW(),	NOW()),	
-(1798,	14,	21,	0,	392,	80,	1,	NOW(),	NOW()),	
-(388,	14,	2,	0,	0,		20,	1,	NOW(),	NOW()),	
-(386,	14,	4,	0,	0,		40,	1,	NOW(),	NOW()),	
-(387,	14,	3,	0,	0,		30,	1,	NOW(),	NOW()),	
-(384,	14,	6,	0,	0,		60,	0,	NOW(),	NOW()),	
-(383,	14,	7,	0,	0,		70,	1,	NOW(),	NOW()),	
-(391,	14,	1,	0,	0,		10,	1,	NOW(),	NOW()),	
-(392,	14,	8,	0,	0,		80,	1,	NOW(),	NOW()),	
+(1952,	14,	28,	0,	388,	20,	1,	NOW(),	NOW()),
+(1787,	14,	15,	0,	391,	70,	1,	NOW(),	NOW()),
+(1797,	14,	24,	0,	392,	70,	1,	NOW(),	NOW()),
+(1798,	14,	21,	0,	392,	80,	1,	NOW(),	NOW()),
+(388,	14,	2,	0,	0,		20,	1,	NOW(),	NOW()),
+(386,	14,	4,	0,	0,		40,	1,	NOW(),	NOW()),
+(387,	14,	3,	0,	0,		30,	1,	NOW(),	NOW()),
+(384,	14,	6,	0,	0,		60,	0,	NOW(),	NOW()),
+(383,	14,	7,	0,	0,		70,	1,	NOW(),	NOW()),
+(391,	14,	1,	0,	0,		10,	1,	NOW(),	NOW()),
+(392,	14,	8,	0,	0,		80,	1,	NOW(),	NOW()),
 (385,	14,	5,	0,	0,		50,	1,	NOW(),	NOW());
 
 -- Checkout pages
@@ -10510,7 +10774,7 @@ VALUES
 (1848,	15,	31,	0,	395,	20,	1,	NOW(),	NOW()),
 (1814,	15,	27,	0,	395,	30,	1,	NOW(),	NOW()),
 (1820,	15,	9,	0,	399,	10,	1,	NOW(),	NOW()),
-(1953,	15,	28,	0,	399,	20,	1,	NOW(),	NOW()),	
+(1953,	15,	28,	0,	399,	20,	1,	NOW(),	NOW()),
 (1825,	15,	11,	0,	403,	50,	1,	NOW(),	NOW()),
 (402,	15,	5,	0,	0,		50,	1,	NOW(),	NOW()),
 (401,	15,	4,	0,	0,		40,	1,	NOW(),	NOW()),
@@ -10528,35 +10792,35 @@ VALUES
 INSERT INTO `ac_block_layouts`
 (`instance_id`,`layout_id`,`block_id`,`custom_block_id`,`parent_instance_id`,`position`,`status`,`date_added`,`date_modified`)
 VALUES
-(942,	17,	5,	0,	0,		50,	1,	NOW(),	NOW()),	
-(943,	17,	6,	0,	0,		60,	1,	NOW(),	NOW()),	
-(944,	17,	7,	0,	0,		70,	1,	NOW(),	NOW()),	
-(945,	17,	8,	0,	0,		80,	1,	NOW(),	NOW()),	
-(940,	17,	3,	0,	0,		30,	1,	NOW(),	NOW()),	
-(939,	17,	2,	0,	0,		20,	1,	NOW(),	NOW()),	
-(938,	17,	1,	0,	0,		10,	1,	NOW(),	NOW()),	
+(942,	17,	5,	0,	0,		50,	1,	NOW(),	NOW()),
+(943,	17,	6,	0,	0,		60,	1,	NOW(),	NOW()),
+(944,	17,	7,	0,	0,		70,	1,	NOW(),	NOW()),
+(945,	17,	8,	0,	0,		80,	1,	NOW(),	NOW()),
+(940,	17,	3,	0,	0,		30,	1,	NOW(),	NOW()),
+(939,	17,	2,	0,	0,		20,	1,	NOW(),	NOW()),
+(938,	17,	1,	0,	0,		10,	1,	NOW(),	NOW()),
 (941,	17,	4,	0,	0,		40,	1,	NOW(),	NOW()),
-(1954,	17,	28,	0,	939,	20,	1,	NOW(),	NOW());	
+(1954,	17,	28,	0,	939,	20,	1,	NOW(),	NOW());
 
 -- Customer Account Pages
 INSERT INTO `ac_block_layouts` (`instance_id`,	 `layout_id`,	 `block_id`,	 `custom_block_id`,	 `parent_instance_id`,	 `position`,	 `status`,	 `date_added`,	`date_modified`) VALUES
-(1900,	18,	5,	0,	0,		50,	1,	NOW(),	NOW()),	
-(1901,	18,	4,	0,	0,		40,	1,	NOW(),	NOW()),	
-(1902,	18,	3,	0,	0,		30,	0,	NOW(),	NOW()),	
-(1903,	18,	2,	0,	0,		20,	1,	NOW(),	NOW()),	
-(1904,	18,	5,	0,	0,		50,	1,	NOW(),	NOW()),	
-(1905,	18,	6,	0,	0,		60,	1,	NOW(),	NOW()),	
-(1906,	18,	7,	0,	0,		70,	1,	NOW(),	NOW()),	
-(1907,	18,	1,	0,	0,		10,	1,	NOW(),	NOW()),	
-(1908,	18,	8,	0,	0,		80,	1,	NOW(),	NOW()),	
-(1920,	18,	24,	0,	1908,	70,	1,	NOW(),	NOW()),	
-(1921,	18,	15,	0,	1907,	70,	1,	NOW(),	NOW()),	
-(1922,	18,	14,	0,	1907,	60,	1,	NOW(),	NOW()),	
-(1923,	18,	13,	0,	1907,	50,	1,	NOW(),	NOW()),	
-(1924,	18,	21,	0,	1908,	80,	1,	NOW(),	NOW()),	
-(1925,	18,	26,	0,	1907,	40,	1,	NOW(),	NOW()),	
-(1849,	18,	31,	0,	1907,	20,	1,	NOW(),	NOW()),	
-(1926,	18,	27,	0,	1907,	30,	1,	NOW(),	NOW()),	
+(1900,	18,	5,	0,	0,		50,	1,	NOW(),	NOW()),
+(1901,	18,	4,	0,	0,		40,	1,	NOW(),	NOW()),
+(1902,	18,	3,	0,	0,		30,	0,	NOW(),	NOW()),
+(1903,	18,	2,	0,	0,		20,	1,	NOW(),	NOW()),
+(1904,	18,	5,	0,	0,		50,	1,	NOW(),	NOW()),
+(1905,	18,	6,	0,	0,		60,	1,	NOW(),	NOW()),
+(1906,	18,	7,	0,	0,		70,	1,	NOW(),	NOW()),
+(1907,	18,	1,	0,	0,		10,	1,	NOW(),	NOW()),
+(1908,	18,	8,	0,	0,		80,	1,	NOW(),	NOW()),
+(1920,	18,	24,	0,	1908,	70,	1,	NOW(),	NOW()),
+(1921,	18,	15,	0,	1907,	70,	1,	NOW(),	NOW()),
+(1922,	18,	14,	0,	1907,	60,	1,	NOW(),	NOW()),
+(1923,	18,	13,	0,	1907,	50,	1,	NOW(),	NOW()),
+(1924,	18,	21,	0,	1908,	80,	1,	NOW(),	NOW()),
+(1925,	18,	26,	0,	1907,	40,	1,	NOW(),	NOW()),
+(1849,	18,	31,	0,	1907,	20,	1,	NOW(),	NOW()),
+(1926,	18,	27,	0,	1907,	30,	1,	NOW(),	NOW()),
 (1927,	18,	9,	0,	1903,	10,	1,	NOW(),	NOW()),
 (1955,	18,	28,	0,	1903,	20,	1,	NOW(),	NOW()),
 (1930,	18,	11,	0,	1908,	50,	1,	NOW(),	NOW()),
@@ -10589,6 +10853,101 @@ VALUES
 (2019,	19,	8, 	0,	0,		80, 1, 	NOW(), 	NOW()),
 (2020,	19,	28,	0,	2013,	20,	1,	NOW(),	NOW());
 
+-- Product Listing Page template's layouts
+INSERT INTO `ac_block_layouts`
+(`instance_id`,`layout_id`,`block_id`,`custom_block_id`,`parent_instance_id`,`position`,`status`,`date_added`,`date_modified`)
+VALUES
+(2043,	20,	1,	0,	0,	10,	1,	NOW(),	NOW()),
+(2044,	20,	2,	0,	0,	20,	1,	NOW(),	NOW()),
+(2045,	20,	3,	0,	0,	30,	1,	NOW(),	NOW()),
+(2046,	20,	4,	0,	0,	40,	1,	NOW(),	NOW()),
+(2047,	20,	5,	0,	0,	50,	1,	NOW(),	NOW()),
+(2048,	20,	6,	0,	0,	60,	1,	NOW(),	NOW()),
+(2049,	20,	7,	0,	0,	70,	1,	NOW(),	NOW()),
+(2050,	20,	8,	0,	0,	80,	1,	NOW(),	NOW()),
+(2051,	20,	25,	0,	2050,	40,	1,	NOW(),	NOW()),
+(2052,	20,	11,	0,	2050,	50,	1,	NOW(),	NOW()),
+(2053,	20,	9,	0,	2044,	10,	1,	NOW(),	NOW()),
+(2054,	20,	24,	0,	2050,	70,	1,	NOW(),	NOW()),
+(2055,	20,	21,	0,	2050,	80,	1,	NOW(),	NOW()),
+(2056,	20,	31,	0,	2043,	20,	1,	NOW(),	NOW()),
+(2057,	20,	27,	0,	2043,	30,	1,	NOW(),	NOW()),
+(2058,	20,	26,	0,	2043,	40,	1,	NOW(),	NOW()),
+(2059,	20,	14,	0,	2043,	60,	1,	NOW(),	NOW()),
+(2060,	20,	13,	0,	2043,	50,	1,	NOW(),	NOW()),
+(2061,	20,	15,	0,	2043,	70,	1,	NOW(),	NOW()),
+(2062,	20,	17,	15,	2043,	80,	1,	NOW(),	NOW()),
+(2063,	20,	28,	0,	2044,	20,	1,	NOW(),	NOW()),
+
+(2064,	20,	17,	13,	2050,	10,	1,	NOW(),	NOW()),
+(2065,	20,	17,	14,	2050,	20,	1,	NOW(),	NOW()),
+(2066,	20,	17,	16,	2050,	30,	1,	NOW(),	NOW()),
+(2067,	20,	17,	15,	2050,	60,	1,	NOW(),	NOW());
+
+-- FastCheckout page layout
+INSERT INTO `ac_block_layouts`
+(`instance_id`,`layout_id`,`block_id`,`custom_block_id`,`parent_instance_id`,`position`,`status`,`date_added`,`date_modified`)
+VALUES (2068, 21, 1, 0, 0, 10, 1, NOW(), NOW()),
+       (2069, 21, 32, 0, 2068, 40, 1, NOW(), NOW()),
+       (2070, 21, 2, 0, 0, 20, 0, NOW(), NOW()),
+       (2071, 21, 3, 0, 0, 30, 0, NOW(), NOW()),
+       (2072, 21, 4, 0, 0, 40, 0, NOW(), NOW()),
+       (2073, 21, 5, 0, 0, 50, 0, NOW(), NOW()),
+       (2074, 21, 6, 0, 0, 60, 1, NOW(), NOW()),
+       (2075, 21, 33, 0, 2074, 10, 1, NOW(), NOW()),
+       (2076, 21, 7, 0, 0, 70, 0, NOW(), NOW()),
+       (2077, 21, 8, 0, 0, 80, 1, NOW(), NOW()),
+       (2078, 22, 1, 0, 0, 10, 1, NOW(), NOW()),
+       (2079, 22, 2, 0, 0, 20, 0, NOW(), NOW()),
+       (2080, 22, 3, 0, 0, 30, 0, NOW(), NOW()),
+       (2081, 22, 4, 0, 0, 40, 0, NOW(), NOW()),
+       (2082, 22, 5, 0, 0, 50, 0, NOW(), NOW()),
+       (2083, 22, 6, 0, 0, 60, 1, NOW(), NOW()),
+       (2084, 22, 7, 0, 0, 70, 0, NOW(), NOW()),
+       (2085, 22, 8, 0, 0, 80, 1, NOW(), NOW()),
+
+       (2378, 30, 15, 0, 0, 10, 1, NOW(), NOW()),
+       (2379, 30, 31, 0, 0, 20, 1, NOW(), NOW()),
+       (2380, 30, 27, 0, 0, 30, 1, NOW(), NOW()),
+       (2381, 30, 26, 0, 0, 40, 1, NOW(), NOW()),
+       (2382, 30, 13, 0, 0, 50, 1, NOW(), NOW()),
+       (2383, 30, 14, 0, 0, 60, 1, NOW(), NOW()),
+       (2385, 30, 28, 0, 0, 20, 1, NOW(), NOW()),
+       (2386, 30, 3, 0, 0, 30, 0, NOW(), NOW()),
+       (2387, 30, 25, 0, 0, 40, 1, NOW(), NOW()),
+       (2388, 30, 4, 0, 0, 40, 1, NOW(), NOW()),
+       (2389, 30, 5, 0, 0, 50, 1, NOW(), NOW()),
+       (2390, 30, 11, 0, 0, 50, 1, NOW(), NOW()),
+       (2391, 30, 6, 0, 0, 60, 1, NOW(), NOW()),
+       (2392, 30, 7, 0, 0, 70, 1, NOW(), NOW()),
+       (2393, 30, 24, 0, 0, 70, 1, NOW(), NOW()),
+       (2394, 30, 8, 0, 0, 80, 1, NOW(), NOW()),
+       (2398, 30, 25, 0, 2394, 40, 1, NOW(), NOW()),
+       (2399, 30, 11, 0, 2394, 50, 1, NOW(), NOW()),
+       (2401, 30, 24, 0, 2394, 70, 1, NOW(), NOW()),
+       (2402, 30, 21, 0, 2394, 80, 1, NOW(), NOW()),
+       (2403, 30, 21, 0, 0, 80, 1, NOW(), NOW()),
+       (2404, 31, 1, 0, 0, 10, 1, NOW(), NOW()),
+       (2405, 31, 32, 0, 2404, 40, 1, NOW(), NOW()),
+       (2406, 31, 33, 0, 0, 10, 1, NOW(), NOW()),
+       (2407, 31, 2, 0, 0, 20, 0, NOW(), NOW()),
+       (2408, 31, 3, 0, 0, 30, 0, NOW(), NOW()),
+       (2409, 31, 4, 0, 0, 40, 0, NOW(), NOW()),
+       (2410, 31, 32, 0, 0, 40, 1, NOW(), NOW()),
+       (2411, 31, 5, 0, 0, 50, 0, NOW(), NOW()),
+       (2412, 31, 6, 0, 0, 60, 1, NOW(), NOW()),
+       (2413, 31, 33, 0, 2412, 10, 1, NOW(), NOW()),
+       (2414, 31, 7, 0, 0, 70, 0, NOW(), NOW()),
+       (2415, 31, 8, 0, 0, 80, 1, NOW(), NOW()),
+       (2416, 32, 1, 0, 0, 10, 1, NOW(), NOW()),
+       (2417, 32, 2, 0, 0, 20, 0, NOW(), NOW()),
+       (2418, 32, 3, 0, 0, 30, 0, NOW(), NOW()),
+       (2419, 32, 4, 0, 0, 40, 0, NOW(), NOW()),
+       (2420, 32, 5, 0, 0, 50, 0, NOW(), NOW()),
+       (2421, 32, 6, 0, 0, 60, 1, NOW(), NOW()),
+       (2422, 32, 7, 0, 0, 70, 0, NOW(), NOW()),
+       (2423, 32, 8, 0, 0, 80, 1, NOW(), NOW())
+;
 --
 -- DDL for table `forms_pages`
 --
@@ -10637,15 +10996,15 @@ DROP TABLE IF EXISTS `ac_fields`;
 CREATE TABLE `ac_fields` (
   `field_id` int(11) NOT NULL auto_increment,
   `form_id` int(11) NOT NULL DEFAULT '0',
-  `field_name` varchar(40) NOT NULL, 
+  `field_name` varchar(40) NOT NULL,
   -- used to create css ID (form_name + field_name) and name for input tag tag
   `element_type` char(1) NOT NULL DEFAULT 'I',
-  -- I - text input, T - Text area, S - Select, M - multivalue select, C - Checkbox, R - radio buttons, U - File upload, H - Hidden, G -Checkbox Group, D - Date, E - time, K - Captcha 
+  -- I - text input, T - Text area, S - Select, M - multivalue select, C - Checkbox, R - radio buttons, U - File upload, H - Hidden, G -Checkbox Group, D - Date, E - time, K - Captcha
   `sort_order` int(3) NOT NULL,
   `attributes` varchar(255) NOT NULL,
   `settings` text COLLATE utf8_general_ci NOT NULL DEFAULT '',
   `required` char(1) NOT NULL DEFAULT 'N',
-  -- N - Not required, Y - required  
+  -- N - Not required, Y - required
   `status` smallint(1) NOT NULL default '0',
   `regexp_pattern` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`field_id`),
@@ -10656,7 +11015,7 @@ INSERT INTO `ac_fields`
 (field_id, form_id, field_name, element_type, sort_order, attributes,settings, required, regexp_pattern, status)
 VALUES
 (11,2,'first_name','I',1,'','','Y','/^.{3,100}$/u',1),
-(12,2,'email','I',2,'','','Y','/^[A-Z0-9._%-]+@[A-Z0-9][A-Z0-9.-]{0,61}[A-Z0-9]\\.[A-Z]{2,16}$/i',1),
+(12,2,'email','I',2,'','','Y','/^[A-Z0-9._%-]+@[A-Z0-9.-]{0,61}[A-Z0-9]\.[A-Z]{2,16}$/i',1),
 (13,2,'enquiry','T',3,'cols="50" rows="8"','','Y','/^.{3,1000}$/su',1),
 (14,2,'captcha','K',4,'','','Y','',1);
 
@@ -10760,7 +11119,7 @@ CREATE TABLE `ac_ant_messages` (
   `viewed` int(11) NOT NULL default '0',
   `title` varchar(255) DEFAULT NULL,
   `description` text,
-  `html` text,
+  `html` longtext,
   `url` text,
   `language_code` varchar(2) NOT NULL DEFAULT 'en',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -10937,12 +11296,12 @@ VALUES  (2,10, 'item_id','varchar',1),
         (2,14, 'sort_order','integer',5),
         (2,15, 'item_type','varchar',6),
         (2,40, 'item_icon_rl_id','varchar',7);
---		
+--
 -- MAIN (PARENT) MENU
 --
---		
+--
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (10,'catalog',1),
         (10,'sale',2),
         (10,'design',3),
@@ -10951,7 +11310,7 @@ VALUES  (10,'catalog',1),
         (10,'reports',6),
         (10,'help',7);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (11,'text_catalog',1),
         (11,'text_sale',2),
         (11,'text_design',3),
@@ -10960,7 +11319,7 @@ VALUES  (11,'text_catalog',1),
         (11,'text_reports',6),
         (11,'text_help',7);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (12,'catalog/category',1),
         (12,'sale/order',2),
         (12,'extension/extensions/template',3),
@@ -10969,7 +11328,7 @@ VALUES  (12,'catalog/category',1),
         (12,'report/sale/orders',6),
         (12,'',7);
 -- PARENT_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (13,'',1),
         (13,'',2),
         (13,'',3),
@@ -10978,7 +11337,7 @@ VALUES  (13,'',1),
         (13,'',6),
         (13,'',7);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES  (14,1,1),
         (14,2,2),
         (14,3,3),
@@ -10987,7 +11346,7 @@ VALUES  (14,1,1),
         (14,6,6),
         (14,7,7);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (15,'core',1),
         (15,'core',2),
         (15,'core',3),
@@ -11005,61 +11364,67 @@ VALUES  (40,'200',1),
         (40,'205',6),
         (40,'206',7);
 
---		
+--
 -- SUBMENU CATALOG
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (10,'category',11),
         (10,'product',12),
         (10,'manufacturer',13),
         (10,'download',14),
         (10,'review',15),
         (10,'attributes',16),
+        (10,'collections',17),
         (10,'rl_manager',220);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (11,'text_category',11),
         (11,'text_product',12),
         (11,'text_manufacturer',13),
         (11,'text_download',14),
         (11,'text_review',15),
         (11,'text_attribute',16),
+        (11,'text_collection',17),
         (11,'text_rl_manager',220);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (12,'catalog/category',11),
         (12,'catalog/product',12),
         (12,'catalog/manufacturer',13),
         (12,'catalog/download',14),
         (12,'catalog/review',15),
         (12,'catalog/attribute',16),
+        (12,'catalog/collections',17),
         (12,'tool/rl_manager',220);
 -- PARENT_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (13,'catalog',11),
         (13,'catalog',12),
         (13,'catalog',13),
         (13,'catalog',14),
         (13,'catalog',15),
         (13,'catalog',16),
+        (13,'catalog',17),
         (13,'catalog',220);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES  (14,1,11),
         (14,2,12),
         (14,3,13),
         (14,4,14),
         (14,5,15),
         (14,6,16),
+        (14,8,17),
         (14,7,220);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (15,'core',11),
         (15,'core',12),
         (15,'core',13),
         (15,'core',14),
         (15,'core',15),
         (15,'core',16),
+        (15,'core',17),
         (15,'core',220);
 -- ITEM_RL_ID
 INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
@@ -11069,42 +11434,46 @@ VALUES  (40,'207',11),
         (40,'210',14),
         (40,'211',15),
         (40,'212',16),
+        (40,'279',17),
         (40,'277',220);
 
 --
 -- SUBMENU EXTENSION
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (10,'extensions',31),
         (10,'shipping',32),
         (10,'payment',33),
         (10,'templates',34),
         (10,'languages',35),
-        (10,'total',36),
-        (10,'add_extension',37),
-        (10,'extensions_stores',38);
+        (10,'taxes',36),
+        (10,'total',37),
+        (10,'add_extension',38),
+        (10,'extensions_stores',39);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (11,'text_extensions',31),
         (11,'text_shipping',32),
         (11,'text_payment',33),
         (11,'text_templates',34),
         (11,'text_language',35),
-        (11,'text_total',36),
-        (11,'text_add_extension',37),
-        (11,'text_extensions_store',38);
+        (11,'text_taxes',36),
+        (11,'text_total',37),
+        (11,'text_add_extension',38),
+        (11,'text_extensions_store',39);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (12,'extension/extensions/extensions',31),
         (12,'extension/extensions/shipping',32),
         (12,'extension/extensions/payment',33),
         (12,'extension/extensions/template',34),
         (12,'extension/extensions/language',35),
-        (12,'extension/total',36),
-        (12,'tool/package_installer',37),
-        (12,'extension/extensions_store',38);
+        (12,'extension/extensions/tax',36),
+        (12,'extension/total',37),
+        (12,'tool/package_installer',38),
+        (12,'extension/extensions_store',39);
 -- PARENT_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (13,'extension',31),
         (13,'extension',32),
         (13,'extension',33),
@@ -11112,9 +11481,10 @@ VALUES  (13,'extension',31),
         (13,'extension',35),
         (13,'extension',36),
         (13,'extension',37),
-        (13,'extension',38);
+        (13,'extension',38),
+        (13,'extension',39);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES  (14,1,31),
         (14,2,32),
         (14,3,33),
@@ -11122,66 +11492,68 @@ VALUES  (14,1,31),
         (14,5,35),
         (14,6,36),
         (14,7,37),
-        (14,8,38);
+        (14,8,38),
+        (14,9,39);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (15,'core',31),
         (15,'core',32),
         (15,'core',33),
         (15,'core',34),
         (15,'core',35),
-        (15,'core',36);
+        (15,'core',36),
+        (15,'core',37);
 -- ITEM_RL_ID
 INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (40,'213',31),
         (40,'214',32),
-        (40,'215',33),
+        (40,'260',33),
         (40,'216',34),
         (40,'217',35),
-        (40,'218',36),
-        (40,'219',37),
-        (40,'220',38);
-
+        (40,'215',36),
+        (40,'218',37),
+        (40,'219',38),
+        (40,'220',39);
 
 --
 -- SUBMENU SALE
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (10,'order',51),
         (10,'customer',52),
         (10,'customer_group',53),
         (10,'coupon',54),
         (10,'contact',55);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (11,'text_order',51),
         (11,'text_customer',52),
         (11,'text_customer_group',53),
         (11,'text_coupon',54),
         (11,'text_contact',55);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (12,'sale/order',51),
         (12,'sale/customer',52),
         (12,'sale/customer_group',53),
         (12,'sale/coupon',54),
         (12,'sale/contact',55);
 -- PARENT_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (13,'sale',51),
         (13,'sale',52),
         (13,'sale',53),
         (13,'sale',54),
         (13,'sale',55);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES  (14,1,51),
         (14,2,52),
         (14,3,53),
         (14,4,54),
         (14,5,55);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (15,'core',51),
         (15,'core',52),
         (15,'core',53),
@@ -11195,7 +11567,7 @@ VALUES  (40,'221',51),
         (40,'224',54),
         (40,'225',55);
 
---		
+--
 -- SUBMENU SYSTEM
 -- ITEM_ID
 INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
@@ -11208,7 +11580,7 @@ VALUES  (10,'setting',71),
         (10,'messages',79),
         (10,'logs',80);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (11,'text_setting',71),
         (11,'text_users',72),
         (11,'text_localisation',73),
@@ -11218,7 +11590,7 @@ VALUES  (11,'text_setting',71),
         (11,'text_messages',79),
         (11,'text_logs',80);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (12,'setting/setting',71),
         (12,'',72),
         (12,'',73),
@@ -11228,7 +11600,7 @@ VALUES  (12,'setting/setting',71),
         (12,'tool/message_manager',79),
         (12,'',80);
 -- PARENT_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (13,'system',71),
         (13,'system',72),
         (13,'system',73),
@@ -11238,7 +11610,7 @@ VALUES  (13,'system',71),
         (13,'system',79),
         (13,'system',80);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES  (14,1,71),
         (14,2,72),
         (14,3,73),
@@ -11248,7 +11620,7 @@ VALUES  (14,1,71),
         (14,9,79),
         (14,10,80);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (15,'core',71),
         (15,'core',72),
         (15,'core',73),
@@ -11272,40 +11644,46 @@ VALUES  (40,'226',71),
 --
 -- SUBMENU REPORTS
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (10,'report_sale',91),
         (10,'report_customer',92),
         (10,'report_product',93),
+        (10,'report_analytics',221),
         (10,'banner_manager_stat',94 );
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (11,'text_report_sale',91),
         (11,'text_customer',92),
         (11,'text_product',93),
+        (11,'text_analytics',221),
         (11,'banner_manager_name_stat',94);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
-VALUES  (12,'',91),
-        (12,'',92),
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
+VALUES  (12,'report/sale/orders',91),
+        (12,'report/customer/online',92),
         (12,'',93),
+        (12,'',221),
         (12,'extension/banner_manager_stat',94);
 -- PARENT_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (13,'reports',91),
         (13,'reports',92),
         (13,'reports',93),
+        (13,'reports',221),
         (13,'reports',94);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES  (14,1,91),
         (14,2,92),
         (14,3,93),
-        (14,4,94);
+        (14,4,221),
+        (14,5,94);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (15,'core',91),
         (15,'core',92),
         (15,'core',93),
+        (15,'core',221),
         (15,'extension',94);
 
 -- ITEM_RL_ID
@@ -11313,42 +11691,43 @@ INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (40,'234',91),
         (40,'222',92),
         (40,'208',93),
+        (40,'234',221),
         (40,'237',94);
 
 --
 -- SUBMENU HELP
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (10,'abantecart',111),
         (10,'documentation',112),
         (10,'support',113),
         (10,'marketplace',114);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (11,'text_abantecart',111),
         (11,'text_documentation',112),
         (11,'text_support',113),
         (11,'text_extensions_store',114);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (12,'window.open(\'http://www.abantecart.com\');',111),
         (12,'window.open(\'http://docs.abantecart.com\');',112),
         (12,'window.open(\'http://forum.abantecart.com\');',113),
         (12,'window.open(\'http://marketplace.abantecart.com\');',114);
 -- PARENT_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (13,'help',111),
         (13,'help',112),
         (13,'help',113),
         (13,'help',114);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES  (14,1,111),
         (14,2,112),
         (14,3,113),
         (14,4,114);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (15,'core',111),
         (15,'core',112),
         (15,'core',113),
@@ -11360,61 +11739,67 @@ VALUES  (40,'238',111),
         (40,'240',113),
         (40,'203',114);
 
---		
+--
 -- SUBMENU DESIGN
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (10,'template',131),
         (10,'layout',132),
         (10,'blocks',133),
         (10,'menu',134),
         (10,'content',135),
-		(10,'banner_manager',136),
-		(10,'forms_manager',200);
+        (10,'banner_manager',136),
+        (10,'forms_manager',200),
+        (10,'email_templates',137);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (11,'text_templates',131),
         (11,'text_layout',132),
         (11,'text_blocks',133),
         (11,'text_menu',134),
         (11,'text_content',135),
         (11,'banner_manager_name',136),
-        (11,'forms_manager_name',200);
+        (11,'forms_manager_name',200),
+        (11,'email_templates',137);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (12,'design/template',131),
         (12,'design/layout',132),
         (12,'design/blocks',133),
         (12,'design/menu',134),
         (12,'design/content',135),
         (12,'extension/banner_manager',136),
+        (12,'design/email_templates',137),
         (12,'tool/forms_manager',200);
 -- PARENT_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (13,'design',131),
         (13,'design',132),
         (13,'design',133),
         (13,'design',134),
         (13,'design',135),
         (13,'design',136),
+        (13,'design',137),
         (13,'design',200);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES  (14,1,131),
         (14,2,132),
         (14,3,133),
         (14,4,134),
         (14,5,135),
         (14,6,136),
+        (14,8,137),
         (14,7,200);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (15,'core',131),
         (15,'core',132),
         (15,'core',133),
         (15,'core',134),
         (15,'core',135),
         (15,'extension',136),
+        (15,'core',137),
         (15,'extension',200);
 -- ITEM_RL_ID
 INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
@@ -11424,13 +11809,13 @@ VALUES  (40,'241',131),
         (40,'244',134),
         (40,'245',135),
         (40,'246',136),
+        (40,'280',137),
         (40,'248',200);
-
 
 --
 -- SUBMENU SYSTEM->SETTINGS
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (10,'all_settings',191),
 (10,'settings_details',192),
@@ -11444,7 +11829,7 @@ VALUES
 (10,'settings_newstore',199);
 
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (11,'text_all_settings',191),
 (11,'text_settings_details',192),
@@ -11458,7 +11843,7 @@ VALUES
 (11,'text_settings_newstore',199);
 
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (12,'setting/setting/all',191),
 (12,'setting/setting/details',192),
@@ -11471,7 +11856,7 @@ VALUES
 (12,'setting/setting/system',198),
 (12,'setting/store/insert',199);
 -- PARENT_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (13,'setting',191),
 (13,'setting',192),
@@ -11484,7 +11869,7 @@ VALUES
 (13,'setting',198),
 (13,'setting',199);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES
 (14,1,191),
 (14,2,192),
@@ -11497,7 +11882,7 @@ VALUES
 (14,9,198),
 (14,10,199);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (15,'core',191),
 (15,'core',192),
@@ -11556,10 +11941,10 @@ INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (40,'256',151),
         (40,'257',152);
 
---		
+--
 -- SUBMENU SYSTEM->LOCALIZATION
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (10,'language',171),
         (10,'language_definitions',172),
         (10,'currency',173),
@@ -11572,7 +11957,7 @@ VALUES  (10,'language',171),
         (10,'lengthclass',180),
         (10,'weightclass',181);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (11,'text_language',171),
         (11,'text_language_definitions',172),
         (11,'text_currency',173),
@@ -11585,7 +11970,7 @@ VALUES  (11,'text_language',171),
         (11,'text_length_class',180),
         (11,'text_weight_class',181);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (12,'localisation/language',171),
         (12,'localisation/language_definitions',172),
         (12,'localisation/currency',173),
@@ -11598,7 +11983,7 @@ VALUES  (12,'localisation/language',171),
         (12,'localisation/length_class',180),
         (12,'localisation/weight_class',181);
 -- PARENT_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (13,'localisation',171),
         (13,'localisation',172),
         (13,'localisation',173),
@@ -11611,7 +11996,7 @@ VALUES  (13,'localisation',171),
         (13,'localisation',180),
         (13,'localisation',181);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES  (14,1,171),
         (14,2,172),
         (14,3,173),
@@ -11624,7 +12009,7 @@ VALUES  (14,1,171),
         (14,10,180),
         (14,11,181);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (15,'core',171),
         (15,'core',172),
         (15,'core',173),
@@ -11746,42 +12131,42 @@ VALUES  (40,'274',186),
 --
 -- SUBMENU REPORTS->SALES
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (10,'report_sale_orders',210),
 (10,'report_sale_tax',211),
 (10,'report_sale_shipping',212),
 (10,'report_sale_coupon',213);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (11,'text_order',210),
 (11,'text_tax',211),
 (11,'text_shipping',212),
 (11,'text_discount',213);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (12,'report/sale/orders',210),
 (12,'report/sale/taxes',211),
 (12,'report/sale/shipping',212),
 (12,'report/sale/coupons',213);
--- PARENT_ID	
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+-- PARENT_ID
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (13,'report_sale',210),
 (13,'report_sale',211),
 (13,'report_sale',212),
 (13,'report_sale',213);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES
 (14,1,210),
 (14,2,211),
 (14,3,212),
 (14,4,213);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (15,'core',210),
 (15,'core',211),
@@ -11797,37 +12182,37 @@ VALUES  (40,'221',210),
 --
 -- SUBMENU REPORTS->CUSTOMERS
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (10,'report_customer_online',214),
 (10,'report_customer_order',215),
 (10,'report_customer_transactions',216);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (11,'text_online',214),
 (11,'text_order',215),
 (11,'text_transactions',216);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (12,'report/customer/online',214),
 (12,'report/customer/orders',215),
 (12,'report/customer/transactions',216);
--- PARENT_ID	
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+-- PARENT_ID
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (13,'report_customer',214),
 (13,'report_customer',215),
 (13,'report_customer',216);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES
 (14,1,214),
 (14,2,215),
 (14,3,216);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (15,'core',214),
 (15,'core',215),
@@ -11837,36 +12222,36 @@ INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (40,'222',214),
         (40,'221',215),
         (40,'260',216);
-        
+
 --
 -- SUBMENU REPORTS->PRODUCTS
 -- ITEM_ID
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (10,'report_product_viewed',217),
 (10,'report_product_purchased',218);
 -- ITEM_TEXT
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (11,'text_report_viewed',217),
 (11,'text_report_purchased',218);
 -- ITEM_URL
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (12,'report/viewed',217),
 (12,'report/purchased',218);
--- PARENT_ID	
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+-- PARENT_ID
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (13,'report_product',217),
 (13,'report_product',218);
 -- SORT_ORDER
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_integer`,`row_id`)
 VALUES
 (14,1,217),
 (14,2,218);
 -- ITEM_TYPE
-INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`) 
+INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES
 (15,'core',217),
 (15,'core',218);
@@ -11874,7 +12259,7 @@ VALUES
 INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (40,'235',217),
         (40,'236',218);
-                
+
 --
 -- Storefront menu names inserts
 --
@@ -11966,7 +12351,7 @@ VALUES  (20, NOW(),'1');
 INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (21,'AbanteCart','1');
 INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
-VALUES  (22,'1.2.7','1');
+VALUES  (22,'1.3.3','1');
 INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
 VALUES  (23,'','1');
 INSERT INTO `ac_dataset_values` (`dataset_column_id`, `value_varchar`,`row_id`)
@@ -12003,10 +12388,12 @@ CREATE TABLE `ac_resource_library` (
   PRIMARY KEY (`resource_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=100000;
 
+CREATE INDEX `ac_resource_library_idx` ON `ac_resource_library` ( `resource_id`, `type_id`);
+
 --
 -- DDL for table `ac_resource_descriptions`
 --
-		
+
 DROP TABLE IF EXISTS `ac_resource_descriptions`;
 CREATE TABLE `ac_resource_descriptions` (
   `resource_id` int(10) NOT NULL DEFAULT '0',
@@ -12021,27 +12408,32 @@ CREATE TABLE `ac_resource_descriptions` (
   PRIMARY KEY (`resource_id`,`language_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci ;
 
-
+CREATE INDEX `ac_resource_descriptions_name_idx` ON `ac_resource_descriptions` ( `resource_id`, `name`);
+CREATE INDEX `ac_resource_descriptions_title_idx` ON `ac_resource_descriptions` ( `resource_id`, `title`);
 
 #storefront menu icons
 INSERT INTO `ac_resource_library` ( `resource_id`, `type_id`, `date_added`)
 VALUES
-(1,1,now()),
-(2,1,now()),
-(3,1,now()),
-(4,1,now()),
-(5,1,now()),
-(6,1,now());
+(1,1,NOW()),
+(2,1,NOW()),
+(3,1,NOW()),
+(4,1,NOW()),
+(5,1,NOW()),
+(6,1,NOW()),
+(7,1,NOW()),
+(8,1,NOW());
 
 INSERT INTO `ac_resource_descriptions`
 (`resource_id`, `language_id`, `name`, `title`, `description`, `resource_path`, `resource_code`, `date_added`)
 VALUES
-(1,1,'Star Icon','','','','<i class="fa fa-star"></i>&nbsp;&nbsp;',now()),
-(2,1,'Icon Home','','','','<i class="fa fa-home"></i>&nbsp;',now()),
-(3,1,'Login Icon','','','','<i class="fa fa-lock"></i>&nbsp;&nbsp;',now()),
-(4,1,'Account Icon','','','','<i class="fa fa-user"></i>&nbsp;',now()),
-(5,1,'Cart Icon','','','','<i class="fa fa-shopping-cart"></i>&nbsp;',now()),
-(6,1,'Checkout Icon','','','','<i class="fa fa-barcode"></i>&nbsp;&nbsp;',now());
+(1,1,'Star Icon','','','','<i class="fa fa-star"></i>&nbsp;&nbsp;',NOW()),
+(2,1,'Icon Home','','','','<i class="fa fa-home"></i>&nbsp;',NOW()),
+(3,1,'Login Icon','','','','<i class="fa fa-lock"></i>&nbsp;&nbsp;',NOW()),
+(4,1,'Account Icon','','','','<i class="fa fa-user"></i>&nbsp;',NOW()),
+(5,1,'Cart Icon','','','','<i class="fa fa-shopping-cart"></i>&nbsp;',NOW()),
+(6,1,'Checkout Icon','','','','<i class="fa fa-barcode"></i>&nbsp;&nbsp;',NOW()),
+(7,1,'store_logo.png','','','18/73/3.png','',NOW()),
+(8,1,'favicon.png','','','18/73/4.png','',NOW());
 
 #Admin Menu Icons
 INSERT INTO `ac_resource_library` ( `resource_id`, `type_id`, `date_added`)
@@ -12123,7 +12515,11 @@ VALUES
   ( 274, 1, NOW() ),
   ( 275, 1, NOW() ),
   ( 276, 1, NOW() ),
-  ( 277, 1, NOW() );
+  ( 277, 1, NOW() ),
+  ( 278, 1, NOW() ),
+  ( 279, 1, NOW() ),
+  ( 280, 1, NOW() ),
+  ( 281, 1, NOW() );
 
 INSERT INTO `ac_resource_descriptions`
 (`resource_id`, `language_id`, `name`, `title`, `description`, `resource_path`, `resource_code`, `date_added`)
@@ -12143,7 +12539,7 @@ VALUES
   ( 212,1,'Icon Attributes', '', '', '', '<i class="fa fa-ticket"></i>&nbsp;', NOW() ),
   ( 213,1,'Icon Extensions', '', '', '', '<i class="fa fa-th"></i>&nbsp;', NOW() ),
   ( 214,1,'Icon Shipping', '', '', '', '<i class="fa fa-truck"></i>&nbsp;', NOW() ),
-  ( 215,1,'Icon Payment', '', '', '', '<i class="fa fa-university"></i>&nbsp;', NOW() ),
+  ( 215,1,'Icon Building', '', '', '', '<i class="fa fa-university"></i>&nbsp;', NOW() ),
   ( 216,1,'Icon Templates', '', '', '', '<i class="fa fa-outdent"></i>&nbsp;', NOW() ),
   ( 217,1,'Icon Languages', '', '', '', '<i class="fa fa-language"></i>&nbsp;', NOW() ),
   ( 218,1,'Icon Total', '', '', '', '<i class="fa fa-sign-in"></i>&nbsp;', NOW() ),
@@ -12189,24 +12585,27 @@ VALUES
   ( 258,1,'Icon Language', '', '', '', '<i class="fa fa-language"></i>&nbsp;', NOW() ),
   ( 259,1,'Icon Language definitions', '', '', '', '<i class="fa fa-sort-alpha-asc"></i>&nbsp;', NOW() ),
   ( 260,1,'Icon Currency', '', '', '', '<i class="fa fa-money"></i>&nbsp;', NOW() ),
-  ( 261,1,'Icon Stockstatus', '', '', '', '<i class="fa fa-list-alt"></i>&nbsp;', NOW() ),
-  ( 262,1,'Icon Orderstatus', '', '', '', '<i class="fa fa-sort-amount-asc"></i>&nbsp;', NOW() ),
+  ( 261,1,'Icon Stock Status', '', '', '', '<i class="fa fa-list-alt"></i>&nbsp;', NOW() ),
+  ( 262,1,'Icon Order Status', '', '', '', '<i class="fa fa-sort-amount-asc"></i>&nbsp;', NOW() ),
   ( 263,1,'Icon Country', '', '', '', '<i class="fa fa-globe"></i>&nbsp;', NOW() ),
   ( 264,1,'Icon Zone', '', '', '', '<i class="fa fa-thumb-tack"></i>&nbsp;', NOW() ),
   ( 265,1,'Icon Location', '', '', '', '<i class="fa fa-flag-checkered"></i>&nbsp;', NOW() ),
-  ( 266,1,'Icon Taxclass', '', '', '', '<i class="fa fa-briefcase"></i>&nbsp;', NOW() ),
-  ( 267,1,'Icon Lengthclass', '', '', '', '<i class="fa fa-arrows-h"></i>&nbsp;', NOW() ),
-  ( 268,1,'Icon Weightclass', '', '', '', '<i class="fa fa-angle-double-down"></i>&nbsp;', NOW() ),
+  ( 266,1,'Icon Tax class', '', '', '', '<i class="fa fa-briefcase"></i>&nbsp;', NOW() ),
+  ( 267,1,'Icon Length class', '', '', '', '<i class="fa fa-arrows-h"></i>&nbsp;', NOW() ),
+  ( 268,1,'Icon Weight class', '', '', '', '<i class="fa fa-angle-double-down"></i>&nbsp;', NOW() ),
   ( 269,1,'Icon Backup', '', '', '', '<i class="fa fa-jsfiddle"></i>&nbsp;', NOW() ),
   ( 270,1,'Icon Migrate', '', '', '', '<i class="fa fa-share-alt-square"></i>&nbsp;', NOW() ),
   ( 271,1,'Icon Datasets', '', '', '', '<i class="fa fa-database"></i>&nbsp;', NOW() ),
   ( 272,1,'Icon Import export', '', '', '', '<i class="fa fa-exchange"></i>&nbsp;', NOW() ),
   ( 273,1,'Icon File uploads', '', '', '', '<i class="fa fa-download"></i>&nbsp;', NOW() ),
-  ( 274,1,'Icon Installlog', '', '', '', '<i class="fa fa-history"></i>&nbsp;', NOW() ),
+  ( 274,1,'Icon Install Log', '', '', '', '<i class="fa fa-history"></i>&nbsp;', NOW() ),
   ( 275,1,'Icon Error log', '', '', '', '<i class="fa fa-exclamation-triangle"></i>&nbsp;', NOW() ),
   ( 276,1,'Icon Settings IM', '', '', '', '<i class="fa fa-bullhorn"></i>&nbsp;', NOW() ),
-  ( 277,1,'Icon Resource Library', '', '', '', '<i class="fa fa-image"></i>&nbsp;', NOW() );
-
+  ( 277,1,'Icon Resource Library', '', '', '', '<i class="fa fa-image"></i>&nbsp;', NOW() ),
+  ( 278,1,'Icon Analytics & Insights', '', '', '', '<i class="fa fa-signal"></i>&nbsp;', NOW() ),
+  ( 279,1,'Icon Collections', '', '', '', '<i class="fa fa-paste"></i>&nbsp;', NOW() ),
+  ( 280,1,'Icon Email Templates', '', '', '', '<i class="fa fa-envelope-open-o"></i>&nbsp;', NOW() ),
+  ( 281,1,'abc-logo-white','abc-logo-white','abc-logo-white.png','18/7a/5.png','', NOW() );
 
 --
 -- DDL for table `ac_resource_types`
@@ -12217,18 +12616,18 @@ CREATE TABLE `ac_resource_types` (
   `type_name` varchar(40) NOT NULL default '',
   `default_directory` varchar(255) COLLATE utf8_general_ci NOT NULL,
   `default_icon` varchar(255) COLLATE utf8_general_ci DEFAULT NULL,
-  `file_types` varchar(40) NOT NULL default '',
+  `file_types` varchar(255) NOT NULL default '',
   `access_type`tinyint(1) NOT NULL default '0' COMMENT '0-Public, 1-Secured',
   PRIMARY KEY (`type_id`),
   KEY `group_id` (`type_id`, `type_name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
-		
+
 INSERT INTO `ac_resource_types` (`type_id`, `type_name`, `default_icon`, `default_directory`, `file_types`, `access_type`) VALUES
-(1, 'image', 'icon_resource_image.png', 'image/', '/.+(jpe?g|gif|png|ico)$/i', 0),
-(2, 'audio', 'icon_resource_audio.png', 'audio/', '/.+(mp3|wav)$/i', 0),
-(3, 'video', 'icon_resource_video.png', 'video/', '/.+(avi|mpg|mov|flv)$/i', 0),
+(1, 'image', 'icon_resource_image.png', 'image/', '/.+(jpe?g|gif|png|ico|svg|svgz|webp|avif)$/i', 0),
+(2, 'audio', 'icon_resource_audio.png', 'audio/', '/.+(mp3|wav|ogg)$/i', 0),
+(3, 'video', 'icon_resource_video.png', 'video/', '/.+(avi|mpg|mpeg|mov|flv|mp4|webm|ogg)$/i', 0),
 (4, 'pdf', 'icon_resource_pdf.png', 'pdf_document/', '/.+(pdf)$/i', 0),
-(5, 'archive', 'icon_resource_archive.png', 'download/', '/.+(zip|rar|gz|7z)$/i', 1),
+(5, 'archive', 'icon_resource_archive.png', 'archive/', '/.+(zip|rar|gz|7z)$/i', 1),
 (6, 'download', 'icon_resource_download.png', 'download/', '/.+$/i', 1);
 
 --
@@ -12238,14 +12637,15 @@ DROP TABLE IF EXISTS `ac_resource_map`;
 CREATE TABLE `ac_resource_map` (
   `resource_id` int(11) NOT NULL,
   `object_name` varchar(40) NOT NULl,
-  `object_id` int(11) NOT NULL,  
-  `default`tinyint(1) NOT NULL DEFAULT '0' COMMENT '0-no, 1-Yes', 
-  `sort_order` int(3) NOT NULL DEFAULT '0',  
+  `object_id` int(11) NOT NULL,
+  `default`tinyint(1) NOT NULL DEFAULT '0' COMMENT '0-no, 1-Yes',
+  `sort_order` int(3) NOT NULL DEFAULT '0',
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY ( `resource_id`, `object_name`, `object_id` )
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+CREATE INDEX `ac_resource_map_sorting_idx` ON `ac_resource_map` ( `resource_id`, `sort_order`);
 
 INSERT INTO `ac_resource_map` ( `resource_id`, `object_name`, `object_id`, `default`, `sort_order`, `date_added`)
 VALUES
@@ -12257,10 +12657,10 @@ VALUES
 (6,'storefront_menu_item',0,0,0, now());
 
 
---		
--- DDL For Global Attributes 		
---		
-		
+--
+-- DDL For Global Attributes
+--
+
 DROP TABLE IF EXISTS `ac_global_attributes`;
 CREATE TABLE `ac_global_attributes` (
   `attribute_id` 		int(11) NOT NULL AUTO_INCREMENT,
@@ -12285,6 +12685,7 @@ CREATE TABLE `ac_global_attributes_descriptions` (
   `attribute_id` 		int(11) NOT NULL,
   `language_id` 		int(11) NOT NULL,
   `name` 				varchar(64) COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
+  `placeholder` varchar(255) COLLATE utf8_general_ci DEFAULT '' COMMENT 'translatable',
   `error_text` 	varchar(255) COLLATE utf8_general_ci NOT NULL COMMENT 'translatable',
   PRIMARY KEY (`attribute_id`,`language_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -12304,9 +12705,9 @@ CREATE TABLE `ac_global_attributes_value_descriptions` (
   `attribute_value_id` int(11) NOT NULL,
   `attribute_id` int(11) NOT NULL,
   `language_id`	int(11) NOT NULL,
-  `value` text COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'translatable', 
+  `value` text COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'translatable',
   PRIMARY KEY (`attribute_value_id`, `attribute_id`, `language_id` )
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;	 
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
 DROP TABLE IF EXISTS `ac_global_attributes_groups`;
@@ -12335,7 +12736,7 @@ CREATE TABLE `ac_global_attributes_types` (
   `sort_order` 			int(3) NOT NULL DEFAULT '0',
   `status` 				smallint(1) NOT NULL default '0',
   PRIMARY KEY (`attribute_type_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;	
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
 
 INSERT INTO `ac_global_attributes_types` (`attribute_type_id`, `type_key`, `controller`, `sort_order`, `status`) VALUES
 (1, 'product_option', 'responses/catalog/attribute/getProductOptionSubform', 1, 1),
@@ -12359,13 +12760,13 @@ VALUES
 ;
 
 --
--- Product Features and Filters 
+-- Product Features and Filters
 --
 
 DROP TABLE IF EXISTS `ac_product_filters`;
 CREATE TABLE `ac_product_filters` (
   `filter_id` int(11) NOT NULL AUTO_INCREMENT,
-  `filter_type` char(1) NOT NULL DEFAULT '',  -- M - manufacture/brand, C - Category  based, F - Feature based, O - Option based, P - Price based 
+  `filter_type` char(1) NOT NULL DEFAULT '',  -- M - manufacture/brand, C - Category  based, F - Feature based, O - Option based, P - Price based
   `categories_hash` text NOT NULL, -- Hash with selected categories, that are used. Default ALL categories.
   `feature_id` int(11),
   `sort_order` int(3) NOT NULL DEFAULT '0',
@@ -12417,8 +12818,8 @@ DROP TABLE IF EXISTS `ac_encryption_keys`;
 CREATE TABLE `ac_encryption_keys` (
   `key_id` int(3) NOT NULL AUTO_INCREMENT,
   `key_name` varchar(32) COLLATE utf8_general_ci NOT NULL DEFAULT '',
-  `status` int(1) NOT NULL,  
-  `comment` text COLLATE utf8_general_ci NOT NULL,  
+  `status` int(1) NOT NULL,
+  `comment` text COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`key_id`),
   UNIQUE KEY `encryption_keys_key_name` (`key_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
@@ -12427,14 +12828,14 @@ DROP TABLE IF EXISTS `ac_tasks`;
 CREATE TABLE `ac_tasks` (
   `task_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
-  `starter` int(11) DEFAULT NULL, -- 0 - storefront, 1 - admin side, 2 - any
-  `status` int(11) DEFAULT '0', -- 0 - disabled, 1 - scheduled, 2 - active
+  `starter` int(11) DEFAULT NULL COMMENT '0 - storefront, 1 - admin side, 2 - any',
+  `status` int(11) DEFAULT '0' COMMENT '0 - disabled, 1 - ready, 2 - running, 3 - failed, 4 - scheduled, 5 - completed',
   `start_time` datetime DEFAULT NULL,
   `last_time_run` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `progress` int(11) NOT NULL DEFAULT '0', -- percentage of progress
-  `last_result` int(11) NOT NULL DEFAULT '0', -- 0 - success, 1 - failed, 2 - interrupted
-  `run_interval` INT(11) NOT NULL DEFAULT '0', -- interval in seconds since last run, 0 - without interval
-  `max_execution_time` int(11) DEFAULT '0', -- maximum execution time for this task
+  `progress` int(11) NOT NULL DEFAULT '0' COMMENT 'percentage of progress',
+  `last_result` int(11) NOT NULL DEFAULT '0' COMMENT '1 - success, 0 - failed',
+  `run_interval` INT(11) NOT NULL DEFAULT '0' COMMENT 'interval in seconds since last run, 0 - without interval',
+  `max_execution_time` int(11) DEFAULT '0',
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`task_id`),
@@ -12444,8 +12845,8 @@ CREATE TABLE `ac_tasks` (
 DROP TABLE IF EXISTS `ac_task_details`;
 CREATE TABLE `ac_task_details` (
   `task_id` int(11) NOT NULL AUTO_INCREMENT,
-  `created_by` varchar(255) DEFAULT '', -- task owner name
-  `settings` text DEFAULT '', -- serialized array with paramenters
+  `created_by` varchar(255) DEFAULT '',
+  `settings` LONGTEXT DEFAULT '',
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`task_id`)
@@ -12456,14 +12857,114 @@ CREATE TABLE `ac_task_steps` (
   `step_id` int(11) NOT NULL AUTO_INCREMENT,
   `task_id` int(11) NOT NULL,
   `sort_order` int(11) DEFAULT '0',
-  `status` int(11) DEFAULT '0', -- 0 - disabled, 1 - scheduled, 2 - active
+  `status` int(11) DEFAULT '0' COMMENT '0 - disabled, 1 - ready, 2 - running, 3 - failed, 4 - scheduled, 5 - completed',
   `last_time_run` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `last_result` int(11) NOT NULL DEFAULT '0', -- 0 - success, 1 - failed, 2 - interrupted
-  `max_execution_time` int(11) DEFAULT '0', -- maximum execution time for this task
+  `last_result` int(11) NOT NULL DEFAULT '0' COMMENT '1 - success, 0 - failed',
+  `max_execution_time` int(11) DEFAULT '0',
   `controller` varchar(255) DEFAULT '',
-  `settings` text DEFAULT '', -- serialized array with paramenters
+  `settings` LONGTEXT DEFAULT '',
   `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`step_id`),
   KEY `task_steps_idx` (`task_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1;
+
+DROP TABLE IF EXISTS `ac_product_stock_locations`;
+CREATE TABLE `ac_product_stock_locations` (
+  `product_id` int(11) NOT NULL,
+  `product_option_value_id` int(11) DEFAULT NULL,
+  `location_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int(11) NOT NULL DEFAULT '0',
+  UNIQUE KEY `ac_product_stock_locations_idx` (`product_id`,`product_option_value_id`,`location_id`),
+  KEY `ac_product_stock_locations_idx2` (`product_option_value_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+DROP TABLE IF EXISTS `ac_order_product_stock_locations`;
+CREATE TABLE `ac_order_product_stock_locations` (
+  `order_product_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `product_option_value_id` int(11) DEFAULT NULL,
+  `location_id` int(11) NOT NULL,
+  `location_name` varchar(255) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int(11) DEFAULT '0',
+  KEY `ac_product_options_value_idx` (`product_option_value_id`),
+  KEY `ac_product_options_value_idx2` (`order_product_id`,`product_id`,`product_option_value_id`,`location_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+
+DROP TABLE IF EXISTS `ac_email_templates`;
+CREATE TABLE `ac_email_templates` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` tinyint(1) NOT NULL,
+  `text_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `language_id` int(11) NOT NULL,
+  `headers` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `subject` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `html_body` text COLLATE utf8_unicode_ci NOT NULL,
+  `text_body` text COLLATE utf8_unicode_ci NOT NULL,
+  `allowed_placeholders` text COLLATE utf8_unicode_ci NOT NULL,
+  `date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `date_deleted` timestamp NULL DEFAULT NULL,
+  `store_id` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email_templates_text_id_idx` (`text_id`,`language_id`, `store_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Dumping data for table `ac_email_templates`
+--
+INSERT INTO `ac_email_templates` (`id`, `status`, `text_id`, `language_id`, `headers`, `subject`, `html_body`, `text_body`, `allowed_placeholders`, `store_id` )
+VALUES
+(1,1,'storefront_reset_password_link',1,'','{{store_name}} - Password reset','A password reset was requested from {{store_name}}&lt;br /&gt;\r\nTo reset your password click link below:&lt;br /&gt;\r\n&lt;a href="{{ reset_link }}"&gt;{{ reset_link }}&lt;/a &gt;\r\n&lt;br /&gt;&lt;br /&gt;\r\n{{{ text_project_label }}}','A password reset was requested from {{store_name}} \r\nTo reset your password click link below:\r\n{{ reset_link }}\r\n\r\n\r\n{{{ text_project_label }}}','store_name, reset_link, text_project_label',0),
+(2,1,'storefront_welcome_email_activated',1,'','Welcome, {{store_name}}','&lt;html&gt;\r\n	&lt;head&gt;\r\n		&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;\r\n	&lt;/head&gt;\r\n	&lt;body&gt;\r\n		&lt;table style=&quot;font-family: Verdana,sans-serif; font-size: 11px; color: #374953; width: 600px;&quot;&gt;\r\n			&lt;tr&gt;\r\n				&lt;td class=&quot;align_left&quot;&gt;\r\n				&lt;a href=&quot;{{ store_url }}&quot; title=&quot;{{ store_name }}&quot;&gt;\r\n						{{# logo_uri}}\r\n				&lt;img src=&quot;{{ logo_uri }}&quot; alt=&quot;{{store_name}}&quot; style=&quot;border: none;&quot;&gt;\r\n                                                 {{/ logo_uri}}\r\n                                                 {{^ logo_uri}}\r\n                                                       {{# logo_html}}\r\n                                                        {{logo_html}}\r\n                                                       {{/ logo_html}}\r\n                                                 {{/ logo_uri}}\r\n					&lt;/a&gt;\r\n				&lt;/td&gt;\r\n			&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n		&lt;td&gt;Welcome and thank you for registering at {{ store_name }}&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;\r\n                          Your account has now been created and you can log in by using your email address and password by visiting our website or at the following URL:&lt;br/&gt;\r\n&lt;a href=&quot;{{ login_url }}&quot;&gt;{{ login_url }}&lt;/a&gt;&lt;br/&gt;\r\nOnce you logging in, you will be able to access, your wishlist, order history, printing invoices and editing your account information.\r\n	&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;\r\n					Thank you.&lt;br/&gt;\r\n                                        {{ store_name }}\r\n&lt;br/&gt;&lt;br/&gt;\r\n{{{ text_project_label }}}\r\n		&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n		&lt;/table&gt;\r\n	&lt;/body&gt;\r\n&lt;/html&gt;','Welcome and thank you for registering at {{ store_name }}\r\n\r\nYour account has now been created and you can log in by using your email address and password by visiting our website or at the following URL:\r\n{{ login_url }}\r\n\r\nOnce you logging in, you will be able to access, your wishlist, order history, printing invoices and editing your account information.\r\n\r\nThank you.\r\n{{ store_name }}\r\n{{{ text_project_label }}}','store_name, login_url, store_url, logo_html, logo_uri, text_project_label',0),
+(3,1,'storefront_welcome_email_approval',1,'','Welcome, {{store_name}}','&lt;html&gt;\r\n	&lt;head&gt;\r\n		&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;\r\n	&lt;/head&gt;\r\n	&lt;body&gt;\r\n		&lt;table style=&quot;font-family: Verdana,sans-serif; font-size: 11px; color: #374953; width: 600px;&quot;&gt;\r\n			&lt;tr&gt;\r\n				&lt;td class=&quot;align_left&quot;&gt;\r\n					&lt;a href=&quot;{{ store_url }}&quot; title=&quot;{{ store_name }}&quot;&gt;\r\n				{{#logo_uri}}\r\n				&lt;img src=&quot;{{ logo_uri }}&quot; alt=&quot;{{store_name}}&quot; style=&quot;border: none;&quot;&gt;\r\n                                                 {{/logo_uri}}\r\n                                                 {{^logo_uri}}\r\n                                                       {{#logo_html}}\r\n                                                        {{logo_html}}\r\n                                                       {{/logo_html}}\r\n                                                 {{/logo_uri}}\r\n					&lt;/a&gt;\r\n				&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;Welcome and thank you for registering at {{ store_name }}&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;\r\n                          Your account must be approved before you can login. Once approved you can log in by using your email address and password by visiting our website or at the following URL:&lt;br/&gt;\r\n&lt;a href=&quot;{{ login_url }}&quot;&gt;{{ login_url }}&lt;/a&gt;&lt;br/&gt;\r\nOnce you logging in, you will be able to access, your wishlist, order history, printing invoices and editing your account information.\r\n		&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;\r\n					Thank you.&lt;br/&gt;\r\n                                        {{ store_name }}\r\n&lt;br/&gt;&lt;br/&gt;\r\n{{{ text_project_label }}}\r\n		&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n		&lt;/table&gt;\r\n	&lt;/body&gt;\r\n&lt;/html&gt;','Welcome and thank you for registering at {{ store_name }}\r\n\r\nYour account must be approved before you can login. Once approved you can log in by using your email address and password by visiting our website or at the following URL:\r\n{{ login_url }}\r\n\r\nOnce you logging in, you will be able to access, your wishlist, order history, printing invoices and editing your account information.\r\n\r\nThank you.\r\n{{ store_name }}\r\n{{{ text_project_label }}}','store_name, login_url, store_url, logo_html, logo_uri, text_project_label',0),
+(4,1,'storefront_send_activate_link',1,'','{{store_name}} - Thank you for registering','&lt;html&gt;\r\n	&lt;head&gt;\r\n		&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;\r\n	&lt;/head&gt;\r\n	&lt;body&gt;\r\n		&lt;table style=&quot;font-family: Verdana,sans-serif; font-size: 11px; color: #374953; width: 600px;&quot;&gt;\r\n			&lt;tr&gt;\r\n				&lt;td class=&quot;align_left&quot;&gt;\r\n					&lt;a href=&quot;{{ store_url }}&quot; title=&quot;{{ store_name }}&quot;&gt;\r\n					{{#logo_uri}}\r\n							&lt;img src=&quot;{{ logo_uri }}&quot; alt=&quot;{{store_name}}&quot; style=&quot;border: none;&quot;&gt;\r\n                                                 {{/logo_uri}}\r\n                                                 {{^logo_uri}}\r\n                                                       {{#logo_html}}\r\n                                                        {{logo_html}}\r\n                                                       {{/logo_html}}\r\n                                                 {{/logo_uri}}\r\n					&lt;/a&gt;\r\n			&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n		&lt;td&gt;Welcome and thank you for registering at {{ store_name }}&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;\r\n                          Before we can activate your account one last step must be taken to complete your registration.&lt;br/&gt;\r\nYou must complete this last step to become a registered member. Please click the following link to activate your account:&lt;br/&gt;\r\n{{{ activate_url }}}&lt;br/&gt;\r\n\r\n				&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n		&lt;td&gt;\r\n					Thank you.&lt;br/&gt;\r\n                                        {{ store_name }}\r\n&lt;br/&gt;\r\n&lt;br/&gt;\r\n{{{ text_project_label }}}\r\n			 	&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n		&lt;/table&gt;\r\n	&lt;/body&gt;\r\n&lt;/html&gt;','Welcome and thank you for registering at {{ store_name }}!\r\n\r\nBefore we can activate your account one last step must be taken to complete your registration.\r\nYou must complete this last step to become a registered member. Please click the following link to activate your account\r\n{{ activate_url }}\r\n\r\nThank you,\r\n{{ store_name }}\r\n\r\n{{{ text_project_label }}}','store_name, activate_url, logo_uri, logo_html, store_url, text_project_label',0),
+(5,1,'storefront_reset_password_notify',1,'','{{store_name}} - Password reset','Your password was successfully reset on {{store_name}}\r\n&lt;br/&gt;\r\n{{{ text_project_label }}}','Your password was successfully reset on {{store_name}}\r\n\r\n{{{ text_project_label }}}','store_name, text_project_label',0),
+(6,1,'storefront_send_login_name',1,'','{{store_name}} - Login name reminder','Login name reminder was requested from {{store_name}} &lt;br/&gt;\r\n&lt;br/&gt;\r\nYour login name is: {{ login_name }}\r\n\r\n&lt;br/&gt;\r\n{{store_name}} \r\n&lt;br/&gt;\r\n&lt;br/&gt;\r\n{{{ text_project_label }}}','Login name reminder was requested from {{store_name}} \r\n\r\nYour login name is: {{ login_name }}\r\n\r\n{{store_name}} \r\n\r\n{{{ text_project_label }}}','store_name, login_name, text_project_label',0),
+(7,1,'storefront_order_confirm',1,'','{{store_name}} - Order {{ order_id }}','&lt;html&gt;\r\n&lt;head&gt;\r\n	&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;\r\n	&lt;title&gt; {{store_name}} - Order {{ order_id }} &lt;/title&gt;\r\n&lt;/head&gt;\r\n&lt;body&gt;\r\n&lt;table style=&quot;font-family: Verdana,sans-serif; font-size: 11px; color: #374953; width: 600px;&quot;&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;&gt;\r\n					&lt;a href=&quot;{{ store_url }}&quot; title=&quot;{{ store_name }}&quot;&gt;\r\n						{{# logo_uri}}\r\n			&lt;img src=&quot;{{ logo_uri }}&quot; alt=&quot;{{store_name}}&quot; style=&quot;border: none;&quot;&gt;\r\n                                                 {{/ logo_uri}}\r\n                                                 {{^ logo_uri}}\r\n                                                       {{# logo_html}}\r\n                                                        {{logo_html}}\r\n                                                       {{/ logo_html}}\r\n                                                 {{/ logo_uri}}\r\n					&lt;/a&gt;\r\n				&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;&gt;Thank you for your interest in {{store_name}} products. Your order has been received and will be processed after payment is confirmed.&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;\r\n		    style=&quot;background-color: #069; color:#FFF; font-size: 12px; font-weight: bold; padding: 0.5em 1em;&quot;&gt;Order Details&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;&gt;Order ID: &lt;span\r\n					style=&quot;color: #069; font-weight: bold;&quot;&gt;{{ order_id }}&lt;/span&gt;&lt;br/&gt;\r\n			Date Ordered: {{ date_added }}&lt;br&gt;\r\n			Payment Method: &lt;strong&gt;{{ payment_method }}&lt;/strong&gt;&lt;br/&gt;\r\n			Shipping Method: &lt;strong&gt;{{ shipping_method }}&lt;/strong&gt;&lt;br/&gt;\r\n			&lt;br/&gt;\r\n			Email: &lt;strong&gt;{{ customer_email }}&lt;/strong&gt;&lt;br/&gt;\r\n			Telephone: &lt;strong&gt;{{ customer_telephone }}&lt;/strong&gt;&lt;br/&gt;\r\n                         {{# customer_mobile_phone }}\r\n                            Telephone: &lt;strong&gt;{{ customer_mobile_phone }}&lt;/strong&gt;&lt;br/&gt;\r\n                         {{/ customer_mobile_phone }}\r\n		         {{# customer_fax }}\r\n                            Fax: &lt;strong&gt;{{ customer_fax }}&lt;/strong&gt;&lt;br/&gt;\r\n                         {{/ customer_fax }}\r\n                         IP Address:&lt;strong&gt;{{ customer_ip }}&lt;/strong&gt;\r\n		&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;\r\n			&lt;table style=&quot;width: 100%; font-family: Verdana,sans-serif; font-size: 11px; color: #FFFFFF;&quot;&gt;\r\n				&lt;tr style=&quot;background-color: #CCCCCC; text-transform: uppercase;&quot;&gt;\r\n		&lt;th style=&quot;text-align: left; padding: 0.3em;&quot;&gt;Shipping Address&lt;/th&gt;\r\n					&lt;th style=&quot;text-align: left; padding: 0.3em;&quot;&gt;Payment Address&lt;/th&gt;\r\n				&lt;/tr&gt;\r\n				&lt;tr&gt;\r\n					&lt;td style=&quot;padding: 0.3em; background-color: #EEEEEE; color: #000;&quot;&gt;\r\n{{# shipping_data }}\r\n{{ firstname }} {{lastname}} &lt;br/&gt;\r\n{{# company }}\r\n{{{ company }}} &lt;br/&gt; \r\n{{/ company }}\r\n{{# address_1 }}\r\n{{{ address_1 }}} &lt;br/&gt; \r\n{{/ address_1 }}\r\n{{# address_2 }}\r\n{{{ address_2 }}} &lt;br/&gt; \r\n{{/ address_2 }}\r\n{{{ city }}} {{{ postcode }}} &lt;br/&gt; \r\n{{# zone }}\r\n{{{ zone }}} &lt;br/&gt; \r\n{{/ zone }}\r\n{{{ country }}}\r\n{{/ shipping_data }}\r\n&lt;/td&gt;\r\n&lt;td style=&quot;padding: 0.3em; background-color: #EEEEEE; color: #000;&quot;&gt;\r\n{{# payment_data }}\r\n{{ firstname }} {{lastname}} &lt;br/&gt;\r\n{{# company }}\r\n{{{ company }}} &lt;br/&gt; \r\n{{/ company }}\r\n{{# address_1 }}\r\n{{{ address_1 }}} &lt;br/&gt; \r\n{{/ address_1 }}\r\n{{# address_2 }}\r\n{{{ address_2 }}} &lt;br/&gt; \r\n{{/ address_2 }}\r\n{{{ city }}} {{{ postcode }}} &lt;br/&gt; \r\n{{# zone }}\r\n{{{ zone }}} &lt;br/&gt; \r\n{{/ zone }}\r\n{{{ country }}}\r\n{{/ payment_data }}\r\n&lt;/td&gt;\r\n				&lt;/tr&gt;\r\n			&lt;/table&gt;\r\n		&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;&gt;\r\n			&lt;table style=&quot;width: 100%; font-family: Verdana,sans-serif; font-size: 11px; color: #000000;&quot;&gt;\r\n				&lt;tr style=&quot;background-color: #CCCCCC;&quot;&gt;\r\n					&lt;th style=&quot;width: 40%; padding: 0.3em; color: #FFFFFF;&quot;&gt;Product&lt;/th&gt;\r\n					&lt;th class=&quot;align_left&quot; style=&quot;color: #FFFFFF;&quot;&gt;Model&lt;/th&gt;\r\n&lt;th class=&quot;align_right&quot;\r\n		    style=&quot;width: 10%; padding: 0.3em; color: #FFFFFF;&quot;&gt;Price&lt;/th&gt;\r\n					&lt;th class=&quot;align_right&quot;\r\n					    style=&quot;width: 15%; padding: 0.3em; color: #FFFFFF;&quot;&gt;Quantity&lt;/th&gt;\r\n					&lt;th class=&quot;align_right&quot;\r\n	    style=&quot;width: 20%; padding: 0.3em; color: #FFFFFF;&quot;&gt;Total&lt;/th&gt;\r\n				&lt;/tr&gt;\r\n				{{# products }}\r\n					&lt;tr style=&quot;background-color: #EEEEEE; text-align: center;&quot;&gt;\r\n						&lt;td class=&quot;align_left&quot; style=&quot;text-align: left;&quot;&gt;{{ name }}\r\n	{{# option }}\r\n								&lt;br/&gt;\r\n								&amp;nbsp;&amp;nbsp;- {{ name}} {{ value }} \r\n	{{/ option }}\r\n						&lt;td class=&quot;align_left&quot;&gt; {{ model }} &lt;/td&gt;\r\n						&lt;td class=&quot;align_right&quot;&gt; {{ price }} &lt;/td&gt;\r\n						&lt;td class=&quot;align_right&quot;&gt; {{ quantity }} &lt;/td&gt;\r\n						&lt;td class=&quot;align_right&quot;&gt; {{ total }}&lt;/td&gt;\r\n					&lt;/tr&gt;\r\n                                {{/ products }}\r\n                                         {{# totals }}\r\n			&lt;tr style=&quot;text-align: right;&quot;&gt;\r\n						&lt;td colspan=&quot;3&quot;&gt;&amp;nbsp;&lt;/td&gt;\r\n						&lt;td style=&quot;background-color: #EEEEEE; font-weight: bold; padding: 0.3em;&quot;&gt;{{ title }} &lt;/td&gt;\r\n						&lt;td style=&quot;background-color: #EEEEEE; padding: 0.3em;&quot;&gt; {{ text }}&lt;/td&gt;\r\n					&lt;/tr&gt;\r\n                                         {{/ totals }}\r\n			&lt;/table&gt;\r\n		&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;\r\n		    style=&quot;background-color: #069; color: #FFF; font-size: 12px; font-weight: bold; padding: 0.5em 1em;&quot;&gt;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n {{# comment }}\r\n	&lt;tr&gt;\r\n&lt;td class=&quot;align_left&quot;\r\n			    style=&quot;background-color: #069; color: #FFF; font-size: 12px; font-weight: bold; padding: 0.5em 1em;&quot;&gt;The comments for your order are:&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n			&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n			&lt;td class=&quot;align_left&quot;&gt; {{{ comment }}} &lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n			&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n {{/ comment }}\r\n {{# invoice }}\r\n		&lt;tr&gt;\r\n			&lt;td class=&quot;align_left&quot;\r\n			    style=&quot;background-color: #069; color: #FFF; font-size: 12px; font-weight: bold; padding: 0.5em 1em;&quot;&gt;To view your order click on the link below:&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n			&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;&gt;&lt;a href=&quot;{{ invoice }}&quot;&gt; {{ invoice }}&lt;/a&gt;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n			&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n{{/ invoice }}\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_center&quot;\r\n		    style=&quot;font-size: 10px; border-top: 1px solid #069; text-decoration: none; color: #374953;&quot;&gt;\r\n			&lt;a href=&quot;{{ store_url }}&quot;\r\n			   style=&quot;color: #069; font-weight: bold; text-decoration: none;&quot;&gt;{{ store_name }}&lt;/a&gt;\r\n{{{ text_project_label }}}\r\n		&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n&lt;/table&gt;\r\n&lt;/body&gt;\r\n&lt;/html&gt;\r\n','Thank you for your interest in {{store_name}} products. Your order has been received and will be processed after payment is confirmed.\r\n\r\nOrder Details\r\n\r\nOrder ID: {{ order_id }}\r\nDate Ordered: {{ date_added }}\r\nPayment Method: {{ payment_method }}\r\nShipping Method: {{ shipping_method }}\r\n\r\nEmail: {{ customer_email }}\r\nTelephone: {{ customer_telephone }}\r\n{{# customer_mobile_phone }}\r\nTelephone: {{ customer_mobile_phone }}\r\n{{/ customer_mobile_phone }}\r\n{{# customer_fax }}\r\nFax: {{ customer_fax }}\r\n{{/ customer_fax }}\r\nIP Address: {{ customer_ip }}\r\n\r\n{{# shipping_data }}\r\nShipping Address:\r\n{{{ firstname }}} {{{lastname}}}\r\n{{{ company }}} \r\n{{{ address_1 }}} \r\n{{{ address_2 }}}\r\n{{{ city }}} {{{ postcode }}}\r\n{{{ zone }}}\r\n{{{ country }}}\r\n{{/ shipping_data }}\r\n\r\n{{# payment_data }}\r\nPayment Address:\r\n{{{ firstname }}} {{{lastname}}}\r\n{{{ company }}} \r\n{{{ address_1 }}} \r\n{{{ address_2 }}}\r\n{{{ city }}} {{{ postcode }}}\r\n{{{ zone }}}\r\n{{{ country }}}\r\n{{/ payment_data }}\r\n\r\n\r\nProduct                                                 Model                             Price                  Quantity              Total\r\n{{# products }}\r\n					\r\n{{ name }}                                               {{ model }}                       {{ price }}            {{ quantity }}        {{ total }}\r\n   {{# option }}\r\n    - {{ name}} {{ value }} \r\n   {{/ option }}\r\n\r\n\r\n{{/ products }}\r\n{{# totals }}\r\n  {{ title }}  {{ text }}\r\n{{/ totals }}\r\n\r\n\r\n{{# comment }}\r\n	The comments for your order are:\r\n {{{ comment }}} \r\n{{/ comment }}\r\n\r\n{{# invoice }}\r\nTo view your order click on the link below:\r\n{{ invoice }}\r\n{{/ invoice }}\r\n\r\n{{ store_name }}\r\n{{ text_project_label }}','store_name, order_id, store_url, logo_uri, logo_html, date_added, payment_method, shipping_method, customer_email, customer_telephone, customer_mobile_phone, customer_fax, customer_ip, shipping_data, payment_data, products, totals, comment, invoice,  text_project_label, ',0),
+(8,1,'storefront_order_confirm_admin_notify',1,'','{{store_name}} - Order {{ order_id }}','&lt;html&gt;\r\n&lt;head&gt;\r\n	&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;\r\n	&lt;title&gt; {{store_name}} - Order {{ order_id }} &lt;/title&gt;\r\n&lt;/head&gt;\r\n&lt;body&gt;\r\n&lt;table style=&quot;font-family: Verdana,sans-serif; font-size: 11px; color: #374953; width: 600px;&quot;&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;&gt;\r\n				&lt;a href=&quot;{{ store_url }}&quot; title=&quot;{{ store_name }}&quot;&gt;\r\n						{{# logo_uri}}\r\n				&lt;img src=&quot;{{ logo_uri }}&quot; alt=&quot;{{store_name}}&quot; style=&quot;border: none;&quot;&gt;\r\n                                                 {{/ logo_uri}}\r\n                                                 {{^ logo_uri}}\r\n                                                       {{# logo_html}}\r\n                                                        {{logo_html}}\r\n                                                       {{/ logo_html}}\r\n                                                 {{/ logo_uri}}\r\n					&lt;/a&gt;\r\n				&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;&gt;You have received an order.&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;\r\n		    style=&quot;background-color: #069; color:#FFF; font-size: 12px; font-weight: bold; padding: 0.5em 1em;&quot;&gt;Order Details&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;&gt;Order ID: &lt;span\r\n			style=&quot;color: #069; font-weight: bold;&quot;&gt;{{ order_id }}&lt;/span&gt;&lt;br/&gt;\r\n			Date Ordered: {{ date_added }}&lt;br&gt;\r\n			Payment Method: &lt;strong&gt;{{ payment_method }}&lt;/strong&gt;&lt;br/&gt;\r\n			Shipping Method: &lt;strong&gt;{{ shipping_method }}&lt;/strong&gt;&lt;br/&gt;\r\n			&lt;br/&gt;\r\n			Email: &lt;strong&gt;{{ customer_email }}&lt;/strong&gt;&lt;br/&gt;\r\n			Telephone: &lt;strong&gt;{{ customer_telephone }}&lt;/strong&gt;&lt;br/&gt;\r\n                         {{# customer_mobile_phone }}\r\n                            Telephone: &lt;strong&gt;{{ customer_mobile_phone }}&lt;/strong&gt;&lt;br/&gt;\r\n                         {{/ customer_mobile_phone }}\r\n		         {{# customer_fax }}\r\n                            Fax: &lt;strong&gt;{{ customer_fax }}&lt;/strong&gt;&lt;br/&gt;\r\n                         {{/ customer_fax }}\r\n                         IP Address:&lt;strong&gt;{{ customer_ip }}&lt;/strong&gt;\r\n		&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;\r\n			&lt;table style=&quot;width: 100%; font-family: Verdana,sans-serif; font-size: 11px; color: #FFFFFF;&quot;&gt;\r\n		&lt;tr style=&quot;background-color: #CCCCCC; text-transform: uppercase;&quot;&gt;\r\n					&lt;th style=&quot;text-align: left; padding: 0.3em;&quot;&gt;Shipping Address&lt;/th&gt;\r\n		&lt;th style=&quot;text-align: left; padding: 0.3em;&quot;&gt;Payment Address&lt;/th&gt;\r\n				&lt;/tr&gt;\r\n				&lt;tr&gt;\r\n					&lt;td style=&quot;padding: 0.3em; background-color: #EEEEEE; color: #000;&quot;&gt;\r\n{{# shipping_data }}\r\n{{ firstname }} {{lastname}} &lt;br/&gt;\r\n{{# company }}\r\n{{{ company }}} &lt;br/&gt; \r\n{{/ company }}\r\n{{# address_1 }}\r\n{{{ address_1 }}} &lt;br/&gt; \r\n{{/ address_1 }}\r\n{{# address_2 }}\r\n{{{ address_2 }}} &lt;br/&gt; \r\n{{/ address_2 }}\r\n{{{ city }}} {{{ postcode }}} &lt;br/&gt; \r\n{{# zone }}\r\n{{{ zone }}} &lt;br/&gt; \r\n{{/ zone }}\r\n{{{ country }}}\r\n{{/ shipping_data }}\r\n&lt;/td&gt;\r\n					&lt;td style=&quot;padding: 0.3em; background-color: #EEEEEE; color: #000;&quot;&gt;\r\n{{# payment_data }}\r\n{{ firstname }} {{lastname}} &lt;br/&gt;\r\n{{# company }}\r\n{{{ company }}} &lt;br/&gt; \r\n{{/ company }}\r\n{{# address_1 }}\r\n{{{ address_1 }}} &lt;br/&gt; \r\n{{/ address_1 }}\r\n{{# address_2 }}\r\n{{{ address_2 }}} &lt;br/&gt; \r\n{{/ address_2 }}\r\n{{{ city }}} {{{ postcode }}} &lt;br/&gt; \r\n{{# zone }}\r\n{{{ zone }}} &lt;br/&gt; \r\n{{/ zone }}\r\n{{{ country }}}\r\n{{/ payment_data }}\r\n&lt;/td&gt;\r\n				&lt;/tr&gt;\r\n			&lt;/table&gt;\r\n		&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;&gt;\r\n			&lt;table style=&quot;width: 100%; font-family: Verdana,sans-serif; font-size: 11px; color: #000000;&quot;&gt;\r\n				&lt;tr style=&quot;background-color: #CCCCCC;&quot;&gt;\r\n					&lt;th style=&quot;width: 40%; padding: 0.3em; color: #FFFFFF;&quot;&gt;Product&lt;/th&gt;\r\n					&lt;th class=&quot;align_left&quot; style=&quot;color: #FFFFFF;&quot;&gt;Model&lt;/th&gt;\r\n					&lt;th class=&quot;align_right&quot;\r\n		    style=&quot;width: 10%; padding: 0.3em; color: #FFFFFF;&quot;&gt;Price&lt;/th&gt;\r\n					&lt;th class=&quot;align_right&quot;\r\n					    style=&quot;width: 15%; padding: 0.3em; color: #FFFFFF;&quot;&gt;Quantity&lt;/th&gt;\r\n					&lt;th class=&quot;align_right&quot;\r\n					    style=&quot;width: 20%; padding: 0.3em; color: #FFFFFF;&quot;&gt;Total&lt;/th&gt;\r\n				&lt;/tr&gt;\r\n				{{# products }}\r\n					&lt;tr style=&quot;background-color: #EEEEEE; text-align: center;&quot;&gt;\r\n						&lt;td class=&quot;align_left&quot; style=&quot;text-align: left;&quot;&gt;{{ name }}\r\n					{{# option }}\r\n			&lt;br/&gt;\r\n								&amp;nbsp;&amp;nbsp;- {{ name}} {{ value }} \r\n	{{/ option }}\r\n						&lt;td class=&quot;align_left&quot;&gt; {{ model }} &lt;/td&gt;\r\n						&lt;td class=&quot;align_right&quot;&gt; {{ price }} &lt;/td&gt;\r\n						&lt;td class=&quot;align_right&quot;&gt; {{ quantity }} &lt;/td&gt;\r\n						&lt;td class=&quot;align_right&quot;&gt; {{ total }}&lt;/td&gt;\r\n					&lt;/tr&gt;\r\n                                {{/ products }}\r\n                                         {{# totals }}\r\n			&lt;tr style=&quot;text-align: right;&quot;&gt;\r\n						&lt;td colspan=&quot;3&quot;&gt;&amp;nbsp;&lt;/td&gt;\r\n						&lt;td style=&quot;background-color: #EEEEEE; font-weight: bold; padding: 0.3em;&quot;&gt;{{ title }} &lt;/td&gt;\r\n					&lt;td style=&quot;background-color: #EEEEEE; padding: 0.3em;&quot;&gt; {{ text }}&lt;/td&gt;\r\n					&lt;/tr&gt;\r\n                                         {{/ totals }}\r\n		&lt;/table&gt;\r\n		&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;\r\n		    style=&quot;background-color: #069; color: #FFF; font-size: 12px; font-weight: bold; padding: 0.5em 1em;&quot;&gt;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n {{# comment }}\r\n	&lt;tr&gt;\r\n			&lt;td class=&quot;align_left&quot;\r\n			    style=&quot;background-color: #069; color: #FFF; font-size: 12px; font-weight: bold; padding: 0.5em 1em;&quot;&gt;The comments for your order are:&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n			&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n			&lt;td class=&quot;align_left&quot;&gt; {{{ comment }}} &lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n			&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n {{/ comment }}\r\n {{# invoice }}\r\n		&lt;tr&gt;\r\n			&lt;td class=&quot;align_left&quot;\r\n			    style=&quot;background-color: #069; color: #FFF; font-size: 12px; font-weight: bold; padding: 0.5em 1em;&quot;&gt;To view your order click on the link below:&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n			&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n&lt;td class=&quot;align_left&quot;&gt;&lt;a href=&quot;{{ invoice }}&quot;&gt; {{ invoice }}&lt;/a&gt;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n		&lt;tr&gt;\r\n			&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n{{/ invoice }}\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_center&quot;\r\n		    style=&quot;font-size: 10px; border-top: 1px solid #069; text-decoration: none; color: #374953;&quot;&gt;\r\n			&lt;a href=&quot;{{ store_url }}&quot;\r\n			   style=&quot;color: #069; font-weight: bold; text-decoration: none;&quot;&gt;{{ store_name }}&lt;/a&gt;\r\n{{{ text_project_label }}}\r\n	&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n&lt;/table&gt;\r\n&lt;/body&gt;\r\n&lt;/html&gt;\r\n','You have received an order.\r\n\r\nOrder Details\r\n\r\nOrder ID: {{ order_id }}\r\nDate Ordered: {{ date_added }}\r\nPayment Method: {{ payment_method }}\r\nShipping Method: {{ shipping_method }}\r\n\r\nEmail: {{ customer_email }}\r\nTelephone: {{ customer_telephone }}\r\n{{# customer_mobile_phone }}\r\nTelephone: {{ customer_mobile_phone }}\r\n{{/ customer_mobile_phone }}\r\n{{# customer_fax }}\r\nFax: {{ customer_fax }}\r\n{{/ customer_fax }}\r\nIP Address: {{ customer_ip }}\r\n\r\n{{# shipping_data }}\r\nShipping Address:\r\n{{{ firstname }}} {{{lastname}}}\r\n{{{ company }}}\r\n{{{ address_1 }}} \r\n{{{ address_2 }}}\r\n{{{ city }}} {{{ postcode }}}\r\n{{{ zone }}}\r\n{{{ country }}}\r\n{{/ shipping_data }}\r\n\r\n{{# payment_data }}\r\nPayment Address:\r\n{{{ firstname }}} {{{lastname}}} \r\n{{{ company }}}\r\n{{{ address_1 }}}\r\n{{{ address_2 }}}\r\n{{{ city }}} {{{ postcode }}}\r\n{{{ zone }}}\r\n{{{ country }}}\r\n{{/ payment_data }}\r\n\r\n\r\nProduct                                                 Model                             Price                  Quantity              Total\r\n{{# products }}\r\n					\r\n{{ name }}                                               {{ model }}                       {{ price }}            {{ quantity }}        {{ total }}\r\n   {{# option }}\r\n    - {{ name}} {{ value }} \r\n   {{/ option }}\r\n\r\n\r\n{{/ products }}\r\n{{# totals }}\r\n  {{ title }}  {{ text }}\r\n{{/ totals }}\r\n\r\n\r\n{{# comment }}\r\n	The comments for your order are:\r\n {{{ comment }}} \r\n{{/ comment }}\r\n\r\n{{# invoice }}\r\nTo view your order click on the link below:\r\n{{ invoice }}\r\n{{/ invoice }}\r\n\r\n{{ store_name }}\r\n{{ text_project_label }}','store_name, order_id, store_url, logo_uri, logo_html, date_added, payment_method, shipping_method, customer_email, customer_telephone, customer_mobile_phone, customer_fax, customer_ip, shipping_data, payment_data, products, totals, comment, invoice,  text_project_label, order_total',0),
+(11,1,'admin_order_status_notify',1,'','{{ store_name }} - Order Update {{ order_id }}','Order:  {{ order_id }} &lt;br/&gt;\r\nDate added: {{ order_date_added }} &lt;br/&gt;\r\nOrder status: {{ order_status }} &lt;br/&gt;\r\nInvoice: {{ invoice }}&lt;br/&gt;\r\n&lt;br/&gt;\r\n\r\nComment:&lt;br/&gt;\r\n{{{ comment }}}&lt;br/&gt;\r\n\r\n&lt;br/&gt;\r\n\r\nPlease reply to this email if you have any questions.\r\n','Order:  {{ order_id }} \r\nDate added: {{ order_date_added }} \r\nOrder status: {{ order_status }} \r\nInvoice: {{ invoice }}\r\n\r\nComment:\r\n{{{ comment }}}\r\n\r\nPlease reply to this email if you have any questions.\r\n','store_name, order_id, order_date_added, order_status, invoice, comment',0),
+(12,1,'admin_new_transaction_notify',1,'','New transaction has been posted to your {{store_name}} account','New transaction has been posted to your {{ store_name }} account in the amount of {{ amount }}. For more details, login to {{ store_name }} account','New transaction has been posted to your {{ store_name }} account in the amount of {{ amount }}. For more details, login to {{ store_name }} account','store_name, amount, transactions_url',0),
+(13,1,'admin_approval_email',1,'','{{ store_name}} - Your Account has been activated!','&lt;a href=\"{{ store_url }}\" title=\"{{ store_name }}\"&gt;\r\n						{{# logo_uri}}\r\n				&lt;img src=\"{{ logo_uri }}\" alt=\"{{store_name}}\" style=\"border: none;\"&gt;\r\n                                                 {{/ logo_uri}}\r\n                                                 {{^ logo_uri}}\r\n                                                       {{# logo_html}}\r\n                                                        {{logo_html}}\r\n                                                       {{/ logo_html}}\r\n                                                 {{/ logo_uri}}\r\n					&lt;/a&gt;\r\n\r\nWelcome and thank you for registering at {{ store_name }} &lt;br/&gt;\r\nYour account has now been created and you can log in by using your email address and password by visiting our website or at the following URL: &lt;br/&gt;\r\n{{ store_url }}&lt;br/&gt;\r\n&lt;br/&gt;\r\n\r\nOnce you logging in, you will be able to access, your wishlist, order history, printing invoices and editing your account information.&lt;br/&gt;\r\n&lt;br/&gt;\r\nThank you,&lt;br/&gt;\r\n {{ store_name}} &lt;br/&gt;\r\n\r\n{{ text_project_label }}','Welcome and thank you for registering at {{ store_name }} \r\nYour account has now been created and you can log in by using your email address and password by visiting our website or at the following URL: \r\n{{ store_url }}\r\n\r\nOnce you logging in, you will be able to access, your wishlist, order history, printing invoices and editing your account information.\r\n\r\nThank you,\r\n {{ store_name}} \r\n\r\n{{text_project_label}}','store_name, store_url, text_project_label, logo_uri, logo_html',0),
+(14,1,'storefront_password_reset_notify',1,'','{{store_name}} Notification','Your password has been updated! If you did not do any changes, please contact site owner&lt;br/&gt;','Your password has been updated! If you did not do any changes, please contact site owner','store_name, loginname, customer_id, firstname, lastname',0),
+(15,1,'storefront_customer_account_update',1,'','{{store_name}} Account update notification','Your account has been updated! If you did not do any changes, please contact site owner ',' Your account has been updated! If you did not do any changes, please contact site owner ','store_name, firstname, lastname, telephone, fax, email, loginname, customer_id, old_loginname, old_email',0),
+(16,1,'storefront_contact_us_mail',1,'','Enquiry from {{ first_name }}','&lt;html&gt;\r\n&lt;head&gt;\r\n	&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;\r\n	&lt;title&gt;{{ title }}&lt;/title&gt;\r\n&lt;/head&gt;\r\n&lt;body&gt;\r\n&lt;table style=&quot;font-family: Verdana,sans-serif; font-size: 11px; color: #374953; width: 600px;&quot;&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;&gt;\r\n			&lt;a href=&quot;{{ store_url }}&quot; title=&quot;{{ store_name }}&quot;&gt;\r\n				{{# logo_uri }}\r\n					&lt;img src=&quot;{{ logo_uri }}&quot; alt=&quot;{{ store_name }}&quot; style=&quot;border: none;&quot;&gt;\r\n				{{/ logo_uri }}\r\n				{{# logo_html }}\r\n					{{ logo_html }}\r\n				{{/ logo_html }}				 \r\n			&lt;/a&gt;\r\n		&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;\r\n		    style=&quot;background-color: #069; color:#FFF; font-size: 12px; font-weight: bold; padding: 0.5em 1em;&quot;&gt;{{ entry_enquiry }}&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_left&quot;\r\n		    style=&quot; font-size: 12px; padding: 0.5em 1em;&quot;&gt;{{{ enquiry }}}&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;\r\n			&lt;table style=&quot;width: 100%; font-family: Verdana,sans-serif; font-size: 11px; color: #FFFFFF;&quot;&gt;\r\n				{{# tpl_form_fields }}\r\n				&lt;tr&gt;\r\n				&lt;td style=&quot;padding: 0.3em; background-color: #EEEEEE; color: #000;&quot;&gt;{{ name }}&lt;/td&gt;\r\n					&lt;td style=&quot;padding: 0.3em; background-color: #EEEEEE; color: #000;&quot;&gt;{{ value }}&lt;/td&gt;\r\n				&lt;/tr&gt;\r\n				{{/ tpl_form_fields }}\r\n			&lt;/table&gt;\r\n		&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n	&lt;tr&gt;\r\n		&lt;td class=&quot;align_center&quot;\r\n		    style=&quot;font-size: 10px; border-top: 1px solid #069; text-decoration: none; color: #374953;&quot;&gt;\r\n			&lt;a href=&quot;{{ store_url }}&quot;\r\n			   style=&quot;color: #069; font-weight: bold; text-decoration: none;&quot;&gt;{{ store_name }}&lt;/a&gt;&lt;br&gt;\r\n{{{ text_project_label }}}\r\n		&lt;/td&gt;\r\n	&lt;/tr&gt;\r\n&lt;/table&gt;\r\n&lt;/body&gt;\r\n&lt;/html&gt;\r\n','{{ store_name }}\r\n\r\n{{ entry_enquiry }}\r\n{{{ enquiry }}}\r\n\r\n\r\n{{# tpl_form_fields }}\r\n{{ name }}  {{ value }}\r\n{{/ tpl_form_fields }}\r\n\r\n{{{ text_project_label }}}','first_name, title, store_url, store_name, logo_uri, logo_html, entry_enquiry, enquiry, tpl_form_fields, form_fields, text_project_label',0),
+(17,1,'storefront_contact_us_mail_admin_notify',1,'','New enquiry from customer',' You have got new enquiry from customer ({{first_name}}, {{email}})!',' You have got new enquiry from customer ({{first_name}}, {{email}})! ','first_name, email',0),
+(18,1,'storefront_new_customer_admin_notify',1,'',' New Customer {{ firstname }} {{ lastname }} has been registered!',' New Customer {{ firstname }} {{ lastname }}  has been registered!',' New Customer {{ firstname }} {{ lastname }}  has been registered!','firstname, lastname',0),
+(19,1,'storefront_new_subscriber_admin_notify',1,'',' New Subscriber {{ firstname }} {{ lastname }} has been registered!',' New Subscriber {{ firstname }} {{ lastname }} has been registered!',' New Subscriber {{ firstname }} {{ lastname }} has been registered!','firstname, lastname',0),
+(21,1,'storefront_product_out_of_stock_admin_notify',1,'','Product with ID #{{ product_id }} is out of Stock. ',' Product with ID #{{ product_id }} is out of Stock. \r\n&lt;br/&gt;&lt;br/&gt;\r\n{{{ text_project_label }}}',' Product with ID #{{ product_id }} is out of Stock. \r\n\r\n{{{ text_project_label }}}','product_id, text_project_label',0),
+(22,1,'storefront_product_review_admin_notify',1,'',' New product review has been added.',' New product review has been added. See details {{ product_url }}\r\n&lt;br/&gt;&lt;br/&gt;\r\n{{{ text_project_label }}}',' New product review has been added. See details {{ product_url }}\r\n\r\n{{{ text_project_label }}}','product_url, product_id, text_project_label',0),
+(23,1,'storefront_welcome_email_approved',1,'','Welcome, {{store_name}} ','&lt;html&gt;\r\n	&lt;head&gt;\r\n		&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;\r\n	&lt;/head&gt;\r\n	&lt;body&gt;\r\n		&lt;table style=&quot;font-family: Verdana,sans-serif; font-size: 11px; color: #374953; width: 600px;&quot;&gt;\r\n			&lt;tr&gt;\r\n				&lt;td class=&quot;align_left&quot;&gt;\r\n				&lt;a href=&quot;{{ store_url }}&quot; title=&quot;{{ store_name }}&quot;&gt;\r\n						{{# logo_uri}}\r\n				&lt;img src=&quot;{{ logo_uri }}&quot; alt=&quot;{{store_name}}&quot; style=&quot;border: none;&quot;&gt;\r\n                                                 {{/ logo_uri}}\r\n                                                 {{^ logo_uri}}\r\n                                                       {{# logo_html}}\r\n                                                        {{logo_html}}\r\n                                                       {{/ logo_html}}\r\n                                                 {{/ logo_uri}}\r\n					&lt;/a&gt;\r\n				&lt;/td&gt;\r\n			&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n		&lt;td&gt;Welcome and thank you for registering at {{ store_name }}&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;\r\n                          Your account has now been created and you can log in by using your email address and password by visiting our website or at the following URL:&lt;br/&gt;\r\n&lt;a href=&quot;{{ login_url }}&quot;&gt;{{ login_url }}&lt;/a&gt;&lt;br/&gt;\r\nOnce you logging in, you will be able to access, your wishlist, order history, printing invoices and editing your account information.\r\n	&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;\r\n					Thank you.&lt;br/&gt;\r\n                                        {{ store_name }}\r\n&lt;br/&gt;&lt;br/&gt;\r\n{{{ text_project_label }}}\r\n		&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n		&lt;/table&gt;\r\n	&lt;/body&gt;\r\n&lt;/html&gt;','Welcome and thank you for registering at {{ store_name }}\r\n\r\nYour account has now been created and you can log in by using your email address and password by visiting our website or at the following URL:\r\n{{ login_url }}\r\n\r\nOnce you logging in, you will be able to access, your wishlist, order history, printing invoices and editing your account information.\r\n\r\nThank you.\r\n{{ store_name }}\r\n{{{ text_project_label }}}','store_name, login_url, store_url, logo_html, logo_uri, text_project_label',0),
+(24, 1,'fast_checkout_welcome_email_guest_registration',1,'','Welcome, {{store_name}}','&lt;html&gt;\r\n	&lt;head&gt;\r\n		&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;\r\n	&lt;/head&gt;\r\n	&lt;body&gt;\r\n		&lt;table style=&quot;font-family: Verdana,sans-serif; font-size: 11px; color: #374953; width: 600px;&quot;&gt;\r\n			&lt;tr&gt;\r\n				&lt;td class=&quot;align_left&quot;&gt;\r\n				&lt;a href=&quot;{{ store_url }}&quot; title=&quot;{{ store_name }}&quot;&gt;\r\n						{{# logo_uri}}\r\n				&lt;img src=&quot;{{ logo_uri }}&quot; alt=&quot;{{store_name}}&quot; style=&quot;border: none;&quot;&gt;\r\n                                                 {{/ logo_uri}}\r\n                                                 {{^ logo_uri}}\r\n                                                       {{# logo_html}}\r\n                                                        {{logo_html}}\r\n                                                       {{/ logo_html}}\r\n                                                 {{/ logo_uri}}\r\n					&lt;/a&gt;\r\n				&lt;/td&gt;\r\n			&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n		&lt;td&gt;Welcome and thank you for registering at {{ store_name }}&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n		&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;\r\n                          Your account has now been created and you can log in by using your email address and password by visiting our website or at the following URL:&lt;br/&gt;\r\n&lt;a href=&quot;{{ login_url }}&quot;&gt;{{ login_url }}&lt;/a&gt;&lt;br/&gt;\r\n&lt;br/&gt;\r\nYour Login Name: {{login}}  &lt;br/&gt;\r\nYour Password: {{password}}  &lt;br/&gt;\r\n	&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;&amp;nbsp;&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n			&lt;tr&gt;\r\n				&lt;td&gt;\r\n					Thank you.&lt;br/&gt;\r\n                                        {{ store_name }}\r\n&lt;br/&gt;&lt;br/&gt;\r\n{{{ text_project_label }}}\r\n		&lt;/td&gt;\r\n			&lt;/tr&gt;\r\n		&lt;/table&gt;\r\n	&lt;/body&gt;\r\n&lt;/html&gt;','Welcome and thank you for registering at {{ store_name }}\r\n\r\nYour account has now been created and you can log in by using your email address and password by visiting our website or at the following URL:\r\n{{ login_url }}\r\n\r\nYour Login Name: {{login}}\r\nYour Password: {{password}}\r\n\r\n\r\nThank you.\r\n{{ store_name }}\r\n{{{ text_project_label }}}','store_name, login_url, store_url, logo_html, logo_uri, text_project_label, login, password',0),
+(25,1,'admin_reset_password_link',1,'','{{store_name}} - Password reset','A password reset was requested from {{store_name}}&lt;br /&gt;\r\nTo reset your password click link below:&lt;br /&gt;\r\n&lt;a href="{{ reset_link }}"&gt;{{ reset_link }}&lt;/a &gt;\r\n&lt;br /&gt;&lt;br /&gt;\r\n{{{ text_project_label }}}','A password reset was requested from {{store_name}} \r\nTo reset your password click link below:\r\n{{ reset_link }}\r\n\r\n\r\n{{{ text_project_label }}}','store_name, reset_link, text_project_label',0)
+;
+
+DROP TABLE IF EXISTS `ac_collections`;
+CREATE TABLE `ac_collections` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `description` text COLLATE utf8_bin,
+  `conditions` text COLLATE utf8_bin,
+  `store_id` int(11) NOT NULL DEFAULT '0',
+  `date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+DROP TABLE IF EXISTS `ac_collection_descriptions`;
+CREATE TABLE `ac_collection_descriptions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `collection_id` int(11) NOT NULL,
+  `language_id` int(11) NOT NULL,
+  `title` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `meta_keywords` text COLLATE utf8_bin,
+  `meta_description` text COLLATE utf8_bin,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `collection_language_idx` (`collection_id`,`language_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+
+INSERT INTO `ac_url_aliases` (`query`, `keyword`, `language_id`) VALUES ('check_seo=1', 'check_seo_url', 1);

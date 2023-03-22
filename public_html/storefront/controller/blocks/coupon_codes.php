@@ -1,11 +1,12 @@
-<?php  
+<?php
+
 /*------------------------------------------------------------------------------
   $Id$
 
   AbanteCart, Ideal OpenSource Ecommerce Solution
   http://www.AbanteCart.com
 
-  Copyright © 2011-2016 Belavier Commerce LLC
+  Copyright © 2011-2020 Belavier Commerce LLC
 
   This source file is subject to Open Software License (OSL 3.0)
   License details is bundled with this package in the file LICENSE.txt.
@@ -17,48 +18,64 @@
    versions in the future. If you wish to customize AbanteCart for your
    needs please refer to http://www.AbanteCart.com for more information.
 ------------------------------------------------------------------------------*/
-if (! defined ( 'DIR_CORE' )) {
-	header ( 'Location: static_pages/' );
+if (!defined('DIR_CORE')) {
+    header('Location: static_pages/');
 }
-class ControllerBlocksCouponCodes extends AController {
-	public $data = array();
-	
-	public function main() {
 
-		$action = func_get_arg(0);
+class ControllerBlocksCouponCodes extends AController
+{
+    public function __construct($registry, $instance_id, $controller, $parent_controller = '')
+    {
+        parent::__construct($registry, $instance_id, $controller, $parent_controller);
+        $this->data['empty_render_text'] =
+            'To view content of block coupon status should be enabled in the store settings';
+    }
+
+    public function main($action = '')
+    {
         //init controller data
-        $this->extensions->hk_InitData($this,__FUNCTION__);
+        $this->extensions->hk_InitData($this, __FUNCTION__);
 
-		$this->loadLanguage('checkout/payment');
+        $this->loadLanguage('checkout/payment');
 
-		if (!$this->config->get('coupon_status')) {
-			return null;
-		}
+        if (!$this->config->get('coupon_status')) {
+            return;
+        }
 
-		$this->data['coupon_status'] = $this->config->get('coupon_status');
+        $this->data['coupon_status'] = $this->config->get('coupon_status');
 
-		$entereted_cpn = ( isset($this->request->post[ 'coupon' ]) ? $this->request->post[ 'coupon' ] : $this->session->data[ 'coupon' ] );
+        $enteredCoupon = $this->request->post['coupon'] ?? $this->session->data['coupon'];
 
-		$form = new AForm();
-		$form->setForm(array( 'form_name' => 'coupon' ));
-		$this->data[ 'form_open' ] = $form->getFieldHtml(
-                                array( 'type' => 'form',
-                                       'name' => 'coupon',
-                                       'action' => $action ));
-		$this->data[ 'coupon' ] = $form->getFieldHtml( array(
-                                       'type' => 'input',
-		                               'name' => 'coupon',
-		                               'value' => $entereted_cpn,
-		                        ));
-		$this->data[ 'submit' ] = $form->getFieldHtml( array(
-                             'type' => 'submit',
-		                     'name' => $this->language->get('button_coupon') ));
+        $form = new AForm();
+        $form->setForm(['form_name' => 'coupon']);
 
-		$this->view->batchAssign($this->data);
-		$this->processTemplate('blocks/coupon_form.tpl');
+        $this->data['coupon_code'] = $enteredCoupon;
+        $this->data['form_open'] = $form->getFieldHtml(
+            [
+                'type'   => 'form',
+                'name'   => 'coupon',
+                'action' => $action,
+                'csrf'   => true,
+            ]
+        );
+        $this->data['coupon'] = $form->getFieldHtml(
+            [
+                'type'  => 'input',
+                'name'  => 'coupon',
+                'value' => $enteredCoupon,
+            ]
+        );
+        $this->data['submit'] = $form->getFieldHtml(
+            [
+                'type' => 'submit',
+                'name' => $this->language->get('button_coupon'),
+            ]
+        );
+
+        $this->view->batchAssign($this->data);
+        $this->processTemplate('blocks/coupon_form.tpl');
 
         //update controller data
-        $this->extensions->hk_UpdateData($this,__FUNCTION__);
-	}
+        $this->extensions->hk_UpdateData($this, __FUNCTION__);
+    }
 }
-?>
